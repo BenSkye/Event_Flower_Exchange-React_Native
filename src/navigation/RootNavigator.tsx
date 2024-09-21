@@ -44,7 +44,7 @@ const TabNavigator = () => (
                                 width: '45%',
                                 top: -11,
                                 height: 5,
-                                backgroundColor: focused ? '#4CAF50' : 'transparent',
+                                backgroundColor: focused ? '#235d3a' : 'transparent',
                                 borderBottomLeftRadius: 15,
                                 borderBottomRightRadius: 15,
                             }}
@@ -53,7 +53,7 @@ const TabNavigator = () => (
                     </View>
                 );
             },
-            tabBarActiveTintColor: '#4CAF50',
+            tabBarActiveTintColor: '#235d3a',
             tabBarInactiveTintColor: 'gray',
             tabBarStyle: styles.tabBar,
             headerShown: false,
@@ -76,11 +76,8 @@ const styles = StyleSheet.create({
     tabBar: {
         position: 'absolute',
         backgroundColor: 'white',
-        left: 20,
-        right: 20,
-        bottom: 15,
         height: 60,
-        borderRadius: 30
+
     }
 })
 

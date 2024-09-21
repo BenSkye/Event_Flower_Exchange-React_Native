@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, ActivityIndicator, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import CategoryCard from '../components/CategoryCard';
 import FeaturedFlowerCard from '../components/FeaturedFlowerCard';
 import QuickLinkButton from '../components/QuickLinkButton';
 import { useNavigation } from '@react-navigation/native';
-
+import { Ionicons } from '@expo/vector-icons';
 const HomeScreen = () => {
     const navigation = useNavigation();
 
@@ -50,26 +50,35 @@ const HomeScreen = () => {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {/* Welcome Section */}
-            <View style={styles.headerContainer}>
-                <Text style={styles.headerText}>Welcome to Event Flower Exchange</Text>
-                <TextInput
-                    style={styles.searchBar}
-                    placeholder="Search for flowers..."
-                    placeholderTextColor="#aaa"
-                />
-            </View>
+        <View style={styles.container}>
+            <SafeAreaView >
+                <View style={styles.header}>
+                    <View style={styles.searchContainer}>
+                        <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Enter search ..."
+                            placeholderTextColor="#666"
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.cartButton}>
+                        <Ionicons name="cart-outline" size={24} color="black" />
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>1</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
 
             {/* Categories Section */}
-            <View style={styles.categoriesContainer}>
+            {/* <View style={styles.categoriesContainer}>
                 <Text style={styles.sectionTitle}>Explore Categories</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryList}>
                     {categories.map((category) => (
                         <CategoryCard key={category.id} title={category.name} image={{ uri: category.image }} />
                     ))}
                 </ScrollView>
-            </View>
+            </View> */}
 
             {/* Featured Listings */}
             <View style={styles.featuredContainer}>
@@ -85,20 +94,13 @@ const HomeScreen = () => {
                         />
                     )}
                     keyExtractor={(item) => item.id}
-                    horizontal
+                    numColumns={2}
                     contentContainerStyle={styles.featuredList}
                 />
             </View>
 
-            {/* Quick Links */}
-            <View style={styles.quickLinksContainer}>
-                <Text style={styles.sectionTitle}>Quick Links</Text>
-                <View style={styles.quickLinks}>
-                    <QuickLinkButton text="Browse Flowers" onPress={handleBrowseFlowers} />
-                    <QuickLinkButton text="Create a Listing" onPress={handleCreateListing} />
-                </View>
-            </View>
-        </ScrollView>
+
+        </View>
     );
 };
 
@@ -107,8 +109,8 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        padding: 16,
         backgroundColor: '#f7f7f7',
+        paddingBottom: 50
     },
     loadingContainer: {
         flex: 1,
@@ -124,14 +126,6 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         color: '#333',
     },
-    searchBar: {
-        height: 40,
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        borderWidth: 1,
-        borderColor: '#ccc',
-    },
     categoriesContainer: {
         marginBottom: 24,
     },
@@ -146,6 +140,7 @@ const styles = StyleSheet.create({
     },
     featuredContainer: {
         marginBottom: 24,
+        paddingHorizontal: 10,
     },
     featuredList: {
         flexDirection: 'row',
@@ -157,5 +152,50 @@ const styles = StyleSheet.create({
     quickLinks: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+
+    },
+    searchContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        marginRight: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    searchIcon: {
+        paddingLeft: 10,
+    },
+    searchInput: {
+        flex: 1,
+        height: 40,
+        paddingHorizontal: 10,
+    },
+    cartButton: {
+        padding: 5,
+        position: 'relative',
+    },
+    badge: {
+        position: 'absolute',
+        right: -5,
+        top: -5,
+        backgroundColor: '#a9dfbf',
+        borderRadius: 10,
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    badgeText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: 'bold',
     },
 });
