@@ -40,6 +40,10 @@ const HomeScreen = () => {
         // navigation.navigate('CreateListingScreen');
     };
 
+    const handleFlowerPress = (flower) => {
+        navigation.navigate('ProductDetail', { flower });
+    };
+
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
@@ -82,6 +86,7 @@ const HomeScreen = () => {
                             name={item.name}
                             price={`$${item.price}`}
                             image={{ uri: item.image }}
+                            onPress={() => handleFlowerPress(item)}
                         />
                     )}
                     keyExtractor={(item) => item.id}
@@ -101,8 +106,6 @@ const HomeScreen = () => {
         </ScrollView>
     );
 };
-
-export default HomeScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -159,3 +162,5 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
 });
+
+export default HomeScreen;
