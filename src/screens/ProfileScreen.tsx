@@ -15,7 +15,7 @@ const ProfileScreen = () => {
       {/* Header giữ từ code 2 */}
       <View style={styles.profileSection}>
         <Image
-          source={{ uri: "https://your-profile-image-url.com" }} // Placeholder for profile image
+          source={require("../assets/img/kem.png")}
           style={styles.profilePicture}
         />
         <View style={styles.profileInfo}>
