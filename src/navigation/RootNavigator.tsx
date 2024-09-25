@@ -69,6 +69,7 @@ const TabNavigator = () => (
 const RootNavigator = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MainTabs" component={TabNavigator} />
+        <Stack.Screen name="HomeStack" component={HomeStack} />
     </Stack.Navigator>
 );
 

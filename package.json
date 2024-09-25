@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
+    "@itenl/react-native-scrollable-tabview": "^1.1.7",
     "@react-native-vector-icons/ionicons": "^7.4.0-alpha.27",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
