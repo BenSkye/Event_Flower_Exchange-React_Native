@@ -63,7 +63,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
       />
       <Button
-        title="Đăng nhập"
+        title="Đăng nhập ss"
         color="red"
         onPress={() => navigation.navigate('Login')}
         style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius

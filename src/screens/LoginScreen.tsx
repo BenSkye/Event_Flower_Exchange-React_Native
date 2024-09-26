@@ -57,7 +57,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <Button
-        title="Profile"
+        title="Profile ss"
         color="blue"
         onPress={() => navigation.navigate("Profile")}
         // style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius

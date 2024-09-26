@@ -90,7 +90,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       </TouchableOpacity>
 
       <Button
-        title="Profile Screen"
+        title="Profile Screen ss"
         color="pink"
         onPress={() => navigation.navigate('Profile')}
         style={styles.navigationButton}
