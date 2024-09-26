@@ -91,7 +91,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
       <Button
         title="Profile Screen"
-        color="red"
+        color="pink"
         onPress={() => navigation.navigate('Profile')}
         style={styles.navigationButton}
       />

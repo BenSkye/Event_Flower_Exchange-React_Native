@@ -58,7 +58,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       />
        <Button
         title="Đăng ký"
-        color="red"
+        color="purple"
         onPress={() => navigation.navigate('Register')}
         style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
       />
