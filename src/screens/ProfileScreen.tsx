@@ -9,7 +9,23 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // Make sure to install this dependency for icons
 import Button from "../components/Button";
-const ProfileScreen = () => {
+import RegisterScreen from "./RegisterScreen";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from "@react-navigation/native";
+
+type RootStackParamList = {
+  Profile: undefined;
+  Register: undefined;
+  Login: undefined;
+  // Add other screen names and their param types here
+};
+
+type ProfileScreenProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'>;
+};
+
+const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+  
   return (
     <View style={styles.container}>
       {/* Header giữ từ code 2 */}
@@ -38,6 +54,18 @@ const ProfileScreen = () => {
         title="Chỉnh sửa profile"
         color="blue"
         onPress={() => {}}
+        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
+      />
+       <Button
+        title="Đăng ký"
+        color="purple"
+        onPress={() => navigation.navigate('Register')}
+        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
+      />
+      <Button
+        title="Đăng nhập ss"
+        color="red"
+        onPress={() => navigation.navigate('Login')}
         style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
       />
     </View>
