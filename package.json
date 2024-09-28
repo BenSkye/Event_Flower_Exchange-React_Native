@@ -19,7 +19,9 @@
     "@react-navigation/stack": "^6.4.1",
     "@types/react-native-vector-icons": "^6.4.18",
     "axios": "^1.7.7",
+    "date-fns": "^4.1.0",
     "expo": "~51.0.28",
+    "expo-linear-gradient": "~13.0.2",
     "expo-status-bar": "~1.12.1",
     "fe": "file:",
     "i": "^0.3.7",
@@ -28,7 +30,8 @@
     "react-native-gesture-handler": "^2.16.1",
     "react-native-pager-view": "^5.1.5",
     "react-native-screens": "^3.31.1",
-    "react-native-splash-screen": "^3.3.0"
+    "react-native-splash-screen": "^3.3.0",
+    "expo-localization": "~15.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
