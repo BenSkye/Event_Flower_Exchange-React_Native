@@ -10,6 +10,7 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { StyleSheet, View } from 'react-native';
 import RegisterScreen from '../screens/RegisterScreen';
+import EditProfile from '../screens/EditProfile';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 export type RootStackParamList = {
@@ -23,6 +24,7 @@ const HomeStack = () => (
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name='EditProfile' component={EditProfile} />
     </Stack.Navigator>
 );
 
@@ -79,6 +81,7 @@ const RootNavigator = () => (
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
 
     </Stack.Navigator>
 );

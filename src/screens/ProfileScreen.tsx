@@ -5,17 +5,17 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView
+  ScrollView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Icons
-import Button from "../components/Button";
+import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons"; // Icons
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from "@react-navigation/native";
 
 type RootStackParamList = {
   Profile: undefined;
-  Register: undefined;
+  EditProfile: undefined;
   Login: undefined;
+  Register: undefined;
 };
 
 type ProfileScreenProps = {
@@ -24,46 +24,104 @@ type ProfileScreenProps = {
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* Header Section */}
-      <View style={styles.profileSection}>
+      <View style={styles.headerSection}>
         <Image
-          source={require("../assets/img/kem.png")}
+          source={require("../assets/img/avt.jpg")} // Replace with your image path
           style={styles.profilePicture}
         />
-        <View style={styles.profileInfo}>
-          <Text style={styles.greeting}>Chào</Text>
-          <Text style={styles.userName}>Gia Khánh</Text>
-        </View>
-        <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <Ionicons name="pencil" size={24} color="white" />
+        {/* Username */}
+        <Text style={styles.userName}>John Doe</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('EditProfile')}
+          style={styles.editButton}
+        >
+          <Text style={styles.editButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
+          style={styles.editButton}
+        >
+          <Text style={styles.editButtonText}>Đăng nhập</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Register')}
+          style={styles.editButton}
+        >
+          <Text style={styles.editButtonText}>Đăng kí</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Profile Info */}
-      <View style={styles.infoSection}>
-        <Text style={styles.infoText}>Số điện thoại: 0123 456 789</Text>
-        <Text style={styles.infoText}>Địa chỉ: Hồ Chí Minh</Text>
+      {/* Contact Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Contact</Text>
+        <View style={styles.sectionItem}>
+          <Ionicons name="mail-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>john.doe@example.com</Text>
+        </View>
+        <View style={styles.sectionItem}>
+          <Ionicons name="call-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>+123 456 789</Text>
+        </View>
+        <View style={styles.sectionItem}>
+          <Ionicons name="home-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>dai hoc fpt</Text>
+        </View>
       </View>
 
-      {/* Action Buttons */}
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Đăng nhập"
-          onPress={() => navigation.navigate('Login')}
-          color="#6200EE"
-          style={styles.actionButton}
-        />
+      {/* Mimi Headline Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Mimi Headline</Text>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Popular</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Trending</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Today</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
       </View>
 
-      {/* Register Button */}
-      <TouchableOpacity
-        style={styles.registerButton}
-        onPress={() => navigation.navigate('Register')}
-      >
-        <Text style={styles.registerText}>Chưa có tài khoản? Đăng ký ngay</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+      {/* Content Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Content</Text>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="heart-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Favourite</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="download-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Download</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Preferences Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Preferences</Text>
+        <TouchableOpacity style={styles.sectionItem}>
+          <MaterialIcons name="language" size={24} color="#333" />
+          <Text style={styles.sectionText}>Language</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="moon-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Darkmode</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="wifi-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Only Download via Wifi</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -72,68 +130,58 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f9f9f9",
   },
-  profileSection: {
-    flexDirection: "row",
+  headerSection: {
     alignItems: "center",
-    padding: 20,
-    backgroundColor: "#0A2540",
-    elevation: 2, // M3 uses shadows and elevation
-    borderBottomStartRadius: 16,
-    borderBottomEndRadius: 16,
+    backgroundColor: "#FF6F61",
+    paddingVertical: 40,
+    paddingHorizontal: 20,
   },
   profilePicture: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 2,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
     borderColor: "#fff",
   },
-  profileInfo: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  greeting: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "400", // M3 regular font weight
-  },
   userName: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: "600",
     color: "#fff",
-    fontSize: 22,
-    fontWeight: "600", // M3 medium weight for headings
   },
   editButton: {
-    padding: 10,
-  },
-  infoSection: {
-    marginVertical: 20,
+    marginTop: 16,
+    backgroundColor: "#333",
+    borderRadius: 24,
+    paddingVertical: 10,
     paddingHorizontal: 20,
   },
-  infoText: {
+  editButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  section: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    color: "#888",
+    marginBottom: 10,
+  },
+  sectionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  sectionText: {
     fontSize: 16,
     color: "#333",
-    marginBottom: 8,
-  },
-  buttonContainer: {
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
-  actionButton: {
-    marginVertical: 8,
-    borderRadius: 28, // M3's more rounded button style
-    paddingVertical: 12,
-  },
-  registerButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  registerText: {
-    color: '#6200EE',
-    fontSize: 16,
-    fontWeight: '600',
+    marginLeft: 10,
+    flex: 1,
   },
 });
 
