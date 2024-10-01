@@ -5,11 +5,10 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  FlatList,
+  SafeAreaView
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Make sure to install this dependency for icons
+import { Ionicons } from "@expo/vector-icons"; // Icons
 import Button from "../components/Button";
-import RegisterScreen from "./RegisterScreen";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from "@react-navigation/native";
 
@@ -17,7 +16,6 @@ type RootStackParamList = {
   Profile: undefined;
   Register: undefined;
   Login: undefined;
-  // Add other screen names and their param types here
 };
 
 type ProfileScreenProps = {
@@ -25,10 +23,9 @@ type ProfileScreenProps = {
 };
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
-  
   return (
-    <View style={styles.container}>
-      {/* Header giữ từ code 2 */}
+    <SafeAreaView style={styles.container}>
+      {/* Header Section */}
       <View style={styles.profileSection}>
         <Image
           source={require("../assets/img/kem.png")}
@@ -38,70 +35,72 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           <Text style={styles.greeting}>Chào</Text>
           <Text style={styles.userName}>Gia Khánh</Text>
         </View>
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity style={styles.editButton} onPress={() => {}}>
           <Ionicons name="pencil" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
-      {/* Thông tin profile từ code 1 */}
+      {/* Profile Info */}
       <View style={styles.infoSection}>
         <Text style={styles.infoText}>Số điện thoại: 0123 456 789</Text>
         <Text style={styles.infoText}>Địa chỉ: Hồ Chí Minh</Text>
       </View>
 
-      {/* Nút bấm từ code 1 */}
-      <Button
-        title="Chỉnh sửa profile"
-        color="blue"
-        onPress={() => {}}
-        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
-      />
-       <Button
-        title="Đăng ký"
-        color="purple"
+      {/* Action Buttons */}
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Đăng nhập"
+          onPress={() => navigation.navigate('Login')}
+          color="#6200EE"
+          style={styles.actionButton}
+        />
+      </View>
+
+      {/* Register Button */}
+      <TouchableOpacity
+        style={styles.registerButton}
         onPress={() => navigation.navigate('Register')}
-        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
-      />
-      <Button
-        title="Đăng nhập ss"
-        color="red"
-        onPress={() => navigation.navigate('Login')}
-        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
-      />
-    </View>
+      >
+        <Text style={styles.registerText}>Chưa có tài khoản? Đăng ký ngay</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: "#f9f9f9",
   },
   profileSection: {
     flexDirection: "row",
     alignItems: "center",
     padding: 20,
     backgroundColor: "#0A2540",
+    elevation: 2, // M3 uses shadows and elevation
+    borderBottomStartRadius: 16,
+    borderBottomEndRadius: 16,
   },
   profilePicture: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     borderWidth: 2,
     borderColor: "#fff",
   },
   profileInfo: {
     flex: 1,
-    marginLeft: 15,
+    marginLeft: 16,
   },
   greeting: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "400", // M3 regular font weight
   },
   userName: {
     color: "#fff",
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: "600", // M3 medium weight for headings
   },
   editButton: {
     padding: 10,
@@ -112,31 +111,29 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 16,
-    marginBottom: 10,
+    color: "#333",
+    marginBottom: 8,
   },
-  menuList: {
-    marginVertical: 20,
+  buttonContainer: {
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+  actionButton: {
+    marginVertical: 8,
+    borderRadius: 28, // M3's more rounded button style
+    paddingVertical: 12,
   },
-  menuText: {
-    fontSize: 18,
+  registerButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
-  notificationBadge: {
-    backgroundColor: "red",
-    borderRadius: 12,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  notificationText: {
-    color: "#fff",
-    fontSize: 12,
+  registerText: {
+    color: '#6200EE',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
