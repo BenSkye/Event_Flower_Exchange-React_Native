@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 
 interface AuthContextType {
     isLoggedIn: boolean;
-    login: (username: string) => void;
+    login: (username: string, password: string) => void; // Updated to accept password
     logout: () => void;
 }
 
@@ -11,9 +11,17 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const login = (username: string) => {
-        setIsLoggedIn(true);
-        // Handle login logic
+    const login = (username: string, password: string) => {
+        // Here, you can add your logic to validate the username and password
+        console.log('Logging in with:', username, password);
+        
+        // For example purposes, let's just log in if the username is not empty
+        if (username && password) {
+            setIsLoggedIn(true);
+            // Handle additional login logic (e.g., API calls)
+        } else {
+            console.error('Invalid login attempt');
+        }
     };
 
     const logout = () => {

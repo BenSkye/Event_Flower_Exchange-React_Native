@@ -1,20 +1,24 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 interface ButtonProps {
     onPress: () => void;
     title: string;
+    color?: string; // Tùy chọn để chỉ định màu nền
+    style?: StyleProp<ViewStyle>; // Thêm thuộc tính style để tùy chỉnh style cho button
 }
 
-const Button: React.FC<ButtonProps> = ({ onPress, title }) => (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+const Button: React.FC<ButtonProps> = ({ onPress, title, color = '#4CAF50', style }) => (
+    <TouchableOpacity
+        style={[styles.button, { backgroundColor: color }, style]} // Kết hợp style của button với props.style
+        onPress={onPress}
+    >
         <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: '#4CAF50',
         padding: 10,
         borderRadius: 5,
     },

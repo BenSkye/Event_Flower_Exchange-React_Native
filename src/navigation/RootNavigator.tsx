@@ -9,13 +9,20 @@ import OrdersScreen from '../screens/OrdersScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { StyleSheet, View } from 'react-native';
+import RegisterScreen from '../screens/RegisterScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
+export type RootStackParamList = {
+    Profile: undefined;
+    Register: undefined;
+};
 const HomeStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="Detail" component={DetailScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
     </Stack.Navigator>
 );
 
@@ -63,6 +70,7 @@ const TabNavigator = () => (
         <Tab.Screen name="Orders" component={OrdersScreen} />
         <Tab.Screen name="Notifications" component={NotificationsScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
+
     </Tab.Navigator>
 );
 
@@ -70,6 +78,9 @@ const RootNavigator = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="HomeStack" component={HomeStack} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+
     </Stack.Navigator>
 );
 
