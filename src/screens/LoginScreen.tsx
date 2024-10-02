@@ -7,10 +7,15 @@ import {
   TouchableOpacity,
   Text,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from "../hooks/useAuth";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from '@expo/vector-icons';
 
 type RootStackParamList = {
   Profile: undefined;
@@ -23,83 +28,125 @@ type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
 };
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { login } = useAuth();
-
+  
   const handleLogin = () => {
-    if (username.trim() === "" || password.trim() === "") {
-      Alert.alert("Input Error", "Please enter your username and password.");
-      return;
-    }
-    login(username, password); // Pass both username and password
+    // Handle login logic here
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        placeholderTextColor="#d19a6a" // Warm placeholder text color
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#d19a6a" // Warm placeholder text color
-        secureTextEntry // Hide the password input
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <Button
-        title="Profile ss"
-        color="blue"
-        onPress={() => navigation.navigate("Profile")}
-        // style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
-      />
-    </View>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Text style={styles.title}>Login</Text>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={24} color="#2e7d32" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Email Address"
+            placeholderTextColor="#333"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={24} color="#2e7d32" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#333"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text style={styles.footerLink}>Register</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: '#56ab2f', // Sử dụng màu xanh duy nhất
+  },
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: 'center',
     padding: 20,
-    backgroundColor: "#fff", // White background for a clean look
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#8e6e53", // Warm color for the title
-    marginBottom: 20,
-    textAlign: "center",
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 30,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+  },
+  icon: {
+    marginRight: 10,
   },
   input: {
-    height: 50,
-    backgroundColor: "#f7d7c4", // Warm background color for input field
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#d19a6a", // Warm border color
-    color: "#5a4633", // Dark text color for input
+    flex: 1,
+    padding: 15,
+    fontSize: 16,
+    color: '#333',
   },
   button: {
-    backgroundColor: "#8e6e53", // Warm color for the login button
+    backgroundColor: '#007bff',
     borderRadius: 10,
-    paddingVertical: 15,
-    alignItems: "center",
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 10,
   },
   buttonText: {
-    color: "#fff", // White text for the button
+    color: '#fff',
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  footerText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  footerLink: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginLeft: 5,
+    textDecorationLine: 'underline',
   },
 });
 
