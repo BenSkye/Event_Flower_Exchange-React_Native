@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const EditProfile = () => {
+const PostProduct = () => {
   return (
     <View>
-      <Text>EditProfile</Text>
+      <Text>PostProduct</Text>
     </View>
   )
 }
 
-export default EditProfile
+export default PostProduct
