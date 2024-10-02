@@ -5,19 +5,17 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  FlatList,
+  ScrollView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Make sure to install this dependency for icons
-import Button from "../components/Button";
-import RegisterScreen from "./RegisterScreen";
+import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons"; // Icons
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from "@react-navigation/native";
 
 type RootStackParamList = {
   Profile: undefined;
-  Register: undefined;
+  EditProfile: undefined;
   Login: undefined;
-  // Add other screen names and their param types here
+  Register: undefined;
 };
 
 type ProfileScreenProps = {
@@ -25,118 +23,165 @@ type ProfileScreenProps = {
 };
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
-  
   return (
-    <View style={styles.container}>
-      {/* Header giữ từ code 2 */}
-      <View style={styles.profileSection}>
+    <ScrollView style={styles.container}>
+      {/* Header Section */}
+      <View style={styles.headerSection}>
         <Image
-          source={require("../assets/img/kem.png")}
+          source={require("../assets/img/avt.jpg")} // Replace with your image path
           style={styles.profilePicture}
         />
-        <View style={styles.profileInfo}>
-          <Text style={styles.greeting}>Chào</Text>
-          <Text style={styles.userName}>Gia Khánh</Text>
-        </View>
-        <TouchableOpacity style={styles.editButton}>
-          <Ionicons name="pencil" size={24} color="white" />
+        {/* Username */}
+        <Text style={styles.userName}>John Doe</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('EditProfile')}
+          style={styles.editButton}
+        >
+          <Text style={styles.editButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
+          style={styles.editButton}
+        >
+          <Text style={styles.editButtonText}>Đăng nhập</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Register')}
+          style={styles.editButton}
+        >
+          <Text style={styles.editButtonText}>Đăng kí</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Thông tin profile từ code 1 */}
-      <View style={styles.infoSection}>
-        <Text style={styles.infoText}>Số điện thoại: 0123 456 789</Text>
-        <Text style={styles.infoText}>Địa chỉ: Hồ Chí Minh</Text>
+      {/* Contact Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Contact</Text>
+        <View style={styles.sectionItem}>
+          <Ionicons name="mail-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>john.doe@example.com</Text>
+        </View>
+        <View style={styles.sectionItem}>
+          <Ionicons name="call-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>+123 456 789</Text>
+        </View>
+        <View style={styles.sectionItem}>
+          <Ionicons name="home-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>dai hoc fpt</Text>
+        </View>
       </View>
 
-      {/* Nút bấm từ code 1 */}
-      <Button
-        title="Chỉnh sửa profile"
-        color="blue"
-        onPress={() => {}}
-        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
-      />
-       <Button
-        title="Đăng ký"
-        color="purple"
-        onPress={() => navigation.navigate('Register')}
-        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
-      />
-      <Button
-        title="Đăng nhập ss"
-        color="red"
-        onPress={() => navigation.navigate('Login')}
-        style={{ padding: 20, borderRadius: 10 }} // Tùy chỉnh thêm padding và borderRadius
-      />
-    </View>
+      {/* Mimi Headline Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Mimi Headline</Text>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Popular</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Trending</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Today</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Content Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Content</Text>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="heart-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Favourite</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="download-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Download</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Preferences Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Preferences</Text>
+        <TouchableOpacity style={styles.sectionItem}>
+          <MaterialIcons name="language" size={24} color="#333" />
+          <Text style={styles.sectionText}>Language</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="moon-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Darkmode</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sectionItem}>
+          <Ionicons name="wifi-outline" size={24} color="#333" />
+          <Text style={styles.sectionText}>Only Download via Wifi</Text>
+          <Feather name="chevron-right" size={24} color="#333" />
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: "#f9f9f9",
   },
-  profileSection: {
-    flexDirection: "row",
+  headerSection: {
     alignItems: "center",
-    padding: 20,
-    backgroundColor: "#0A2540",
-  },
-  profilePicture: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  profileInfo: {
-    flex: 1,
-    marginLeft: 15,
-  },
-  greeting: {
-    color: "#fff",
-    fontSize: 18,
-  },
-  userName: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  editButton: {
-    padding: 10,
-  },
-  infoSection: {
-    marginVertical: 20,
+    backgroundColor: "#FF6F61",
+    paddingVertical: 40,
     paddingHorizontal: 20,
   },
-  infoText: {
+  profilePicture: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: "#fff",
+  },
+  userName: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#fff",
+  },
+  editButton: {
+    marginTop: 16,
+    backgroundColor: "#333",
+    borderRadius: 24,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  editButtonText: {
+    color: "#fff",
     fontSize: 16,
+    fontWeight: "600",
+  },
+  section: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    color: "#888",
     marginBottom: 10,
   },
-  menuList: {
-    marginVertical: 20,
-  },
-  menuItem: {
+  sectionItem: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    padding: 15,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },
-  menuText: {
-    fontSize: 18,
-  },
-  notificationBadge: {
-    backgroundColor: "red",
-    borderRadius: 12,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  notificationText: {
-    color: "#fff",
-    fontSize: 12,
+  sectionText: {
+    fontSize: 16,
+    color: "#333",
+    marginLeft: 10,
+    flex: 1,
   },
 });
 
