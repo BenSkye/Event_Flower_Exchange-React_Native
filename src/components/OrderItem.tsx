@@ -5,7 +5,6 @@ import { formatPrice } from '../utils/formatPrice';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const OrderItem = ({ order }: { order: any }) => {
-    console.log('order.productImage', order.productImage)
     return (
         <View style={styles.container}>
             <View style={styles.shopInfo}>
