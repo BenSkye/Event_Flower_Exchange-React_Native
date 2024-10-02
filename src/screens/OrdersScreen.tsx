@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, forwardRef } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import PagerView from 'react-native-pager-view';
@@ -76,13 +76,27 @@ const OrdersScreen = () => {
         { key: 'delivered', label: 'Delivered' },
     ];
 
+    useEffect(() => {
+        if (pagerRef.current && pagerRef.current.setPage) {
+            pagerRef.current.setPage(activeTab);
+        }
+    }, [activeTab]);
+    const handleTabPress = useCallback((index: number) => {
+        setActiveTab(index);
+        if (pagerRef.current && typeof pagerRef.current.setPage === 'function') {
+            pagerRef.current.setPage(index);
+        } else {
+            console.warn('PagerView ref or setPage method is not available');
+        }
+    }, []);
+
+
     const renderTab = (tab: typeof tabs[0], index: number) => (
         <TouchableOpacity
             key={tab.key}
             style={[styles.tab, activeTab === index && styles.activeTab]}
             onPress={() => {
-                setActiveTab(index);
-                pagerRef.current?.setPage(index);
+                handleTabPress(index);
             }}
         >
             <Text style={[styles.tabText, activeTab === index && styles.activeTabText]}>
