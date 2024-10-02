@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator();
 export type RootStackParamList = {
     Profile: undefined;
     Register: undefined;
-  };
+};
 const HomeStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
@@ -72,13 +72,14 @@ const TabNavigator = () => (
         <Tab.Screen name="Orders" component={OrdersScreen} />
         <Tab.Screen name="Notifications" component={NotificationsScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
-    
+
     </Tab.Navigator>
 );
 
 const RootNavigator = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MainTabs" component={TabNavigator} />
+        <Stack.Screen name="HomeStack" component={HomeStack} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />

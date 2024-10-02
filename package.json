@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
+    "@itenl/react-native-scrollable-tabview": "^1.1.7",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-picker/picker": "^2.8.1",
     "@react-native-vector-icons/ionicons": "^7.4.0-alpha.27",
