@@ -11,6 +11,8 @@ import ProfileScreen from '../screens/ProfileScreen';
 import { StyleSheet, View } from 'react-native';
 import RegisterScreen from '../screens/RegisterScreen';
 import EditProfile from '../screens/EditProfile';
+import PostProduct from '../screens/seller/PostProduct';
+import ManageProduct from '../screens/seller/ManageProduct';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 export type RootStackParamList = {
@@ -25,6 +27,8 @@ const HomeStack = () => (
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name='EditProfile' component={EditProfile} />
+        <Stack.Screen name='SellProduct' component={PostProduct} />
+        <Stack.Screen name='ManageProduct' component={ManageProduct} />
     </Stack.Navigator>
 );
 
@@ -82,13 +86,14 @@ const RootNavigator = () => (
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
-
+        <Stack.Screen name='SellProduct' component={PostProduct} />
+        <Stack.Screen name='ManageProduct' component={ManageProduct} />
     </Stack.Navigator>
 );
 
 const styles = StyleSheet.create({
     tabBar: {
-        position: 'absolute',
+        // position: 'absolute',
         backgroundColor: 'white',
         height: 60,
 

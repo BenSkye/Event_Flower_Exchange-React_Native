@@ -16,6 +16,8 @@ type RootStackParamList = {
   EditProfile: undefined;
   Login: undefined;
   Register: undefined;
+  SellProduct: undefined;
+  ManageProduct: undefined;
 };
 
 type ProfileScreenProps = {
@@ -72,52 +74,13 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
       {/* Mimi Headline Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Mimi Headline</Text>
-        <TouchableOpacity style={styles.sectionItem}>
-          <Text style={styles.sectionText}>Popular</Text>
+        <Text style={styles.sectionTitle}>Bài bán hàng</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('SellProduct')} style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Đăng bài bán</Text>
           <Feather name="chevron-right" size={24} color="#333" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sectionItem}>
-          <Text style={styles.sectionText}>Trending</Text>
-          <Feather name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sectionItem}>
-          <Text style={styles.sectionText}>Today</Text>
-          <Feather name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Content Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Content</Text>
-        <TouchableOpacity style={styles.sectionItem}>
-          <Ionicons name="heart-outline" size={24} color="#333" />
-          <Text style={styles.sectionText}>Favourite</Text>
-          <Feather name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sectionItem}>
-          <Ionicons name="download-outline" size={24} color="#333" />
-          <Text style={styles.sectionText}>Download</Text>
-          <Feather name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Preferences Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Preferences</Text>
-        <TouchableOpacity style={styles.sectionItem}>
-          <MaterialIcons name="language" size={24} color="#333" />
-          <Text style={styles.sectionText}>Language</Text>
-          <Feather name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sectionItem}>
-          <Ionicons name="moon-outline" size={24} color="#333" />
-          <Text style={styles.sectionText}>Darkmode</Text>
-          <Feather name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sectionItem}>
-          <Ionicons name="wifi-outline" size={24} color="#333" />
-          <Text style={styles.sectionText}>Only Download via Wifi</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('ManageProduct')} style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Quản lý bài bán</Text>
           <Feather name="chevron-right" size={24} color="#333" />
         </TouchableOpacity>
       </View>
