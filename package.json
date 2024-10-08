@@ -22,17 +22,19 @@
     "axios": "^1.7.7",
     "date-fns": "^4.1.0",
     "expo": "~51.0.28",
+    "expo-image-picker": "^15.0.7",
     "expo-linear-gradient": "~13.0.2",
+    "expo-localization": "~15.0.3",
     "expo-status-bar": "~1.12.1",
     "fe": "file:",
+    "firebase": "^10.14.0",
     "i": "^0.3.7",
     "react": "18.2.0",
     "react-native": "0.74.5",
     "react-native-gesture-handler": "^2.16.1",
-    "react-native-pager-view": "^5.1.5",
+    "react-native-pager-view": "6.4.1",
     "react-native-screens": "^3.31.1",
-    "react-native-splash-screen": "^3.3.0",
-    "expo-localization": "~15.0.3"
+    "react-native-splash-screen": "^3.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

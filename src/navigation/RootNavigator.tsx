@@ -11,14 +11,29 @@ import ProfileScreen from '../screens/ProfileScreen';
 import { StyleSheet, View } from 'react-native';
 import RegisterScreen from '../screens/RegisterScreen';
 import EditProfile from '../screens/EditProfile';
-import PostProduct from '../screens/seller/PostProduct';
-import ManageProduct from '../screens/seller/ManageProduct';
+import PostProduct from '../screens/seller/PostProductScreen';
+import ManageProduct from '../screens/seller/ManageProductScreen';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
 export type RootStackParamList = {
     Profile: undefined;
     Register: undefined;
 };
+
+// Material Design 3 color palette
+const colors = {
+    primary: '#5a61c9',
+    secondary: '#03DAC6',
+    background: '#F5F5F5',
+    surface: '#FFFFFF',
+    onPrimary: '#FFFFFF',
+    onSecondary: '#000000',
+    onBackground: '#000000',
+    onSurface: '#000000',
+};
+
 const HomeStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
@@ -48,7 +63,6 @@ const TabNavigator = () => (
                     iconName = focused ? 'person' : 'person-outline';
                 }
 
-
                 return (
                     <View style={{ alignItems: 'center', justifyContent: 'flex-start' }}>
                         <View
@@ -57,7 +71,7 @@ const TabNavigator = () => (
                                 width: '45%',
                                 top: -11,
                                 height: 5,
-                                backgroundColor: focused ? '#235d3a' : 'transparent',
+                                backgroundColor: focused ? colors.primary : 'transparent',
                                 borderBottomLeftRadius: 15,
                                 borderBottomRightRadius: 15,
                             }}
@@ -66,7 +80,7 @@ const TabNavigator = () => (
                     </View>
                 );
             },
-            tabBarActiveTintColor: '#235d3a',
+            tabBarActiveTintColor: colors.primary,
             tabBarInactiveTintColor: 'gray',
             tabBarStyle: styles.tabBar,
             headerShown: false,
@@ -76,12 +90,16 @@ const TabNavigator = () => (
         <Tab.Screen name="Orders" component={OrdersScreen} />
         <Tab.Screen name="Notifications" component={NotificationsScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
-
     </Tab.Navigator>
 );
 
 const RootNavigator = () => (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator 
+        screenOptions={{ 
+            headerShown: false,
+            cardStyle: { backgroundColor: colors.background }
+        }}
+    >
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="HomeStack" component={HomeStack} />
         <Stack.Screen name="Register" component={RegisterScreen} />
@@ -94,10 +112,11 @@ const RootNavigator = () => (
 
 const styles = StyleSheet.create({
     tabBar: {
-        // position: 'absolute',
-        backgroundColor: 'white',
+        backgroundColor: colors.surface,
         height: 60,
-
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(0, 0, 0, 0.1)',
+        elevation: 8,
     }
 })
 
