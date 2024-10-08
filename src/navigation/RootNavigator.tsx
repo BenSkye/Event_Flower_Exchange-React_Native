@@ -11,6 +11,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import { StyleSheet, View } from 'react-native';
 import RegisterScreen from '../screens/RegisterScreen';
 import EditProfile from '../screens/EditProfile';
+import ProductDetail from '../screens/buyer/ProductDetail';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 export type RootStackParamList = {

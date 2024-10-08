@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const Header = () => {
+const Header = ({ setSearch }: { setSearch: (search: string) => void }) => {
+    const [searchText, setSearchText] = useState('');
+
+    const handleSearchChange = (text: string) => {
+        setSearchText(text);
+        setSearch(text);
+    };
     return (
         <View style={styles.header}>
             <View style={styles.searchContainer}>
@@ -11,6 +17,7 @@ const Header = () => {
                     style={styles.searchInput}
                     placeholder="Enter search ..."
                     placeholderTextColor="#666"
+                    onChangeText={handleSearchChange}
                 />
             </View>
             <TouchableOpacity style={styles.cartButton}>

@@ -1,54 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, ActivityIndicator, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView } from 'react-native';
 import axios from 'axios';
-import CategoryCard from '../components/CategoryCard';
-import FeaturedFlowerCard from '../components/FeaturedFlowerCard';
-import QuickLinkButton from '../components/QuickLinkButton';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
 import ProductList from '../components/ProductList';
 import Header from '../components/Header';
+import { getFlowers } from '../services/flower';
+import useDebounce from '../hooks/useDebounce';
+
 const HomeScreen = () => {
     const navigation = useNavigation();
 
-    // State to hold data
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState<any[]>([]);
-    const [page, setPage] = useState(1); const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [search, setSearch] = useState('');
+    const debouncedSearch = useDebounce(search, 100);
 
-    const fetchData = async (page: number) => {
+    const fetchData = async (pageNumber: number, refresh: boolean = false) => {
         try {
             const categoryResponse = await axios.get('https://66eaaa3d55ad32cda479e676.mockapi.io/categorys');
-            const flowerResponse = await axios.get(`https://66f4360577b5e8897098c4c6.mockapi.io/Flower?page=${page}&limit=10`);
+            const flowerResponse = await getFlowers(pageNumber, 10, search);
             setCategories(categoryResponse.data);
-            const newProducts = flowerResponse.data;
-            setProducts((prevProducts: any[]) => [...prevProducts, ...newProducts]);
+            if (refresh) {
+                setProducts(flowerResponse);
+            } else {
+                setProducts((prevProducts: any[]) => [...prevProducts, ...flowerResponse]);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     };
 
-    // Fetch data from MockAPI
     useEffect(() => {
+        setProducts([]);
         fetchData(1);
-    }, []);
+    }, [debouncedSearch]);
+
 
     const loadMoreProducts = () => {
-        console.log('loadMoreProducts')
         fetchData(page + 1);
         setPage(page + 1);
     };
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setProducts([]);
+        setPage(1);
+        fetchData(1, true);
+    }, []);
 
-    const handleBrowseFlowers = () => {
-        // navigation.navigate('BrowseFlowersScreen');
-    };
-
-    const handleCreateListing = () => {
-        // navigation.navigate('CreateListingScreen');
-    };
+    const handleSearch = (search: string) => {
+        setSearch(search);
+        fetchData(1, true);
+    }
 
     if (loading) {
         return (
@@ -61,8 +70,13 @@ const HomeScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header />
-            <ProductList products={products} loadMoreProducts={loadMoreProducts} />
+            <Header setSearch={handleSearch} />
+            <ProductList
+                products={products}
+                loadMoreProducts={loadMoreProducts}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+            />
         </SafeAreaView>
     );
 };
@@ -80,5 +94,4 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-
 });

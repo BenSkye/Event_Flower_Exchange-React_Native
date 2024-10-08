@@ -1,27 +1,33 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import ProductCard from './ProductCard';
 
-const ProductList = ({ products, loadMoreProducts }: { products: Array<any>, loadMoreProducts: () => void }) => {
+const ProductList = ({ products, loadMoreProducts, refreshing, onRefresh, }: { products: Array<any>, loadMoreProducts: () => void, refreshing: boolean, onRefresh: () => void }) => {
+    const numColumns = 2;
     return (
         <View style={styles.container}>
             <FlatList
+                key={`flatlist-${numColumns}-columns`}
                 data={products as any[]}
                 renderItem={({ item }) => (
                     <ProductCard
-                        key={item.id}
-                        name={item.name}
-                        price={`$${item.price}`}
-                        image={{ uri: item.image }}
-                        seller={item.seller}
+                        key={item._id}
+                        data={item}
                     />
                 )}
-                keyExtractor={(item) => item.id}
-                numColumns={2}
+                keyExtractor={(item) => item._id}
+                numColumns={numColumns}
                 contentContainerStyle={styles.listContainer}
                 columnWrapperStyle={styles.row}
                 onEndReached={loadMoreProducts}
                 onEndReachedThreshold={0.1}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#9Bd35A', '#689F38']}
+                    />
+                }
             />
         </View>
     );
