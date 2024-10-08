@@ -76,20 +76,26 @@ const OrdersScreen = () => {
         { key: 'delivered', label: 'Delivered' },
     ];
 
-    useEffect(() => {
-        if (pagerRef.current && pagerRef.current.setPage) {
-            pagerRef.current.setPage(activeTab);
-        }
-    }, [activeTab]);
+    // useEffect(() => {
+    //     if (pagerRef.current && pagerRef.current.setPage) {
+    //         pagerRef.current.setPage(activeTab);
+    //     }
+    // }, [activeTab]);
+
     const handleTabPress = useCallback((index: number) => {
         setActiveTab(index);
-        if (pagerRef.current && typeof pagerRef.current.setPage === 'function') {
-            pagerRef.current.setPage(index);
+        if (pagerRef.current) {
+            if (typeof pagerRef.current.setPage === 'function') {
+                pagerRef.current.setPage(index);
+            } else if (typeof pagerRef.current.setPageWithoutAnimation === 'function') {
+                pagerRef.current.setPageWithoutAnimation(index);
+            } else {
+                console.warn('PagerView ref does not have expected methods');
+            }
         } else {
-            console.warn('PagerView ref or setPage method is not available');
+            console.warn('PagerView ref is not available');
         }
     }, []);
-
 
     const renderTab = (tab: typeof tabs[0], index: number) => (
         <TouchableOpacity
