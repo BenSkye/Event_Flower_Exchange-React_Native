@@ -11,7 +11,11 @@ class AuctionRepository {
   }
 
   async getAuctionByFlowerId(flowerId: string) {
-    return await Auction.findOne({ flowerId })
+    const auction = await Auction.findOne({ flowerId }).populate({
+      path: 'bids.bidder',
+      select: 'userName'
+    })
+    return auction
   }
 
   async getAuctionById(id: string) {

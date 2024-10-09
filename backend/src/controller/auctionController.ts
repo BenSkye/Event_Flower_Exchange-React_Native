@@ -16,5 +16,9 @@ class AuctionController {
     const auction = await AuctionService.getPersonalBid(req.user.id)
     res.status(200).json(auction)
   })
+  static getAuctionByFlowerId = catchAsync(async (req: any, res: any, next: any) => {
+    const auction = await AuctionService.getAuctionByFlowerId(req.params.flowerId)
+    res.status(200).json(auction)
+  })
 }
 export default AuctionController

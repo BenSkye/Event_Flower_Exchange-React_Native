@@ -12,10 +12,10 @@ import {
   ScrollView,
 } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAuth } from "../hooks/useAuth";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from "../context/AuthContext";
 
 type RootStackParamList = {
   Profile: undefined;
@@ -31,13 +31,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
-  
+
   const handleLogin = () => {
     // Handle login logic here
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >

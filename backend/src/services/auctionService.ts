@@ -11,7 +11,9 @@ class AuctionService {
   }
 
   static async getAuctionByFlowerId(flowerId: string) {
-    return await auctionRepository.getAuctionByFlowerId(flowerId)
+    const auctions = await auctionRepository.getAuctionByFlowerId(flowerId)
+    console.log('auctions', auctions)
+    return auctions
   }
 
   static async getAuctionById(id: string) {

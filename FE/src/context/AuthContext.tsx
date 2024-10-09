@@ -1,35 +1,48 @@
 import React, { createContext, useState, useContext } from 'react';
+import apiClient from '../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthContextType {
     isLoggedIn: boolean;
-    login: (username: string, password: string) => void; // Updated to accept password
+    login: (userEmail: string, password: string) => void; // Updated to accept password
     logout: () => void;
+    user: any;
+    register: (user: any) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState<any>(null);
 
-    const login = (username: string, password: string) => {
-        // Here, you can add your logic to validate the username and password
-        console.log('Logging in with:', username, password);
-        
-        // For example purposes, let's just log in if the username is not empty
-        if (username && password) {
+    const login = async (userEmail: string, password: string) => {
+        console.log('Logging in with:', userEmail, password);
+        const response = await apiClient.post('/auth/login', { userEmail, password });
+        console.log('response', response.data)
+        setUser(response.data.user)
+        AsyncStorage.setItem('token', response.data.token)
+        if (response.data.status === 'success') {
             setIsLoggedIn(true);
-            // Handle additional login logic (e.g., API calls)
         } else {
             console.error('Invalid login attempt');
         }
     };
 
+    const register = async (user: any) => {
+        const response = await apiClient.post('/auth/register', user);
+        console.log('response', response.data)
+        return response.data
+    };
+
     const logout = () => {
         setIsLoggedIn(false);
+        AsyncStorage.removeItem('token');
+        setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, user, register }}>
             {children}
         </AuthContext.Provider>
     );

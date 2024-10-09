@@ -5,6 +5,7 @@ import { getFlowerById } from '../../services/flower';
 // import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import { Ionicons } from '@expo/vector-icons';
+import AuctionDetail from './AuctionDetail';
 
 type ParamList = {
     Detail: {
@@ -49,24 +50,7 @@ const ProductDetail = () => {
     };
     return (
         <ScrollView style={styles.container}>
-            {/* <View style={styles.carouselContainer}>
-                <Carousel
-                    ref={carouselRef}
-                    data={product.images}
-                    renderItem={renderCarouselItem}
-                    sliderWidth={screenWidth}
-                    itemWidth={screenWidth}
-                    onSnapToItem={(index) => setActiveSlide(index)}
-                />
-                <Pagination
-                    dotsLength={product.images.length}
-                    activeDotIndex={activeSlide}
-                    containerStyle={styles.paginationContainer}
-                    dotStyle={styles.paginationDot}
-                    inactiveDotOpacity={0.4}
-                    inactiveDotScale={0.6}
-                />
-            </View>
+            <Image source={{ uri: product.images[0] }} style={styles.image} />
             <View style={styles.infoContainer}>
                 <Text style={styles.name}>{product.name}</Text>
                 <Text style={styles.price}>
@@ -79,14 +63,20 @@ const ProductDetail = () => {
                 <View style={styles.detailsContainer}>
                     <Text style={styles.detailItem}>Category: {product.categoryId.name}</Text>
                     <Text style={styles.detailItem}>Status: {product.status}</Text>
-                    <Text style={styles.detailItem}>Freshness: {product.freshness}</Text>
                 </View>
             </View>
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.buttonText}>
                     {product.saleType === 'fixed_price' ? 'Add to Cart' : 'Place Bid'}
                 </Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
+            <View style={[styles.freshness, styles[product.freshness]]}>
+                <Text style={styles[product.freshness]}>{product.freshness}</Text>
+            </View>
+            {product.saleType === 'auction' && (
+                <AuctionDetail flowerId={product._id} />
+            )}
+
         </ScrollView>
     );
 };
@@ -130,8 +120,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     name: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 18,
         marginBottom: 10,
     },
     price: {
@@ -167,6 +156,36 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    freshness: {
+        fontSize: 12,
+        fontWeight: '600',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        position: 'absolute',
+        top: 15,
+        right: 5,
+    },
+    fresh: {
+        backgroundColor: '#e8f5e9',
+        color: '#4caf50',
+        borderRadius: 12,
+    },
+    slightly_wilted: {
+        backgroundColor: '#fff3e0',
+        color: '#ff9800',
+        borderRadius: 12,
+    },
+    wilted: {
+        backgroundColor: '#ffebee',
+        color: '#f44336',
+        borderRadius: 12,
+    },
+    expired: {
+        backgroundColor: '#efebe9',
+        color: '#795548',
+        borderRadius: 12,
     },
 });
 

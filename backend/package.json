@@ -44,6 +44,7 @@
     "@types/node-cron": "^3.0.11",
     "@types/validator": "^13.11.10",
     "axios": "^1.7.2",
+    "backend": "file:",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
