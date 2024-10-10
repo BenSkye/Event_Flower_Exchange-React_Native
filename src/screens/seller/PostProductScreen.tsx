@@ -13,7 +13,7 @@ const PostProduct = () => {
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<any[]>([]);
   const [condition, setCondition] = useState('');
   const [price, setPrice] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -28,11 +28,11 @@ const PostProduct = () => {
     });
 
     if (!result.canceled) {
-      setImages([...images, ...result.assets.map(asset => asset.uri)]);
+      setImages([...images, ...result.assets.map((asset) => asset.uri)]);
     }
   };
 
-  const uploadImages = async (uris) => {
+  const uploadImages = async (uris: any[]) => {
     const uploadPromises = uris.map(async (uri) => {
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -94,6 +94,10 @@ const PostProduct = () => {
     setUploading(false);
   };
 
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
+
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -107,7 +111,7 @@ const PostProduct = () => {
       </View>
       <ScrollView 
         style={styles.container}
-        ref={scrollViewRef}
+        ref={scrollViewRef as React.RefObject<ScrollView>}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
         <Text style={styles.label}>Tên hoa</Text>
@@ -146,7 +150,17 @@ const PostProduct = () => {
         </TouchableOpacity>
         <FlatList
           data={images}
-          renderItem={({ item }) => <Image source={{ uri: item }} style={styles.image} />}
+          renderItem={({ item, index }) => (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: item }} style={styles.image} />
+              <TouchableOpacity
+                style={styles.removeImageButton}
+                onPress={() => removeImage(index)}
+              >
+                <Ionicons name="close-circle" size={24} color="#FF6B6B" />
+              </TouchableOpacity>
+            </View>
+          )}
           keyExtractor={(item, index) => index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -171,7 +185,7 @@ const PostProduct = () => {
           placeholder="Nhập giá"
           keyboardType="numeric"
           onFocus={() => {
-            scrollViewRef.current.scrollToEnd({ animated: true });
+            scrollViewRef.current?.scrollToEnd({ animated: true });
           }}
         />
 
@@ -275,6 +289,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#5a61c9',
     marginLeft: 10,
+  },
+  imageContainer: {
+    position: 'relative',
+    marginRight: 10,
+    marginBottom: 15,
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 2,
   },
 });
 
