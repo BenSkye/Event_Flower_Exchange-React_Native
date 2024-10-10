@@ -36,7 +36,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             source={require("../assets/img/avt.jpg")}
             style={styles.profilePicture}
           />
-          <Text style={styles.userName}>John Doe</Text>
+          <Text style={styles.userName}>John Doe 123</Text>
         </View>
 
         {/* Action Buttons */}
@@ -45,7 +45,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             onPress={() => navigation.navigate('EditProfile')}
             style={styles.actionButton}
           >
-            <Text style={styles.actionButtonText}>Edit Profile</Text>
+            <Text style={styles.actionButtonText}>Chỉnh sửa thông tin</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}

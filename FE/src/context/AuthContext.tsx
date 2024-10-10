@@ -7,7 +7,7 @@ interface AuthContextType {
     login: (userEmail: string, password: string) => void; // Updated to accept password
     logout: () => void;
     user: any;
-    register: (user: any) => void;
+    register: (user: any) => Promise<any>; // Update the return type
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,9 +30,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const register = async (user: any) => {
-        const response = await apiClient.post('/auth/register', user);
-        console.log('response', response.data)
-        return response.data
+        try {
+            const response = await apiClient.post('/auth/register', user);
+            console.log('Registration response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Registration error:', error);
+            throw error;
+        }
     };
 
     const logout = () => {
