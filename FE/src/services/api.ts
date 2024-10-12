@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'https://2194-125-235-238-81.ngrok-free.app/api/v1';
+const BASE_URL = 'https://adb4-2405-4802-8131-91e0-550e-5a5-1873-c92d.ngrok-free.app/api/v1';
 const TOKEN_KEY = 'token';
 
 const apiClient: AxiosInstance = axios.create({

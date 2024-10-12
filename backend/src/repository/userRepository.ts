@@ -1,4 +1,5 @@
 import User from '~/models/userModel'
+import { selectedObject } from '~/utils'
 export interface IUser {
   userName: string
   userEmail: string
@@ -26,8 +27,8 @@ class userRepository implements IUserRepository {
     return userSaved
   }
 
-  async findUser(query: any) {
-    const user = User.findOne(query)
+  async findUser(query: any, select?: string[]) {
+    const user = User.findOne(query).select(selectedObject(select || []))
     return user
   }
   async findByEmail(userEmail: string) {
@@ -61,7 +62,7 @@ class userRepository implements IUserRepository {
   }
   async updateUser(
     userId: string,
-    updates: { userName?: string; avatar?: string; userPhone?: number; userAddress?: string }
+    updates: { userName?: string; avatar?: string; userPhone?: number; userAddress?: string; pushToken?: string }
   ) {
     const user = await User.findByIdAndUpdate(userId, updates, { new: true })
     return user
