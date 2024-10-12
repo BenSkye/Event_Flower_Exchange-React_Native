@@ -10,5 +10,6 @@ userRoute.route('/personal-information').get(authController.protect, userControl
 userRoute.route('/admin/manage_people').get(userController.getAllUser)
 userRoute.route('/check-phone-exist').get(authController.protect, userController.checkPhoneExist)
 userRoute.route('/update-phone').put(authController.protect, userController.updatePhone)
+userRoute.route('/update-push-token').put(authController.protect, userController.updatePushToken)
 userRoute.route('/').get(userController.getAllUser)
 export default userRoute

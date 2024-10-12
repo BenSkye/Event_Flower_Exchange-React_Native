@@ -44,7 +44,11 @@ const userSchema = new Schema(
       enum: ['active', 'inactive'],
       default: 'active'
     },
-    passwordChangeAt: Date
+    passwordChangeAt: Date,
+    pushToken: {
+      type: String,
+      default: ''
+    }
   },
   { timestamps: true, collection: COLLECTION_NAME } // Change 'timeStamp' to 'timestamps'
 )

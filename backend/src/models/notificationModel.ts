@@ -13,7 +13,10 @@ const notificationSchema = new Schema(
       required: true
     },
     message: {
-      type: String,
+      type: {
+        title: String,
+        body: String
+      },
       required: true
     },
     isRead: {
@@ -22,10 +25,6 @@ const notificationSchema = new Schema(
     },
     type: {
       type: String,
-    },
-    information: {
-      type: Object,
-      required: true
     }
   },
   { timestamps: true, collection: COLLECTION_NAME }

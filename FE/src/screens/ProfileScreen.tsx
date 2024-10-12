@@ -10,21 +10,20 @@ import {
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ProfileStyle from '../styles/ProfileStyle';
+import { useAuth } from "../context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../navigation/RootNavigator";
 
-type RootStackParamList = {
-  Profile: undefined;
-  EditProfile: undefined;
-  Login: undefined;
-  Register: undefined;
-  SellProduct: undefined;
-  ManageProduct: undefined;
-};
+
 
 type ProfileScreenProps = {
+  navigate(arg0: string): void;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 };
 
-const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+const ProfileScreen = () => {
+  const navigation = useNavigation<ProfileScreenProps>();
+  const { user, logout } = useAuth()
   return (
     <View style={ProfileStyle.container}>
       <StatusBar backgroundColor="#5a61c9" barStyle="light-content" />
@@ -35,7 +34,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             source={require("../assets/img/avt.jpg")}
             style={ProfileStyle.profilePicture}
           />
-          <Text style={ProfileStyle.userName}>John Doe 123</Text>
+          <Text style={ProfileStyle.userName}>{user?.userName}</Text>
         </View>
 
         {/* Action Buttons */}
@@ -58,6 +57,14 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           >
             <Text style={ProfileStyle.actionButtonText}>Đăng kí</Text>
           </TouchableOpacity>
+          {user ? (
+            <TouchableOpacity
+              onPress={() => logout()}
+              style={ProfileStyle.actionButton}
+            >
+              <Text style={ProfileStyle.actionButtonText}>Đăng xuất</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {/* Contact Section */}

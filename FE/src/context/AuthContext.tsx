@@ -1,6 +1,7 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import apiClient from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { handleNotification } from '../utils/handleNotification';
 
 interface AuthContextType {
     isLoggedIn: boolean;
@@ -16,14 +17,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<any>(null);
 
+    useEffect(() => {
+        checkToken();
+    }, []);
+
+    useEffect(() => {
+        if (isLoggedIn && user) {
+            handleNotification(user);
+        }
+    }, [user, isLoggedIn]);
+
+    const checkToken = async () => {
+        const token = await AsyncStorage.getItem('token');
+        console.log('token', token)
+        if (token) {
+            const response = await apiClient.get('/user/personal-information');
+            console.log('response35', response.data)
+            setUser(response.data.data.personal);
+            setIsLoggedIn(true);
+        }
+    }
+
     const login = async (userEmail: string, password: string) => {
         console.log('Logging in with:', userEmail, password);
         const response = await apiClient.post('/auth/login', { userEmail, password });
         console.log('response', response.data)
-        setUser(response.data.user)
-        AsyncStorage.setItem('token', response.data.token)
+        setUser(response.data.data.user)
+        AsyncStorage.setItem('token', response.data.data.token)
         if (response.data.status === 'success') {
             setIsLoggedIn(true);
+            return response.data
         } else {
             console.error('Invalid login attempt');
         }

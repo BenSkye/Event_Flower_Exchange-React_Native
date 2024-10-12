@@ -19,8 +19,18 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export type RootStackParamList = {
-    Profile: undefined;
+    MainTabs: undefined;
+    HomeStack: undefined;
+    HomeScreen: undefined;
+    Detail: { productId: string };
     Register: undefined;
+    Profile: undefined;
+    Login: { returnTo?: keyof RootStackParamList };
+    EditProfile: undefined;
+    SellProduct: undefined;
+    ManageProduct: undefined;
+    Orders: undefined;
+    Notifications: undefined;
 };
 
 // Material Design 3 color palette

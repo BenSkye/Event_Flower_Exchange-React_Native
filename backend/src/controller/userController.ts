@@ -80,6 +80,11 @@ class UserController {
       }
     })
   })
+  static updatePushToken = catchAsync(async (req: any, res: any, next: any) => {
+    const userId = req.user.id
+    const { pushToken } = req.body
+    await UserService.updatePushToken(userId, pushToken)
+  })
 }
 
 export default UserController

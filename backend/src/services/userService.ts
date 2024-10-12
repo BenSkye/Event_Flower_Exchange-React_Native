@@ -64,6 +64,10 @@ class UserService {
     }
     return true
   }
+  static async updatePushToken(userId: string, pushToken: string) {
+    const userRepositoryInstance = new userRepository()
+    return await userRepositoryInstance.updateUser(userId, { pushToken })
+  }
 }
 
 export default UserService
