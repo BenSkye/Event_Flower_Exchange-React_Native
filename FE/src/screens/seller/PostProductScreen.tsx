@@ -1,12 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc } from "firebase/firestore";
-import { storage, db } from '../../utils/firebase/firebase';
+import { storage } from '../../utils/firebase/firebase';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import PostProductStyle from '../../styles/PostProductStyle';
+import { getCategory, createFlower } from '../../services/flower';
 
 const PostProduct = () => {
   const navigation = useNavigation();
@@ -18,6 +19,26 @@ const PostProduct = () => {
   const [price, setPrice] = useState('');
   const [uploading, setUploading] = useState(false);
   const scrollViewRef = useRef<ScrollView>();
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState('');
+  const [saleType, setSaleType] = useState('fixed_price');
+  const [startingPrice, setStartingPrice] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const categoriesData = await getCategory();
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      Alert.alert("Lỗi", "Không thể tải danh mục hoa. Vui lòng thử lại sau.");
+    }
+  };
 
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -32,36 +53,49 @@ const PostProduct = () => {
     }
   };
 
-  const uploadImages = async (uris: any[]) => {
+  const uploadImages = async (uris: string[]) => {
     const uploadPromises = uris.map(async (uri) => {
       const response = await fetch(uri);
       const blob = await response.blob();
       const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
       const storageRef = ref(storage, `products/${filename}`);
-      const uploadTask = uploadBytesResumable(storageRef, blob);
 
-      return new Promise((resolve, reject) => {
+      return new Promise<string>((resolve, reject) => {
+        const uploadTask = uploadBytesResumable(storageRef, blob);
+
         uploadTask.on('state_changed',
           (snapshot) => {
             // You can use this to show upload progress if needed
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
           },
           (error) => {
+            console.error("Upload error:", error);
             reject(error);
           },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               resolve(downloadURL);
-            });
+            } catch (error) {
+              console.error("Get download URL error:", error);
+              reject(error);
+            }
           }
         );
       });
     });
 
-    return Promise.all(uploadPromises);
+    try {
+      return await Promise.all(uploadPromises);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      throw error;
+    }
   };
 
   const handleSubmit = async () => {
-    if (!name || !type || !description || images.length === 0 || !condition || !price) {
+    if (!name || !categoryId || !description || images.length === 0 || !condition || !price) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin và chọn ít nhất một hình ảnh");
       return;
     }
@@ -69,17 +103,27 @@ const PostProduct = () => {
     setUploading(true);
     try {
       const imageUrls = await uploadImages(images);
-      const docRef = await addDoc(collection(db, "products"), {
+      const flowerData = {
         name,
-        type,
         description,
-        imageUrls,
-        condition,
-        price: parseFloat(price),
-        createdAt: new Date()
-      });
-      console.log("Document written with ID: ", docRef.id);
-      Alert.alert("Thành công", "Sản phẩm đã được đăng bán");
+        categoryId,
+        images: imageUrls,
+        saleType,
+        status: "available",
+        freshness: condition,
+        ...(saleType === 'fixed_price' 
+          ? { fixedPrice: parseFloat(price) }
+          : { 
+              startingPrice: parseFloat(startingPrice),
+              startTime,
+              endTime
+            }
+        )
+      };
+
+      const response = await createFlower(flowerData);
+      console.log("Flower created with ID: ", response.id);
+      Alert.alert("Thành công", "Hoa đã được đăng bán");
       // Reset form
       setName('');
       setType('');
@@ -88,8 +132,8 @@ const PostProduct = () => {
       setCondition('');
       setPrice('');
     } catch (error) {
-      console.error("Error adding document: ", error);
-      Alert.alert("Lỗi", "Không thể đăng bán sản phẩm. Vui lòng thử lại sau.");
+      console.error("Error creating flower: ", error);
+      Alert.alert("Lỗi", "Không thể đăng bán hoa. Vui lòng thử lại sau.");
     }
     setUploading(false);
   };
@@ -103,40 +147,27 @@ const PostProduct = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+      <View style={PostProductStyle.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={PostProductStyle.backButton}>
           <Ionicons name="arrow-back" size={24} color="#5a61c9" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Đăng bán hoa</Text>
+        <Text style={PostProductStyle.headerTitle}>Đăng bán hoa</Text>
       </View>
       <ScrollView 
-        style={styles.container}
+        style={PostProductStyle.container}
         ref={scrollViewRef as React.RefObject<ScrollView>}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
-        <Text style={styles.label}>Tên hoa</Text>
+        <Text style={PostProductStyle.label}>Tên hoa</Text>
         <TextInput
-          style={styles.input}
+          style={PostProductStyle.input}
           value={name}
           onChangeText={setName}
           placeholder="Nhập tên hoa"
         />
-
-        <Text style={styles.label}>Loại hoa</Text>
-        <Picker
-          selectedValue={type}
-          onValueChange={(itemValue) => setType(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Chọn loại hoa" value="" />
-          <Picker.Item label="Hoa hồng" value="rose" />
-          <Picker.Item label="Hoa cúc" value="daisy" />
-          <Picker.Item label="Hoa lan" value="orchid" />
-        </Picker>
-
-        <Text style={styles.label}>Mô tả</Text>
+        <Text style={PostProductStyle.label}>Mô tả</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={[PostProductStyle.input, PostProductStyle.textArea]}
           value={description}
           onChangeText={setDescription}
           placeholder="Nhập mô tả hoa"
@@ -144,17 +175,17 @@ const PostProduct = () => {
           numberOfLines={4}
         />
 
-        <Text style={styles.label}>Hình ảnh</Text>
-        <TouchableOpacity style={styles.imagePicker} onPress={pickImages}>
+        <Text style={PostProductStyle.label}>Hình ảnh</Text>
+        <TouchableOpacity style={PostProductStyle.imagePicker} onPress={pickImages}>
           <Text>Chọn hình ảnh</Text>
         </TouchableOpacity>
         <FlatList
           data={images}
           renderItem={({ item, index }) => (
-            <View style={styles.imageContainer}>
-              <Image source={{ uri: item }} style={styles.image} />
+            <View style={PostProductStyle.imageContainer}>
+              <Image source={{ uri: item }} style={PostProductStyle.image} />
               <TouchableOpacity
-                style={styles.removeImageButton}
+                style={PostProductStyle.removeImageButton}
                 onPress={() => removeImage(index)}
               >
                 <Ionicons name="close-circle" size={24} color="#FF6B6B" />
@@ -166,143 +197,91 @@ const PostProduct = () => {
           showsHorizontalScrollIndicator={false}
         />
 
-        <Text style={styles.label}>Tình trạng</Text>
+        <Text style={PostProductStyle.label}>Danh mục</Text>
+        <Picker
+          selectedValue={categoryId}
+          onValueChange={(itemValue) => setCategoryId(itemValue)}
+          style={PostProductStyle.picker}
+        >
+          <Picker.Item label="Chọn danh mục" value="" />
+          {categories.map((category: any) => (
+            <Picker.Item key={category._id} label={category.name} value={category._id} />
+          ))}
+        </Picker>
+
+        <Text style={PostProductStyle.label}>Loại bán</Text>
+        <Picker
+          selectedValue={saleType}
+          onValueChange={(itemValue) => setSaleType(itemValue)}
+          style={PostProductStyle.picker}
+        >
+          <Picker.Item label="Giá cố định" value="fixed_price" />
+          <Picker.Item label="Đấu giá" value="auction" />
+        </Picker>
+
+        {saleType === 'fixed_price' ? (
+          <>
+            <Text style={PostProductStyle.label}>Giá cố định</Text>
+            <TextInput
+              style={PostProductStyle.input}
+              value={price}
+              onChangeText={setPrice}
+              placeholder="Nhập giá cố định"
+              keyboardType="numeric"
+            />
+          </>
+        ) : (
+          <>
+            <Text style={PostProductStyle.label}>Giá khởi điểm</Text>
+            <TextInput
+              style={PostProductStyle.input}
+              value={startingPrice}
+              onChangeText={setStartingPrice}
+              placeholder="Nhập giá khởi điểm"
+              keyboardType="numeric"
+            />
+            <Text style={PostProductStyle.label}>Thời gian bắt đầu</Text>
+            <TextInput
+              style={PostProductStyle.input}
+              value={startTime}
+              onChangeText={setStartTime}
+              placeholder="YYYY-MM-DD"
+            />
+            <Text style={PostProductStyle.label}>Thời gian kết thúc</Text>
+            <TextInput
+              style={PostProductStyle.input}
+              value={endTime}
+              onChangeText={setEndTime}
+              placeholder="YYYY-MM-DD"
+            />
+          </>
+        )}
+
+        <Text style={PostProductStyle.label}>Độ tươi</Text>
         <Picker
           selectedValue={condition}
           onValueChange={(itemValue) => setCondition(itemValue)}
-          style={styles.picker}
+          style={PostProductStyle.picker}
         >
-          <Picker.Item label="Chọn tình trạng" value="" />
-          <Picker.Item label="Mới" value="new" />
-          <Picker.Item label="Đã sử dụng" value="used" />
+          <Picker.Item label="Chọn độ tươi" value="" />
+          <Picker.Item label="Tươi" value="fresh" />
+          <Picker.Item label="Hơi héo" value="slightly_wilted" />
+          <Picker.Item label="Héo" value="wilted" />
+          <Picker.Item label="Hết hạn" value="expired" />
         </Picker>
 
-        <Text style={styles.label}>Giá</Text>
-        <TextInput
-          style={styles.input}
-          value={price}
-          onChangeText={setPrice}
-          placeholder="Nhập giá"
-          keyboardType="numeric"
-          onFocus={() => {
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-          }}
-        />
-
-        <View style={styles.buttonContainer}>
+        <View style={PostProductStyle.buttonContainer}>
           <TouchableOpacity 
-            style={[styles.button, uploading && styles.disabledButton]} 
+            style={[PostProductStyle.button, uploading && PostProductStyle.disabledButton]} 
             onPress={handleSubmit}
             disabled={uploading}
           >
-            <Text style={styles.buttonText}>{uploading ? 'Đang xử lý...' : 'Đăng bán'}</Text>
+            <Text style={PostProductStyle.buttonText}>{uploading ? 'Đang xử lý...' : 'Đăng bán'}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#F5F5F5',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#5a61c9',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#5a61c9',
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  picker: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  imagePicker: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginRight: 10,
-    marginBottom: 15,
-    borderRadius: 8,
-  },
-  button: {
-    backgroundColor: '#5a61c9',
-    borderRadius: 8,
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  disabledButton: {
-    backgroundColor: '#cccccc',
-  },
-  buttonContainer: {
-    paddingBottom: 30,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#F5F5F5',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  backButton: {
-    padding: 10,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#5a61c9',
-    marginLeft: 10,
-  },
-  imageContainer: {
-    position: 'relative',
-    marginRight: 10,
-    marginBottom: 15,
-  },
-  removeImageButton: {
-    position: 'absolute',
-    top: -10,
-    right: -10,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 2,
-  },
-});
 
 export default PostProduct;
