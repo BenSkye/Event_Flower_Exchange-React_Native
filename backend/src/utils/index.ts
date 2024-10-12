@@ -8,3 +8,6 @@ export const convertToObjectID = (id: string) => {
   return new Types.ObjectId(id)
 }
 
+export const selectedObject = (select: string[]) => {
+  return select.join(" ");
+};

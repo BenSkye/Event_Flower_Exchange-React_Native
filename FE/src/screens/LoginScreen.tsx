@@ -13,27 +13,37 @@ import {
 } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from "../context/AuthContext";
+import { RootStackParamList } from "../navigation/RootNavigator";
 
-type RootStackParamList = {
-  Profile: undefined;
-  Register: undefined;
-  Login: undefined;
-  // Add other screen names and their param types here
-};
 
 type LoginScreenProps = {
+  navigate(arg0: never): unknown;
+  reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
 };
-const LoginScreen = ({ navigation }: LoginScreenProps) => {
+type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
+
+const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
-
-  const handleLogin = () => {
-    // Handle login logic here
+  const navigation = useNavigation<LoginScreenProps>();
+  const route = useRoute<LoginScreenRouteProp>();
+  const handleLogin = async () => {
+    const response = await login(email, password)
+    if (response?.status === 'success') {
+      if (route.params?.returnTo) {
+        navigation.navigate(route.params.returnTo as never);
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainTabs' }],
+        });
+      }
+    }
   };
 
   return (
