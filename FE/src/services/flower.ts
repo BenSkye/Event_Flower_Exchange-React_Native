@@ -11,4 +11,14 @@ const getFlowerById = async (id: string) => {
     return response.data
 }
 
-export { getFlowers, getFlowerById }
+const getCategory = async () => {
+    const response = await apiClient.get('/category')
+    return response.data
+}
+
+const createFlower = async (data: any) => {
+    const response = await apiClient.post('/flower/create', data)
+    return response.data
+}
+
+export { getFlowers, getFlowerById, getCategory, createFlower }
