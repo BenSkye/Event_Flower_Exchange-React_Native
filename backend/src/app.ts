@@ -13,6 +13,7 @@ import userRoute from './routes/userRoute'
 import categoryRoute from '~/routes/categoryRoute'
 import flowerRoute from '~/routes/flowerRoute'
 import auctionRoute from '~/routes/auctionRoute'
+import notificationRoute from '~/routes/notificationRoute'
 
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.use('/api/v1/user', userRoute)
 app.use('/api/v1/category', categoryRoute)
 app.use('/api/v1/flower', flowerRoute)
 app.use('/api/v1/auction', auctionRoute)
+app.use('/api/v1/notification', notificationRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })

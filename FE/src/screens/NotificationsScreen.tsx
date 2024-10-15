@@ -1,5 +1,7 @@
-import React from 'react';
-import { StyleSheet, View, Text, FlatList } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { getPersonalNotification } from '../services/notification';
+import { Link, useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const notifications = [
     { id: '1', title: 'New Message', message: 'Đơn hàng của bạn đang trên đường.', time: '2 minutes ago' },
@@ -15,6 +17,7 @@ interface NotificationItemProps {
 }
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ title, message, time }) => (
+
     <View style={styles.notificationItem}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.message}>{message}</Text>
@@ -23,13 +26,38 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ title, message, tim
 );
 
 const NotificationsScreen = () => {
+    const [notifications, setNotifications] = useState([])
+    const navigation = useNavigation();
+
+    useFocusEffect(
+        useCallback(() => {
+            const fetchNotifications = async () => {
+                try {
+                    const response = await getPersonalNotification();
+                    console.log('response notifications', response);
+                    setNotifications(response);
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                }
+            };
+
+            fetchNotifications();
+
+            return () => {
+
+            };
+        }, [])
+    );
+
     return (
         <View style={styles.container}>
             <FlatList
                 data={notifications}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
-                    <NotificationItem title={item.title} message={item.message} time={item.time} />
+                    <TouchableOpacity onPress={() => navigation.navigate('HomeStack', { screen: 'Detail', params: { id: item?.data?.flowerId?.toString() } })}>
+                        <NotificationItem title={item.message.title} message={item.message.body} time={item.createdAt} />
+                    </TouchableOpacity>
                 )}
             />
         </View>

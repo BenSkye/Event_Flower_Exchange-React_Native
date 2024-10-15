@@ -57,7 +57,7 @@ class AuctionService {
     const userRepositoryInstance = new userRepository();
     const user = await userRepositoryInstance.findUser({ _id: userId }, ['userName']);
     const flower = await flowerRepository.getFlowerById(auction.flowerId.toString())
-    notificationService.createNotification(auction.sellerId.toString(), 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, 'new-auction-bid')
+    notificationService.createNotification(auction.sellerId.toString(), 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
     return updateAuction
   }
 
