@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import PostProductStyle from '../../styles/PostProductStyle';
 import { getCategory, createFlower } from '../../services/flower';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const PostProduct = () => {
   const navigation = useNavigation();
@@ -25,6 +26,8 @@ const PostProduct = () => {
   const [startingPrice, setStartingPrice] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
   useEffect(() => {
     fetchCategories();
@@ -95,8 +98,18 @@ const PostProduct = () => {
   };
 
   const handleSubmit = async () => {
-    if (!name || !categoryId || !description || images.length === 0 || !condition || !price) {
+    if (!name || !categoryId || !description || images.length === 0 || !condition) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin và chọn ít nhất một hình ảnh");
+      return;
+    }
+
+    if (saleType === 'fixed_price' && !price) {
+      Alert.alert("Lỗi", "Vui lòng nhập giá cố định");
+      return;
+    }
+
+    if (saleType === 'auction' && (!startingPrice || !startTime || !endTime)) {
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin đấu giá");
       return;
     }
 
@@ -118,7 +131,7 @@ const PostProduct = () => {
               startTime,
               endTime
             }
-        )
+        ),
       };
 
       const response = await createFlower(flowerData);
@@ -140,6 +153,22 @@ const PostProduct = () => {
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+  };
+
+  const onChangeStartDate = (event: any, selectedDate: any) => {
+    const currentDate = selectedDate || new Date(startTime);
+    setShowStartDatePicker(Platform.OS === 'ios');
+    setStartTime(formatDate(currentDate));
+  };
+
+  const onChangeEndDate = (event: any, selectedDate: any) => {
+    const currentDate = selectedDate || new Date(endTime);
+    setShowEndDatePicker(Platform.OS === 'ios');
+    setEndTime(formatDate(currentDate));
+  };
+
+  const formatDate = (date: any) => {
+    return date.toISOString().split('T')[0]; // Returns date in YYYY-MM-DD format
   };
 
   return (
@@ -241,19 +270,35 @@ const PostProduct = () => {
               keyboardType="numeric"
             />
             <Text style={PostProductStyle.label}>Thời gian bắt đầu</Text>
-            <TextInput
+            <TouchableOpacity 
               style={PostProductStyle.input}
-              value={startTime}
-              onChangeText={setStartTime}
-              placeholder="YYYY-MM-DD"
-            />
+              onPress={() => setShowStartDatePicker(true)}
+            >
+              <Text>{startTime || 'Chọn ngày bắt đầu'}</Text>
+            </TouchableOpacity>
+            {showStartDatePicker && (
+              <DateTimePicker
+                value={startTime ? new Date(startTime) : new Date()}
+                mode="date"
+                display="default"
+                onChange={onChangeStartDate}
+              />
+            )}
             <Text style={PostProductStyle.label}>Thời gian kết thúc</Text>
-            <TextInput
+            <TouchableOpacity 
               style={PostProductStyle.input}
-              value={endTime}
-              onChangeText={setEndTime}
-              placeholder="YYYY-MM-DD"
-            />
+              onPress={() => setShowEndDatePicker(true)}
+            >
+              <Text>{endTime || 'Chọn ngày kết thúc'}</Text>
+            </TouchableOpacity>
+            {showEndDatePicker && (
+              <DateTimePicker
+                value={endTime ? new Date(endTime) : new Date()}
+                mode="date"
+                display="default"
+                onChange={onChangeEndDate}
+              />
+            )}
           </>
         )}
 
