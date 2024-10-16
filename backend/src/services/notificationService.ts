@@ -9,8 +9,8 @@ class NotificationService {
     this.expo = new Expo();
   }
 
-  async createNotification(userId: string, title: string, body: string, type: string) {
-    const notification = { userId, message: { title, body }, type };
+  async createNotification(userId: string, title: string, body: string, data: any, type: string) {
+    const notification = { userId, message: { title, body }, data, type };
     const newNotification = await notificationRepository.createNotification(notification);
     await this.sendNotification(userId, newNotification)
     return newNotification
@@ -42,6 +42,12 @@ class NotificationService {
     } catch (error) {
       console.error('Error sending notification:', error);
     }
+  }
+
+  async getPersonalNotification(userId: string) {
+    const notification = await notificationRepository.findNotification({ userId }, []);
+    console.log('notification', notification)
+    return notification;
   }
 
 }
