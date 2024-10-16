@@ -19,6 +19,10 @@ const notificationSchema = new Schema(
       },
       required: true
     },
+    data: {
+      type: Object,
+      required: true
+    },
     isRead: {
       type: Boolean,
       default: false
