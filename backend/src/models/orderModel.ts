@@ -39,6 +39,12 @@ const orderSchema = new Schema(
       enum: ['pending', 'paid', 'failed'],
       default: 'pending'
     },
+    address: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    }
   },
   { timestamps: true, collection: COLLECTION_NAME }
 )

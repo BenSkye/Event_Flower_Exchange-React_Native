@@ -1,6 +1,8 @@
 import auctionRepository from "~/repository/auctionRepository";
 import flowerRepository from "~/repository/flowerRepository";
 import orderRepository from "~/repository/orderRepository";
+import userRepository from "~/repository/userRepository";
+import notificationService from "~/services/notificationService";
 import { convertToObjectID } from "~/utils";
 import AppError from "~/utils/appError";
 
@@ -51,8 +53,12 @@ class AuctionService {
     console.log('currentTime', currentTime)
     auction.bids.push({ bidder: userId, amount, time: currentTime })
     auction.currentPrice = amount
-    await auctionRepository.updateAuction(auctionId, auction)
-    return auction
+    const updateAuction = await auctionRepository.updateAuction(auctionId, auction)
+    const userRepositoryInstance = new userRepository();
+    const user = await userRepositoryInstance.findUser({ _id: userId }, ['userName']);
+    const flower = await flowerRepository.getFlowerById(auction.flowerId.toString())
+    notificationService.createNotification(auction.sellerId.toString(), 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
+    return updateAuction
   }
 
   static async checkoutBuyNowAuction(auctionId: string, userId: string) {
