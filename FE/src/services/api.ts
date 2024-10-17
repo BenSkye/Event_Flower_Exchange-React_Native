@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = process.env.API_URL;
+const BASE_URL = process.env.EXPO_API_URL;
 console.log('BASE_URL',BASE_URL)
 const TOKEN_KEY = 'token';
 
