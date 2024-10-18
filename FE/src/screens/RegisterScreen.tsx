@@ -1,26 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Modal, Image, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Button from '../components/Button';
-import { useNavigation } from '@react-navigation/native';
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useAuth } from '../context/AuthContext';
-import RegisterStyle from '../styles/RegisterStyle';
+import { Text, TextInput, View, TouchableOpacity, Alert, ScrollView, StatusBar, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../styles/RegisterScreenStyles';
-
-import * as Localization from 'expo-localization';
-
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useAuth } from '../context/AuthContext';
+import { styles } from '../styles/RegisterScreenStyles'; // Import the styles
 
 type RootStackParamList = {
   Profile: undefined;
   Register: undefined;
   Login: undefined;
-
-  // Add other screen names and their param types here
 };
 
 type RegisterScreenProps = {
@@ -33,17 +22,6 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const [userPhone, setUserPhone] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [password, setPassword] = useState('');
-
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showGenderPicker, setShowGenderPicker] = useState(false);
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(Localization.locale, {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    }).format(date);
-  }
 
   const { register } = useAuth();
 
@@ -64,7 +42,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       };
 
       const response = await register(userData);
-
+      
       if (response.status === 'success') {
         Alert.alert('Success', 'Registration successful!', [
           { text: 'OK', onPress: () => navigation.navigate('Login') }
@@ -79,27 +57,27 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   };
 
   return (
-    <KeyboardAvoidingView
+    <KeyboardAvoidingView 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={RegisterStyle.container}
+      style={styles.container} // Use the container style
     >
       <LinearGradient
-        colors={['#8061e0', '#ae9edf']} style={styles.backgroundLinearGradient}
+        colors={['#8061e0', '#ae9edf']} 
+        style={styles.backgroundLinearGradient} // Use the background style
       />
       <View style={styles.background}>
         <ScrollView contentContainerStyle={styles.scrollView}>
+          <StatusBar backgroundColor="#5a61c9" barStyle="light-content" />
           <Image
             source={require('../../assets/splashDaisy.png')}
             style={styles.logo}
           />
-          <Text style={styles.slogan}>Kết nối nở rộ, từng cánh hoa một</Text>
-
           <Text style={styles.title}>Create Account</Text>
 
-          <View style={RegisterStyle.inputContainer}>
-            <Ionicons name="person-outline" size={24} color="#2e7d32" style={RegisterStyle.icon} />
+          <View style={styles.inputContainer}>
+            <Ionicons name="person-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
-              style={RegisterStyle.input}
+              style={styles.input} // Use the input style
               placeholder="Full Name"
               placeholderTextColor="#333"
               value={userName}
@@ -107,10 +85,10 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             />
           </View>
 
-          <View style={RegisterStyle.inputContainer}>
-            <Ionicons name="mail-outline" size={24} color="#2e7d32" style={RegisterStyle.icon} />
+          <View style={styles.inputContainer}>
+            <Ionicons name="mail-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
-              style={RegisterStyle.input}
+              style={styles.input} // Use the input style
               placeholder="Email Address"
               placeholderTextColor="#333"
               keyboardType="email-address"
@@ -119,10 +97,10 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             />
           </View>
 
-          <View style={RegisterStyle.inputContainer}>
-            <Ionicons name="call-outline" size={24} color="#2e7d32" style={RegisterStyle.icon} />
+          <View style={styles.inputContainer}>
+            <Ionicons name="call-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
-              style={RegisterStyle.input}
+              style={styles.input} // Use the input style
               placeholder="Phone Number"
               placeholderTextColor="#333"
               keyboardType="phone-pad"
@@ -131,10 +109,10 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             />
           </View>
 
-          <View style={RegisterStyle.inputContainer}>
-            <Ionicons name="location-outline" size={24} color="#2e7d32" style={RegisterStyle.icon} />
+          <View style={styles.inputContainer}>
+            <Ionicons name="location-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
-              style={RegisterStyle.input}
+              style={styles.input} // Use the input style
               placeholder="Address"
               placeholderTextColor="#333"
               value={userAddress}
@@ -142,10 +120,10 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             />
           </View>
 
-          <View style={RegisterStyle.inputContainer}>
-            <Ionicons name="lock-closed-outline" size={24} color="#2e7d32" style={RegisterStyle.icon} />
+          <View style={styles.inputContainer}>
+            <Ionicons name="lock-closed-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
-              style={RegisterStyle.input}
+              style={styles.input} // Use the input style
               placeholder="Password"
               placeholderTextColor="#333"
               secureTextEntry
@@ -153,22 +131,18 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               onChangeText={setPassword}
             />
           </View>
+
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
+
+          {/* Navigation to Login */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account?</Text>
+            <Text style={styles.footerText}>Already have an account? </Text>
             <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Text style={styles.footerLink}>Login</Text>
             </TouchableOpacity>
           </View>
-          <Button
-            title="Go to Profile"
-            color="#000000"
-            onPress={() => navigation.navigate('Profile')}
-            style={styles.navigationButton}
-          />
-
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
