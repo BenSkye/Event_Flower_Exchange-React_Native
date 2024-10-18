@@ -14,8 +14,6 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/RootNavigator";
 
-
-
 type ProfileScreenProps = {
   navigate(arg0: string): void;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'>;
@@ -23,7 +21,8 @@ type ProfileScreenProps = {
 
 const ProfileScreen = () => {
   const navigation = useNavigation<ProfileScreenProps>();
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuth();
+
   return (
     <View style={ProfileStyle.container}>
       <StatusBar backgroundColor="#5a61c9" barStyle="light-content" />
@@ -39,32 +38,37 @@ const ProfileScreen = () => {
 
         {/* Action Buttons */}
         <View style={ProfileStyle.actionButtons}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('EditProfile')}
-            style={ProfileStyle.actionButton}
-          >
-            <Text style={ProfileStyle.actionButtonText}>Chỉnh sửa thông tin</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
-            style={ProfileStyle.actionButton}
-          >
-            <Text style={ProfileStyle.actionButtonText}>Đăng nhập</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Register')}
-            style={ProfileStyle.actionButton}
-          >
-            <Text style={ProfileStyle.actionButtonText}>Đăng kí</Text>
-          </TouchableOpacity>
-          {user ? (
-            <TouchableOpacity
-              onPress={() => logout()}
-              style={ProfileStyle.actionButton}
-            >
-              <Text style={ProfileStyle.actionButtonText}>Đăng xuất</Text>
-            </TouchableOpacity>
-          ) : null}
+          {!user ? ( // If user is not logged in
+            <>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Login')}
+                style={ProfileStyle.actionButton}
+              >
+                <Text style={ProfileStyle.actionButtonText}>Đăng nhập</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Register')}
+                style={ProfileStyle.actionButton}
+              >
+                <Text style={ProfileStyle.actionButtonText}>Đăng kí</Text>
+              </TouchableOpacity>
+            </>
+          ) : ( // If user is logged in
+            <>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('EditProfile')}
+                style={ProfileStyle.actionButton}
+              >
+                <Text style={ProfileStyle.actionButtonText}>Chỉnh sửa thông tin</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => logout()}
+                style={ProfileStyle.actionButton}
+              >
+                <Text style={ProfileStyle.actionButtonText}>Đăng xuất</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
 
         {/* Contact Section */}
