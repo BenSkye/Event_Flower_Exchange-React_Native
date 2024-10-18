@@ -13,7 +13,7 @@ const ChooseOrderAddress = () => {
     const fetchAddress = async () => {
         const response = await getPersonalAddress();
         console.log('response 11', response);
-        setListAddress(response.address.information);
+        setListAddress(response.information);
     }
 
     useFocusEffect(
@@ -29,11 +29,16 @@ const ChooseOrderAddress = () => {
         <TouchableOpacity onPress={() => handleSelectAddress(item)}>
             <View style={styles.addressItem}>
                 <RadioButton
-                    value={item.id}
+                    value={item._id}
                     status={selectedAddress?._id === item._id ? 'checked' : 'unchecked'}
                     onPress={() => handleSelectAddress(item)}
                 />
-                <Text>{item.information}</Text>
+
+                <View>
+
+                    <Text style={styles.text}>{item.name} | {item.phone}</Text>
+                    <Text style={styles.text}>{item.address}</Text>
+                </View>
             </View>
         </TouchableOpacity>
     );
@@ -45,8 +50,11 @@ const ChooseOrderAddress = () => {
                 data={listAddress}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
+                ListFooterComponent={
+                    <Button title="Thêm địa chỉ mới" icon='pluscircleo' onPress={() => {/* Navigate to add address screen */ }} />
+                }
             />
-            <Button title="Add Address" onPress={() => {/* Navigate to add address screen */ }} />
+
         </View>
     );
 }
@@ -63,6 +71,12 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
+    text: {
+        fontSize: 16,
+        color: '#909497',
+        marginBottom: 4,
+    },
+
 })
 
 export default ChooseOrderAddress;

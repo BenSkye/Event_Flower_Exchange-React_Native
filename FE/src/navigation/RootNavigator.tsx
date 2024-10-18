@@ -15,6 +15,7 @@ import ProductDetail from '../screens/buyer/ProductDetail';
 import PostProduct from '../screens/seller/PostProductScreen';
 import ManageProduct from '../screens/seller/ManageProductScreen';
 import Checkout from '../screens/Checkout';
+import ChooseOrderAddress from '../screens/ChooseOrderAddress';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -72,6 +73,7 @@ const HomeStack = () => (
                 <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
             ),
         }} />
+        <Stack.Screen name="ChooseOrderAddress" component={ChooseOrderAddress} />
     </Stack.Navigator>
 );
 
@@ -158,6 +160,7 @@ const RootNavigator = () => (
         <Stack.Screen name='SellProduct' component={PostProduct} />
         <Stack.Screen name='ManageProduct' component={ManageProduct} />
         <Stack.Screen name='Checkout' component={Checkout} />
+        <Stack.Screen name="ChooseOrderAddress" component={ChooseOrderAddress} />
 
     </Stack.Navigator>
 );

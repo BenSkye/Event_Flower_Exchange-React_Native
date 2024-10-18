@@ -1,4 +1,4 @@
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
 import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { getFlowerById } from '../services/flower';
@@ -9,6 +9,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 const Checkout = () => {
     const { selectedAddress } = useAddress();
     const route = useRoute();
+    const navigate = useNavigation();
     const routeParams = route.params;
     const [flower, setFlower] = React.useState<any>(null);
 
@@ -26,20 +27,25 @@ const Checkout = () => {
     return (
         <View style={styles.wrapper}>
             <ScrollView contentContainerStyle={styles.container}>
-                <View style={styles.sectionAddress}>
-                    <AntDesign name="enviromento" size={24} color="#5a61c9" style={styles.sallerIcon} />
-                    <View>
-                        <Text style={styles.sectionTitle}>Địa chỉ nhận hàng</Text>
-                        {selectedAddress ? (
-                            <>
-                                <Text style={styles.text}>{selectedAddress.name} | {selectedAddress.phone}</Text>
-                                <Text style={styles.text}>{selectedAddress.address}</Text>
-                            </>
-                        ) : (
-                            <Text style={styles.text}>Chưa có địa chỉ nhận hàng</Text>
-                        )}
+                <TouchableOpacity onPress={() => { navigate.navigate('ChooseOrderAddress') }}>
+                    <View style={styles.sectionAddress}>
+                        <AntDesign name="enviromento" size={24} color="#5a61c9" style={styles.sallerIcon} />
+                        <View>
+                            <Text style={styles.sectionTitle}>Địa chỉ nhận hàng</Text>
+                            {selectedAddress ? (
+                                <>
+                                    <Text style={styles.text}>{selectedAddress.name} | {selectedAddress.phone}</Text>
+                                    <Text style={styles.text}>{selectedAddress.address}</Text>
+                                </>
+                            ) : (
+                                <Text style={styles.text}>Chưa có địa chỉ nhận hàng</Text>
+                            )}
+                        </View>
+                        <View style={styles.rightIcon}>
+                            <AntDesign name="right" size={24} color="black" />
+                        </View>
                     </View>
-                </View>
+                </TouchableOpacity>
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Thông tin sản phẩm</Text>
                     {flower ? (
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 2,
-        flexDirection: 'row',
+        flexDirection: 'row'
     },
     sectionTitle: {
         fontSize: 18,
@@ -150,6 +156,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    rightIcon: {
+        marginLeft: 'auto',
+        justifyContent: 'center',
+    }
 });
 
 export default Checkout;
