@@ -14,6 +14,7 @@ import EditProfile from '../screens/EditProfile';
 import ProductDetail from '../screens/buyer/ProductDetail';
 import PostProduct from '../screens/seller/PostProductScreen';
 import ManageProduct from '../screens/seller/ManageProductScreen';
+import Checkout from '../screens/Checkout';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,7 +23,7 @@ export type RootStackParamList = {
     MainTabs: undefined;
     HomeStack: undefined;
     HomeScreen: undefined;
-    Detail: { productId: string };
+    Detail: { id: string };
     Register: undefined;
     Profile: undefined;
     Login: { returnTo?: keyof RootStackParamList };
@@ -31,6 +32,7 @@ export type RootStackParamList = {
     ManageProduct: undefined;
     Orders: undefined;
     Notifications: undefined;
+    Checkout: { flowerId: string };
 };
 
 // Material Design 3 color palette
@@ -55,6 +57,21 @@ const HomeStack = () => (
         <Stack.Screen name='EditProfile' component={EditProfile} />
         <Stack.Screen name='SellProduct' component={PostProduct} />
         <Stack.Screen name='ManageProduct' component={ManageProduct} />
+        <Stack.Screen name='Checkout' component={Checkout} options={{
+            headerShown: true,
+            title: 'Thanh Toán',
+            headerStyle: {
+                backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.onPrimary,
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+            headerBackTitleVisible: false,
+            headerBackImage: () => (
+                <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
+            ),
+        }} />
     </Stack.Navigator>
 );
 
@@ -98,8 +115,29 @@ const TabNavigator = () => (
         })}
     >
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Orders" component={OrdersScreen} />
-        <Tab.Screen name="Notifications" component={NotificationsScreen} />
+        <Tab.Screen name="Orders" component={OrdersScreen}
+            options={{
+                headerShown: true,
+                title: 'Đơn Hàng',
+                headerStyle: {
+                    backgroundColor: colors.primary,
+                },
+                headerTintColor: colors.onPrimary,
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }} />
+        <Tab.Screen name="Notifications" component={NotificationsScreen} options={{
+            headerShown: true,
+            title: 'Thông Báo',
+            headerStyle: {
+                backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.onPrimary,
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+        }} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
 );
@@ -113,11 +151,14 @@ const RootNavigator = () => (
     >
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="HomeStack" component={HomeStack} />
+        <Stack.Screen name="Detail" component={DetailScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name='SellProduct' component={PostProduct} />
         <Stack.Screen name='ManageProduct' component={ManageProduct} />
+        <Stack.Screen name='Checkout' component={Checkout} />
+
     </Stack.Navigator>
 );
 

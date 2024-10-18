@@ -55,7 +55,7 @@ const NotificationsScreen = () => {
                 data={notifications}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => navigation.navigate('HomeStack', { screen: 'Detail', params: { id: item?.data?.flowerId?.toString() } })}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Detail', { id: item?.data?.flowerId?.toString() })}>
                         <NotificationItem title={item.message.title} message={item.message.body} time={item.createdAt} />
                     </TouchableOpacity>
                 )}

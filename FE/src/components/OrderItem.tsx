@@ -1,31 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { ORDER_STATUS_COLORS } from '../constant/indext';
-import { formatPrice } from '../utils/formatPrice';
+import { formatDate, formatPrice } from '../utils';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const OrderItem = ({ order }: { order: any }) => {
+    console.log('order', order);
     return (
         <View style={styles.container}>
             <View style={styles.shopInfo}>
                 <View style={styles.sallerContainer}>
                     <MaterialIcons name="store" size={16} color="#666" style={styles.sallerIcon} />
-                    <Text style={styles.saller}>{order.saller}</Text>
+                    {/* <Text style={styles.saller}>{order.saller}</Text> */}
                 </View>
                 <Text style={[styles.orderStatus, { color: ORDER_STATUS_COLORS[order.status as keyof typeof ORDER_STATUS_COLORS] }]}>
                     {order.status}
                 </Text>
             </View>
             <View style={styles.productInfo}>
-                <Image source={{ uri: order.productImage }} style={styles.productImage} />
+                <Image source={{ uri: order.flowerId.images[0] }} style={styles.productImage} />
                 <View style={styles.productDetails}>
-                    <Text style={styles.productName}>{order.productName}</Text>
-                    <Text style={styles.productQuantity}>x{order.quantity}</Text>
+                    <Text style={styles.productName}>{order.flowerId.name}</Text>
+                    {order.flowerId.saleType === 'auction' && (
+                        <Text style={styles.auctionTitle}>Sản phẩm đấu giá</Text>
+                    )}
+                    <Text>{formatDate(order.createdAt)}</Text>
                 </View>
             </View>
             <View style={styles.orderTotal}>
-                <Text style={styles.totalLabel}>Tổng số tiền ({order.itemCount} sản phẩm):</Text>
-                <Text style={styles.totalAmount}>{formatPrice(order.totalAmount)}</Text>
+                <Text style={styles.totalLabel}>Tổng số tiền sản phẩm:</Text>
+                <Text style={styles.totalAmount}>{formatPrice(order.price)}</Text>
             </View>
         </View>
     );
@@ -97,6 +101,10 @@ const styles = StyleSheet.create({
     }, sallerIcon: {
         marginRight: 5,
     },
+    auctionTitle: {
+        color: '#a9dfbf',
+        marginTop: 5,
+    }
 });
 
 export default OrderItem;

@@ -4,71 +4,37 @@ import axios from 'axios';
 import PagerView from 'react-native-pager-view';
 
 import OrderItem from '../components/OrderItem';
+import { getPersonalBuyOrder } from '../services/order';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../navigation/RootNavigator';
 
-const sampleOrders = [
-    {
-        id: '1',
-        saller: 'BenDan',
-        status: 'pending',
-        productName: 'Hoa đám cưới cần thanh lý',
-        productImage: 'https://f131flower.com/imgdata/images/WHHSCF6756762511851433.jpg',
-        quantity: 1,
-        itemCount: 1,
-        totalAmount: 27,
-    },
-    {
-        id: '2',
-        saller: 'Luanlil',
-        status: 'delivering',
-        productName: 'Hoa thôi nôi',
-        productImage: 'https://stc.hoatuoihoangnga.com/data/uploads/products/1472/gio-hoa-gau-trang-dang-yeu.1.jpg?v=1704352647?v=1704352647',
-        quantity: 1,
-        itemCount: 1,
-        totalAmount: 27.1,
-    }, {
 
-        id: '3',
-        saller: 'Tyty',
-        status: 'delivered',
-        productName: 'Hoa hồng trắng',
-        productImage: 'https://hoathangtu.com/wp-content/uploads/2023/01/IMG_0147-scaled.jpg',
-        quantity: 1,
-        itemCount: 1,
-        totalAmount: 15.35,
-    }, {
-        id: '4',
-        saller: 'Khanho',
-        status: 'delivered',
-        productName: 'Hoa cúng rằm',
-        productImage: 'https://ttol.vietnamnetjsc.vn/images/2022/01/17/08/58/ram-thang-chap-4.jpg',
-        quantity: 1,
-        itemCount: 1,
-        totalAmount: 10,
-    }, {
-        id: '5',
-        saller: 'quanga',
-        status: 'delivered',
-        productName: 'Hoa tết',
-        productImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJv7R0eE5V6fS-484wv37rVExTTGvgNdSG3Q&s',
-        quantity: 1,
-        itemCount: 1,
-        totalAmount: 10,
-    }, {
-        id: '6',
-        saller: 'Tyty',
-        status: 'delivered',
-        productName: 'Hoa mặt trời',
-        productImage: 'https://sanvemaybay.vn/includes/uploads/2021/12/hoa-huong-duong_112958596-1-e1639571024309.jpg',
-        quantity: 1,
-        itemCount: 1,
-        totalAmount: 10,
-    },
-    // Thêm các đơn hàng khác cho trạng thái này
-]
 
 const OrdersScreen = () => {
     const [activeTab, setActiveTab] = useState(0);
+    const [orders, setOrders] = useState([]);
     const pagerRef = useRef<PagerView>(null);
+    const navigation = useNavigation<RootStackParamList>();
+
+    useFocusEffect(
+        useCallback(() => {
+            const fetchOrder = async () => {
+                try {
+                    const response = await getPersonalBuyOrder();
+                    console.log('response Order', response);
+                    setOrders(response);
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                }
+            };
+
+            fetchOrder();
+
+            return () => {
+
+            };
+        }, [])
+    );
 
     const tabs = [
         { key: 'pending', label: 'Pending' },
@@ -113,17 +79,25 @@ const OrdersScreen = () => {
 
     const renderOrder = ({ item }: { item: any }) => (
         <View style={styles.orderItem}>
-            <OrderItem order={item} />
+            <TouchableOpacity
+                onPress={() => {
+                    if (item.status === 'pending') {
+                        navigation.navigate('Checkout', { flowerId: item.flowerId._id });
+                    }
+                }}
+            >
+                <OrderItem order={item} />
+            </TouchableOpacity>
         </View>
     );
 
     const renderOrderList = (status: string) => {
-        const filteredOrders = sampleOrders.filter(order => order.status === status);
+        const filteredOrders = orders.filter(order => order.status === status);
         return (
             <FlatList
                 data={filteredOrders}
                 renderItem={renderOrder}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
                         <Text>No orders found</Text>
@@ -142,9 +116,7 @@ const OrdersScreen = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerText}>Orders</Text>
-            </View>
+
             <View style={styles.tabContainer}>
                 {tabs.map((tab, index) => renderTab(tab, index))}
             </View>

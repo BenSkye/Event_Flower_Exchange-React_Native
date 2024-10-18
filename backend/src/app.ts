@@ -14,6 +14,9 @@ import categoryRoute from '~/routes/categoryRoute'
 import flowerRoute from '~/routes/flowerRoute'
 import auctionRoute from '~/routes/auctionRoute'
 import notificationRoute from '~/routes/notificationRoute'
+import AuctionService from '~/services/auctionService'
+import orderRoute from '~/routes/orderRoute'
+import addressRoute from '~/routes/addressRoute'
 
 dotenv.config()
 
@@ -28,10 +31,17 @@ app.use('/api/v1/user', userRoute)
 app.use('/api/v1/category', categoryRoute)
 app.use('/api/v1/flower', flowerRoute)
 app.use('/api/v1/auction', auctionRoute)
+app.use('/api/v1/order', orderRoute)
+app.use('/api/v1/address', addressRoute)
 app.use('/api/v1/notification', notificationRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
+
+cron.schedule('* * * * *', () => {
+  console.log('Running endTimeAuction every minute');
+  AuctionService.endTimeAuction();
+});
 
 app.use(errorController)
 export default app
