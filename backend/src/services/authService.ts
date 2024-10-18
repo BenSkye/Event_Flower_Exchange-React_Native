@@ -6,6 +6,7 @@ import bcryptjs from 'bcryptjs'
 import AppError from '~/utils/appError'
 import { IUser } from '~/repository/userRepository'
 import sendEmailSerVice from './sendEmailService'
+import addressRepository from '~/repository/addressRepository'
 
 interface IAuthService {
   registerUser(user: IUser): Promise<any>
@@ -29,6 +30,7 @@ class AuthService implements IAuthService {
     user.password = password
     const userRepositoryInstance = new userRepository()
     const newUser = await userRepositoryInstance.addUser(user)
+    await addressRepository.createAddress({ userId: newUser._id })
 
     // Gửi email chào mừng với mật khẩu
     // await this.sendWelcomeEmail(newUser.userEmail, newUser.userName, user.password);

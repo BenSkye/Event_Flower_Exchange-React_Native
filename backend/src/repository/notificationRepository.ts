@@ -7,7 +7,7 @@ class NotificationRepository {
   }
 
   async findNotification(filter: any, select: any) {
-    return Notification.find(filter).select(selectedObject(select));
+    return Notification.find(filter).select(selectedObject(select)).sort({ createdAt: -1 });
   }
 }
 

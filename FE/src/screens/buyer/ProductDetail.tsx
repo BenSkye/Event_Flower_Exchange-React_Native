@@ -5,6 +5,7 @@ import ImageView from "react-native-image-viewing";
 import { getFlowerById } from '../../services/flower';
 import AuctionDetail from './AuctionDetail';
 import ProductDetailStyle from '../../styles/ProductDetailStyle';
+import { formatPrice } from '../../utils';
 
 type ParamList = {
     Detail: {
@@ -66,7 +67,7 @@ const ProductDetail = () => {
                     <Text style={ProductDetailStyle.name}>{product.name}</Text>
                     <Text style={ProductDetailStyle.price}>
                         {product.saleType === 'fixed_price'
-                            ? `$${product.fixedPrice.toFixed(10)}`
+                            ? `${formatPrice(product.fixedPrice)}`
                             : 'Auction'}
                     </Text>
                     <Text style={ProductDetailStyle.seller}>Seller: {product.sellerId.userName}</Text>
@@ -76,11 +77,24 @@ const ProductDetail = () => {
                         <Text style={ProductDetailStyle.detailItem}>Status: {product.status}</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={ProductDetailStyle.button}>
-                    <Text style={ProductDetailStyle.buttonText}>
-                        {product.saleType === 'fixed_price' ? 'Add to Cart' : 'Place Bid'}
-                    </Text>
-                </TouchableOpacity>
+                {product.saleType === 'fixed_price' ? (
+                    <TouchableOpacity style={ProductDetailStyle.button}
+                        onPress={() => {
+                            navigation.navigate('Checkout', { flowerId: product._id });
+                        }}
+                    >
+                        <Text style={ProductDetailStyle.buttonText}>
+                            Mua ngay
+                        </Text>
+                    </TouchableOpacity>) : (
+
+                    <TouchableOpacity style={ProductDetailStyle.button}>
+                        <Text style={ProductDetailStyle.buttonText}>
+                            Đặt giá
+                        </Text>
+                    </TouchableOpacity>
+                )}
+
                 <View style={[ProductDetailStyle.freshness, getFreshnessStyle(product.freshness)]}>
                     <Text style={getFreshnessStyle(product.freshness)}>{product.freshness}</Text>
                 </View>

@@ -33,16 +33,10 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const [userPhone, setUserPhone] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [password, setPassword] = useState('');
-  const [birthday, setBirthday] = useState(new Date());
-  const [gender, setGender] = useState('Male');
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showGenderPicker, setShowGenderPicker] = useState(false);
 
-  const onChangeDate = (event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || birthday;
-    setShowDatePicker(false);
-    setBirthday(currentDate);
-  };
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat(Localization.locale, {
       day: '2-digit',
@@ -50,7 +44,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       year: 'numeric'
     }).format(date);
   }
-  
+
   const { register } = useAuth();
 
   const handleRegister = async () => {
@@ -70,7 +64,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       };
 
       const response = await register(userData);
-      
+
       if (response.status === 'success') {
         Alert.alert('Success', 'Registration successful!', [
           { text: 'OK', onPress: () => navigation.navigate('Login') }
@@ -85,14 +79,17 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={RegisterStyle.container}
     >
+      <LinearGradient
+        colors={['#8061e0', '#ae9edf']} style={styles.backgroundLinearGradient}
+      />
       <View style={styles.background}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Image
-            source={require('../assets/img/avt.jpg')}
+            source={require('../../assets/splashDaisy.png')}
             style={styles.logo}
           />
           <Text style={styles.slogan}>Kết nối nở rộ, từng cánh hoa một</Text>
@@ -156,100 +153,22 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               onChangeText={setPassword}
             />
           </View>
-
-          <TouchableOpacity style={styles.pickerButton} onPress={() => setShowDatePicker(true)}>
-            <Ionicons name="calendar-outline" size={24} color="#2e7d32" style={styles.icon} />
-            <Text style={styles.pickerButtonText}>
-              {birthday ? formatDate(birthday) : 'Select Birthday'}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.pickerButton} onPress={() => setShowGenderPicker(true)}>
-            <Ionicons name="person-outline" size={24} color="#2e7d32" style={styles.icon} />
-            <Text style={styles.pickerButtonText}>{gender}</Text>
-          </TouchableOpacity>
-
-          {/* Date Picker Modal */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={showDatePicker}
-            onRequestClose={() => setShowDatePicker(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Select Birthday</Text>
-                <DateTimePicker
-                  value={birthday}
-                  mode="date"
-                  display="spinner"
-                  onChange={onChangeDate}
-                  style={styles.datePicker}
-                />
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => setShowDatePicker(false)}
-                >
-                  <Text style={styles.modalButtonText}>Confirm</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-
-          {/* Gender Picker Modal */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={showGenderPicker}
-            onRequestClose={() => setShowGenderPicker(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Select Gender</Text>
-                {['Male', 'Female', 'Other'].map((item) => (
-                  <TouchableOpacity
-                    key={item}
-                    style={[
-                      styles.genderOption,
-                      gender === item && styles.selectedGenderOption
-                    ]}
-                    onPress={() => {
-                      setGender(item);
-                      setShowGenderPicker(false);
-                    }}
-                  >
-                    <Text style={[
-                      styles.genderOptionText,
-                      gender === item && styles.selectedGenderOptionText
-                    ]}>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => setShowGenderPicker(false)}
-                >
-                  <Text style={styles.modalButtonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
           <View style={styles.footer}>
-          <Text style={styles.footerText}>Already have an account?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text style={styles.footerLink}>Login</Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={styles.footerText}>Already have an account?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+              <Text style={styles.footerLink}>Login</Text>
+            </TouchableOpacity>
+          </View>
           <Button
             title="Go to Profile"
             color="#000000"
             onPress={() => navigation.navigate('Profile')}
             style={styles.navigationButton}
           />
-          
+
         </ScrollView>
       </View>
     </KeyboardAvoidingView>

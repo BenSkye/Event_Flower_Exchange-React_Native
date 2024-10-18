@@ -3,7 +3,13 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#66BB6A', // Màu xanh bạc hà đậm hơn
+  },
+  backgroundLinearGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '100%',
   },
   scrollView: {
     flexGrow: 1,
@@ -42,7 +48,7 @@ export const styles = StyleSheet.create({
     color: '#333',
   },
   button: {
-    backgroundColor: '#000', // Black color for login button
+    backgroundColor: '#bfc9ca', // Black color for login button
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',

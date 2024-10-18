@@ -5,11 +5,10 @@ import AppError from "~/utils/appError"
 
 class FlowerService {
   static async createFlower(userId: string, flower: any) {
+    const currentTime = new Date().toLocaleString();
+    const startTime = new Date(flower.startTime).toLocaleString();
+    const endTime = new Date(flower.endTime).toLocaleString();
     if (flower.saleType === 'auction') {
-      const currentTime = roundToStartOfDay(new Date());
-      const startTime = new Date(flower.startTime);
-      const endTime = new Date(flower.endTime);
-
       console.log('currentTime', currentTime)
       console.log('startTime', startTime)
       console.log('endTime', endTime)
@@ -28,8 +27,8 @@ class FlowerService {
           flowerId: newFlower._id,
           startingPrice: flower.startingPrice,
           buyNowPrice: flower.buyNowPrice,
-          startTime: flower.startTime,
-          endTime: flower.endTime,
+          startTime: startTime,
+          endTime: endTime,
           isBuyNow: true
         }
         await AuctionService.createAuction(auction)
@@ -38,8 +37,8 @@ class FlowerService {
           sellerId: userId,
           flowerId: newFlower._id,
           startingPrice: flower.startingPrice,
-          startTime: flower.startTime,
-          endTime: flower.endTime
+          startTime: startTime,
+          endTime: endTime
         }
         await AuctionService.createAuction(auction)
       }

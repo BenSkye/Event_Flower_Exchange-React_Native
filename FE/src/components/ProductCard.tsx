@@ -1,13 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { formatPrice } from '../utils';
 
 const ProductCard = ({ data }: { data: any }) => {
     const navigation = useNavigation();
 
     const renderPriceInfo = () => {
         if (data.saleType === 'fixed_price') {
-            return <Text style={styles.price}>${data.fixedPrice?.toFixed(2)}</Text>;
+            return <Text style={styles.price}> ${formatPrice(data?.fixedPrice)}</Text>;
         } else if (data.saleType === 'auction') {
             return <Text style={styles.auctionText}>Auction</Text>;
         }
