@@ -16,6 +16,8 @@ import PostProduct from '../screens/seller/PostProductScreen';
 import ManageProduct from '../screens/seller/ManageProductScreen';
 import Checkout from '../screens/Checkout';
 import ChooseOrderAddress from '../screens/ChooseOrderAddress';
+import AddAddress from '../screens/AddAddress';
+import AddressPicker from '../screens/AddressPicker';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +36,9 @@ export type RootStackParamList = {
     Orders: undefined;
     Notifications: undefined;
     Checkout: { flowerId: string };
+    ChooseOrderAddress: undefined;
+    AddAddress: undefined;
+    AddressPicker: undefined;
 };
 
 // Material Design 3 color palette
@@ -48,34 +53,6 @@ const colors = {
     onSurface: '#000000',
 };
 
-const HomeStack = () => (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="Detail" component={DetailScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name='EditProfile' component={EditProfile} />
-        <Stack.Screen name='SellProduct' component={PostProduct} />
-        <Stack.Screen name='ManageProduct' component={ManageProduct} />
-        <Stack.Screen name='Checkout' component={Checkout} options={{
-            headerShown: true,
-            title: 'Thanh Toán',
-            headerStyle: {
-                backgroundColor: colors.primary,
-            },
-            headerTintColor: colors.onPrimary,
-            headerTitleStyle: {
-                fontWeight: 'bold',
-            },
-            headerBackTitleVisible: false,
-            headerBackImage: () => (
-                <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
-            ),
-        }} />
-        <Stack.Screen name="ChooseOrderAddress" component={ChooseOrderAddress} />
-    </Stack.Navigator>
-);
 
 const TabNavigator = () => (
     <Tab.Navigator
@@ -152,16 +129,58 @@ const RootNavigator = () => (
         }}
     >
         <Stack.Screen name="MainTabs" component={TabNavigator} />
-        <Stack.Screen name="HomeStack" component={HomeStack} />
         <Stack.Screen name="Detail" component={DetailScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name='SellProduct' component={PostProduct} />
         <Stack.Screen name='ManageProduct' component={ManageProduct} />
-        <Stack.Screen name='Checkout' component={Checkout} />
-        <Stack.Screen name="ChooseOrderAddress" component={ChooseOrderAddress} />
-
+        <Stack.Screen name='Checkout' component={Checkout} options={{
+            headerShown: true,
+            title: 'Thanh Toán',
+            headerStyle: {
+                backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.onPrimary,
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+            headerBackTitleVisible: false,
+            headerBackImage: () => (
+                <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
+            ),
+        }} />
+        <Stack.Screen name="ChooseOrderAddress" component={ChooseOrderAddress} options={{
+            headerShown: true,
+            title: 'Chọn địa chỉ nhận hàng',
+            headerStyle: {
+                backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.onPrimary,
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+            headerBackTitleVisible: false,
+            headerBackImage: () => (
+                <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
+            ),
+        }} />
+        <Stack.Screen name="AddAddress" component={AddAddress} options={{
+            headerShown: true,
+            title: 'Địa chỉ mới',
+            headerStyle: {
+                backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.onPrimary,
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+            headerBackTitleVisible: false,
+            headerBackImage: () => (
+                <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
+            ),
+        }} />
+        <Stack.Screen name="AddressPicker" component={AddressPicker} />
     </Stack.Navigator>
 );
 
