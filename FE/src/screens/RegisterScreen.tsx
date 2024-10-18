@@ -143,14 +143,6 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               <Text style={styles.footerLink}>Login</Text>
             </TouchableOpacity>
           </View>
-
-          {/* Optional: Uncomment if you want to keep the Profile button */}
-          {/* <Button
-            title="Go to Profile"
-            color="#000000"
-            onPress={() => navigation.navigate('Profile')}
-            style={styles.navigationButton}
-          /> */}
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
