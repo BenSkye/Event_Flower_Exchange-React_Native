@@ -18,6 +18,7 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 
 import { styles } from '../styles/LoginScreenStyles';
 import { RootStackParamList } from "../navigation/RootNavigator";
+import { LinearGradient } from "expo-linear-gradient";
 
 // type RootStackParamList = {
 //   Profile: undefined;
@@ -30,7 +31,7 @@ type LoginScreenProps = {
   navigate(arg0: never): unknown;
   reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
-  
+
 };
 type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 
@@ -59,9 +60,14 @@ const LoginScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
+      <LinearGradient
+        colors={['#8061e0', '#ae9edf']} style={styles.backgroundLinearGradient}
+      />
+
       <ScrollView contentContainerStyle={styles.scrollView}>
+
         <Image
-          source={require('../assets/img/avt.jpg')}
+          source={require('../../assets/splashDaisy.png')}
           style={styles.logo}
         />
         <Text style={styles.slogan}>Kết nối nở rộ, từng cánh hoa một</Text>

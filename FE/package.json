@@ -37,6 +37,7 @@
     "react-native-dotenv": "^3.4.11",
     "react-native-image-viewing": "^0.2.2",
     "react-native-pager-view": "6.3.0",
+    "react-native-paper": "^5.12.5",
     "react-native-screens": "^3.31.1",
     "react-native-splash-screen": "^3.3.0"
   },

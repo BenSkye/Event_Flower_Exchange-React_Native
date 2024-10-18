@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View, TouchableOpacity, Alert, ScrollView, StatusBar, Image } from 'react-native';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { Text, TextInput, View, TouchableOpacity, Alert, ScrollView, StatusBar, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -63,14 +62,15 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       style={styles.container} // Use the container style
     >
       <LinearGradient
-        colors={['#a8e063', '#56ab2f']}
-        style={styles.background} // Use the background style
-      >
+        colors={['#8061e0', '#ae9edf']} 
+        style={styles.backgroundLinearGradient} // Use the background style
+      />
+      <View style={styles.background}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <StatusBar backgroundColor="#5a61c9" barStyle="light-content" />
           <Image
-            source={require("../assets/img/avt.jpg")}
-            style={styles.logo} // Use the logo style
+            source={require('../../assets/splashDaisy.png')}
+            style={styles.logo}
           />
           <Text style={styles.title}>Create Account</Text>
 
@@ -139,12 +139,20 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
           {/* Navigation to Login */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.footerLink}>Log in</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+              <Text style={styles.footerLink}>Login</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Optional: Uncomment if you want to keep the Profile button */}
+          {/* <Button
+            title="Go to Profile"
+            color="#000000"
+            onPress={() => navigation.navigate('Profile')}
+            style={styles.navigationButton}
+          /> */}
         </ScrollView>
-      </LinearGradient>
+      </View>
     </KeyboardAvoidingView>
   );
 };
