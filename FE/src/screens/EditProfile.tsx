@@ -1,12 +1,67 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { useAuth } from '../context/AuthContext';
+import EditProfileStyles from '../styles/EditProfileStyles';
+import { useNavigation } from '@react-navigation/native';
 
 const EditProfile = () => {
-  return (
-    <View>
-      <Text>EditProfile</Text>
-    </View>
-  )
-}
+  const { user, updateUser } = useAuth();
+  const [username, setUsername] = useState(user?.userName || '');
+  const [phone, setPhone] = useState(user?.userPhone || '');
+  const [address, setAddress] = useState(user?.userAddress || '');
 
-export default EditProfile
+  const navigation = useNavigation();
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
+
+  const handleUpdateProfile = async () => {
+    const updatedUser = {
+      userName: username,
+      userPhone: phone,
+      userAddress: address,
+    };
+
+    await updateUser(updatedUser);
+    
+    navigation.navigate('Profile');
+  };
+
+  const handlePhoneChange = (text: string) => {
+    const numericText = text.replace(/[^0-9]/g, '');
+    setPhone(numericText);
+  };
+
+  return (
+    <View style={EditProfileStyles.container}>
+      <TouchableOpacity style={EditProfileStyles.backButton} onPress={handleBackPress}>
+        <Text style={EditProfileStyles.backButtonText}>←</Text>
+      </TouchableOpacity>
+      <Text style={EditProfileStyles.title}>Edit Profile</Text>
+      <TextInput
+        style={EditProfileStyles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
+      <TextInput
+        style={EditProfileStyles.input}
+        placeholder="Phone"
+        value={phone}
+        onChangeText={handlePhoneChange}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={EditProfileStyles.input}
+        placeholder="Address"
+        value={address}
+        onChangeText={setAddress}
+      />
+      <TouchableOpacity style={EditProfileStyles.button} onPress={handleUpdateProfile}>
+        <Text style={EditProfileStyles.buttonText}>Cập nhật thông tin</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export default EditProfile;
