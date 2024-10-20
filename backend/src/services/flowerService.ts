@@ -2,18 +2,26 @@ import flowerRepository from "~/repository/flowerRepository"
 import AuctionService from "~/services/auctionService"
 import { roundToStartOfDay } from "~/utils";
 import AppError from "~/utils/appError"
+import { parseISO, isAfter, isBefore } from 'date-fns';
+import { toZonedTime, format } from 'date-fns-tz';
 
 class FlowerService {
   static async createFlower(userId: string, flower: any) {
-    const currentTime = new Date();
-    const startTime = new Date(flower.startTime);
-    const endTime = new Date(flower.endTime);
+    const timeZone = 'Asia/Ho_Chi_Minh';
+    const currentTime = toZonedTime(new Date(), timeZone);
+    const startTime = toZonedTime(parseISO(flower.startTime), timeZone);
+    const endTime = toZonedTime(parseISO(flower.endTime), timeZone);
     if (flower.saleType === 'auction') {
       console.log('currentTime', currentTime)
       console.log('startTime', startTime)
       console.log('endTime', endTime)
-      if (!(currentTime <= startTime && startTime < endTime)) {
-        throw new AppError('Invalid time', 400)
+
+      console.log('currentTime', format(currentTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }));
+      console.log('startTime', format(startTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }));
+      console.log('endTime', format(endTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }));
+
+      if (!(isAfter(startTime, currentTime) && isBefore(startTime, endTime))) {
+        throw new AppError('Invalid time', 400);
       }
       flower = { ...flower, sellerId: userId, status: 'in_auction' }
     } else {
