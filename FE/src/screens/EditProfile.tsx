@@ -83,7 +83,7 @@ const EditProfile = () => {
         onChangeText={setAddress}
       />
       <TouchableOpacity style={EditProfileStyles.button} onPress={handleUpdateProfile}>
-        <Text style={EditProfileStyles.buttonText}>Update Profile</Text>
+        <Text style={EditProfileStyles.buttonText}>Cập nhật thông tin</Text>
       </TouchableOpacity>
     </View>
   );

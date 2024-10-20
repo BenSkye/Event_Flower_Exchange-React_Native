@@ -80,7 +80,7 @@ const ProductDetail = () => {
                 {product.saleType === 'fixed_price' ? (
                     <TouchableOpacity style={ProductDetailStyle.button}
                         onPress={() => {
-                            navigation.navigate('Checkout', { flowerId: product._id });
+                            navigation.navigate('Checkout', { flowerId : product._id });
                         }}
                     >
                         <Text style={ProductDetailStyle.buttonText}>

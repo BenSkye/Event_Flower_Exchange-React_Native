@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { getAuctionByFlowerId } from '../../services/auction';
+import { styles } from '../../styles/AuctionDetailStyles';
 
 const AuctionDetail = ({ flowerId }: { flowerId: any }) => {
 
@@ -20,22 +21,20 @@ const AuctionDetail = ({ flowerId }: { flowerId: any }) => {
     }, [flowerId]);
 
     return (
-        <View>
+        <View style={styles.container}>
             {auction && auction.bids && auction.bids.length > 0 ? (
                 auction.bids.map((bid: any) => (
-                    <View key={bid._id}>
-                        <Text>Bidder: {bid.bidder.userName}</Text>
-                        <Text>Amount: {bid.amount}</Text>
-                        <Text>Time: {new Date(bid.time).toLocaleString()}</Text>
+                    <View key={bid._id} style={styles.bidContainer}>
+                        <Text style={styles.bidderText}>Người đấu giá: {bid.bidder.userName}</Text>
+                        <Text style={styles.amountText}>Số tiền: {bid.amount}</Text>
+                        <Text style={styles.timeText}>Thời gian đấu giá: {new Date(bid.time).toLocaleString()}</Text>
                     </View>
                 ))
             ) : (
-                <Text>No bids available</Text>
+                <Text>Không có đấu giá nào</Text>
             )}
         </View>
     );
 }
-
-const styles = StyleSheet.create({})
 
 export default AuctionDetail;
