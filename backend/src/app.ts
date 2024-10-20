@@ -42,7 +42,7 @@ app.all('*', (req, res, next) => {
 
 cron.schedule('* * * * *', () => {
   console.log('Running endTimeAuction every minute');
-  AuctionService.endTimeAuction();
+  AuctionService.endTimeStartTimeAuction();
 });
 
 app.use(errorController)

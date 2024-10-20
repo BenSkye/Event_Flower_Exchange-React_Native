@@ -4,8 +4,10 @@ import orderRepository from "~/repository/orderRepository";
 import userRepository from "~/repository/userRepository";
 import notificationService from "~/services/notificationService";
 import OrderService from "~/services/orderService";
-import { convertToObjectID } from "~/utils";
+import { convertToISOString, convertToObjectID } from "~/utils";
 import AppError from "~/utils/appError";
+import { parseISO, isAfter, isBefore } from 'date-fns';
+import { toZonedTime, format } from 'date-fns-tz';
 
 
 class AuctionService {
@@ -105,32 +107,35 @@ class AuctionService {
     return await auctionRepository.getPersonalBid(userId)
   }
 
-  static async endTimeAuction() {
-    const currentTime = new Date();
+  static async endTimeStartTimeAuction() {
+    const timeZone = 'Asia/Ho_Chi_Minh';
+    const currentTime = toZonedTime(new Date(), timeZone);
+    console.log('currentTime', currentTime)
+    console.log('currentTime', format(currentTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone }));
+
     const endedAuctions = await auctionRepository.getAuctions({
-      status: 'active',
+      status: { $in: ['active', 'pending'] },
       endTime: { $lte: currentTime }
     });
+    console.log('endedAuctions', endedAuctions)
     const updatePromises = endedAuctions.map(async (auction: any) => {
-      // Tìm người đặt giá cao nhất
-      const highestBid = auction.bids.find((bid: any) => bid.amount === auction.currentPrice)
-
       const updateData: any = {
         status: 'ended'
       };
-
-      // Nếu có người thắng, cập nhật winner
-      if (highestBid.bidder) {
-        updateData.winner = highestBid.bidder;
+      if (auction.bids.length > 0) {
+        // Tìm người đặt giá cao nhất
+        const highestBid = auction.bids.find((bid: any) => bid.amount === auction.currentPrice)
+        // Nếu có người thắng, cập nhật winner
+        if (highestBid.bidder) {
+          updateData.winner = highestBid.bidder;
+        }
+        // Cập nhật trạng thái của hoa
+        await flowerRepository.updateFlower(auction.flowerId, {
+          status: highestBid.bidder ? 'sold' : 'available'
+        });
       }
-
       // Cập nhật auction
       const updatedAuction = await auctionRepository.updateAuction(auction._id, updateData);
-
-      // Cập nhật trạng thái của hoa
-      await flowerRepository.updateFlower(auction.flowerId, {
-        status: highestBid.bidder ? 'sold' : 'available'
-      });
 
       // Nếu có người thắng, tạo order
       const currentTime = new Date();
@@ -150,7 +155,25 @@ class AuctionService {
       return updatedAuction;
     });
     const updatedAuctions = await Promise.all(updatePromises);
-    return updatedAuctions;
+
+    const startAuctions = await auctionRepository.getAuctions({
+      status: 'pending',
+      startTime: { $lte: currentTime }
+    });
+    console.log('startAuctions', startAuctions)
+
+    const updatePromisesStart = startAuctions.map(async (auction: any) => {
+      const updateData: any = {
+        status: 'active'
+      };
+      const updatedAuction = await auctionRepository.updateAuction(auction._id, updateData);
+      return updatedAuction;
+    });
+    const updatedAuctionsStart = await Promise.all(updatePromisesStart);
+
+    return { updatedAuctions, updatedAuctionsStart };
   }
+
+
 }
 export default AuctionService
