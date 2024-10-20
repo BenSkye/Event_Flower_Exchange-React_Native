@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -23,6 +23,11 @@ const ProfileScreen = () => {
   const navigation = useNavigation<ProfileScreenProps>();
   const { user, logout } = useAuth();
 
+  useEffect(() => {
+    // Log user information to check if avatar is updated
+    console.log('Current user:', user);
+  }, [user]); // This will run every time user changes
+
   return (
     <View style={ProfileStyle.container}>
       <StatusBar backgroundColor="#5a61c9" barStyle="light-content" />
@@ -30,7 +35,7 @@ const ProfileScreen = () => {
         {/* Header Section */}
         <View style={ProfileStyle.headerSection}>
           <Image
-            source={require("../assets/img/avt.jpg")}
+            source={{ uri: user?.avatar }} // Sử dụng avatar
             style={ProfileStyle.profilePicture}
           />
           <Text style={ProfileStyle.userName}>{user?.userName}</Text>
@@ -73,19 +78,19 @@ const ProfileScreen = () => {
 
         {/* Contact Section */}
         <View style={ProfileStyle.section}>
-          <Text style={ProfileStyle.sectionTitle}>Liên lạc</Text>
+          <Text style={ProfileStyle.sectionTitle}>Thông tin liên lạc</Text>
           <View style={ProfileStyle.card}>
             <View style={ProfileStyle.sectionItem}>
               <Ionicons name="mail-outline" size={24} color="#5a61c9" />
-              <Text style={ProfileStyle.sectionText}>john.doe@example.com</Text>
+              <Text style={ProfileStyle.sectionText}>{user?.userEmail}</Text>
             </View>
             <View style={ProfileStyle.sectionItem}>
               <Ionicons name="call-outline" size={24} color="#5a61c9" />
-              <Text style={ProfileStyle.sectionText}>+123 456 789</Text>
+              <Text style={ProfileStyle.sectionText}>{user?.userPhone}</Text>
             </View>
             <View style={ProfileStyle.sectionItem}>
               <Ionicons name="home-outline" size={24} color="#5a61c9" />
-              <Text style={ProfileStyle.sectionText}>dai hoc fpt</Text>
+              <Text style={ProfileStyle.sectionText}>{user?.userAddress}</Text>
             </View>
           </View>
         </View>

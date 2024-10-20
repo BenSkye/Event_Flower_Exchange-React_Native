@@ -24,7 +24,7 @@ const AuctionDetail = ({ flowerId }: { flowerId: any }) => {
             {auction && auction.bids && auction.bids.length > 0 ? (
                 auction.bids.map((bid: any) => (
                     <View key={bid._id}>
-                        <Text>Bidder: {bid.bidder.name}</Text>
+                        <Text>Bidder: {bid.bidder.userName}</Text>
                         <Text>Amount: {bid.amount}</Text>
                         <Text>Time: {new Date(bid.time).toLocaleString()}</Text>
                     </View>
