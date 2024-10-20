@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert, FlatList, KeyboardAvoidingView, Platform, Switch } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -24,10 +24,16 @@ const PostProduct = () => {
   const [categoryId, setCategoryId] = useState('');
   const [saleType, setSaleType] = useState('fixed_price');
   const [startingPrice, setStartingPrice] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [startDate, setStartDate] = useState(new Date());
+  const [startTime, setStartTime] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  const [isBuyNow, setIsBuyNow] = useState(false);
+  const [buyNowPrice, setBuyNowPrice] = useState('');
 
   useEffect(() => {
     fetchCategories();
@@ -108,8 +114,8 @@ const PostProduct = () => {
       return;
     }
 
-    if (saleType === 'auction' && (!startingPrice || !startTime || !endTime)) {
-      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin đấu giá");
+    if (saleType === 'auction' && (!startingPrice || !startDate || !endDate)) {
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin đu giá");
       return;
     }
 
@@ -128,8 +134,10 @@ const PostProduct = () => {
           ? { fixedPrice: parseFloat(price) }
           : { 
               startingPrice: parseFloat(startingPrice),
-              startTime,
-              endTime
+              startTime: formatDateTime(startDate, startTime),
+              endTime: formatDateTime(endDate, endTime),
+              isBuyNow,
+              ...(isBuyNow ? { buyNowPrice: parseFloat(buyNowPrice) } : {})
             }
         ),
       };
@@ -155,20 +163,34 @@ const PostProduct = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const onChangeStartDate = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || new Date(startTime);
+  const onChangeStartDate = (event: any, selectedDate: Date | undefined) => {
+    const currentDate = selectedDate || startDate;
     setShowStartDatePicker(Platform.OS === 'ios');
-    setStartTime(formatDate(currentDate));
+    setStartDate(currentDate);
   };
 
-  const onChangeEndDate = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || new Date(endTime);
+  const onChangeStartTime = (event: any, selectedTime: Date | undefined) => {
+    const currentTime = selectedTime || startTime;
+    setShowStartTimePicker(Platform.OS === 'ios');
+    setStartTime(currentTime);
+  };
+
+  const onChangeEndDate = (event: any, selectedDate: Date | undefined) => {
+    const currentDate = selectedDate || endDate;
     setShowEndDatePicker(Platform.OS === 'ios');
-    setEndTime(formatDate(currentDate));
+    setEndDate(currentDate);
   };
 
-  const formatDate = (date: any) => {
-    return date.toISOString().split('T')[0]; // Returns date in YYYY-MM-DD format
+  const onChangeEndTime = (event: any, selectedTime: Date | undefined) => {
+    const currentTime = selectedTime || endTime;
+    setShowEndTimePicker(Platform.OS === 'ios');
+    setEndTime(currentTime);
+  };
+
+  const formatDateTime = (date: Date, time: Date) => {
+    const formattedDate = date.toISOString().split('T')[0];
+    const formattedTime = time.toTimeString().split(' ')[0];
+    return `${formattedDate}T${formattedTime}.000+00:00`;
   };
 
   return (
@@ -274,30 +296,86 @@ const PostProduct = () => {
               style={PostProductStyle.input}
               onPress={() => setShowStartDatePicker(true)}
             >
-              <Text>{startTime || 'Chọn ngày bắt đầu'}</Text>
+              <Text>{startDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
             {showStartDatePicker && (
               <DateTimePicker
-                value={startTime ? new Date(startTime) : new Date()}
+                value={startDate}
                 mode="date"
                 display="default"
                 onChange={onChangeStartDate}
               />
             )}
+            <TouchableOpacity 
+              style={PostProductStyle.input}
+              onPress={() => setShowStartTimePicker(true)}
+            >
+              <Text>{startTime.toLocaleTimeString()}</Text>
+            </TouchableOpacity>
+            {showStartTimePicker && (
+              <DateTimePicker
+                value={startTime}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeStartTime}
+              />
+            )}
+
             <Text style={PostProductStyle.label}>Thời gian kết thúc</Text>
             <TouchableOpacity 
               style={PostProductStyle.input}
               onPress={() => setShowEndDatePicker(true)}
             >
-              <Text>{endTime || 'Chọn ngày kết thúc'}</Text>
+              <Text>{endDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
             {showEndDatePicker && (
               <DateTimePicker
-                value={endTime ? new Date(endTime) : new Date()}
+                value={endDate}
                 mode="date"
                 display="default"
                 onChange={onChangeEndDate}
               />
+            )}
+            <TouchableOpacity 
+              style={PostProductStyle.input}
+              onPress={() => setShowEndTimePicker(true)}
+            >
+              <Text>{endTime.toLocaleTimeString()}</Text>
+            </TouchableOpacity>
+            {showEndTimePicker && (
+              <DateTimePicker
+                value={endTime}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeEndTime}
+              />
+            )}
+
+            <View style={PostProductStyle.switchContainer}>
+              <Text style={PostProductStyle.switchLabel}>Thêm giá mua ngay?</Text>
+              <Switch
+                value={isBuyNow}
+                onValueChange={setIsBuyNow}
+                style={PostProductStyle.switch}
+              />
+            </View>
+            
+            {isBuyNow && (
+              <>
+                <Text style={PostProductStyle.noteText}>
+                  Giá mua ngay là giá mà người đấu sẽ ngay lập tức có được hoa của bạn mà không cần đợi hết phiên đấu giá
+                </Text>
+                <Text style={PostProductStyle.label}>Giá mua ngay</Text>
+                <TextInput
+                  style={PostProductStyle.input}
+                  value={buyNowPrice}
+                  onChangeText={setBuyNowPrice}
+                  placeholder="Nhập giá mua ngay"
+                  keyboardType="numeric"
+                />
+              </>
             )}
           </>
         )}
