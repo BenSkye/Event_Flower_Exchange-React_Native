@@ -10,4 +10,13 @@ const getPersonalAddress = async () => {
     }
 }
 
-export { getPersonalAddress }
+const addAddress = async (address: any) => {
+    try {
+        const response = await apiClient.put('/address/add-address', address)
+        return response.data
+    } catch (error) {
+        return error
+    }
+}
+
+export { getPersonalAddress, addAddress }

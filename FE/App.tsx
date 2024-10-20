@@ -4,6 +4,8 @@ import RootNavigator, { RootStackParamList } from './src/navigation/RootNavigato
 import { AuthProvider } from './src/context/AuthContext';
 import * as Notifications from 'expo-notifications';
 import { AddressProvider } from './src/context/AddressContext';
+import OrderDetail from './src/screens/OrderDetail';
+import * as Linking from 'expo-linking';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -50,6 +52,7 @@ export default function App() {
       responseListener.current &&
         Notifications.removeNotificationSubscription(responseListener.current);
     };
+
   }, []);
 
   return (

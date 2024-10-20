@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getPersonalAddress } from '../services/address';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAddress } from '../context/AddressContext';
 import { RadioButton } from 'react-native-paper';
 import Button from '../components/Button';
@@ -9,6 +9,7 @@ import Button from '../components/Button';
 const ChooseOrderAddress = () => {
     const { selectedAddress, changeAddress } = useAddress();
     const [listAddress, setListAddress] = useState([]);
+    const navigate = useNavigation();
 
     const fetchAddress = async () => {
         const response = await getPersonalAddress();
@@ -49,9 +50,9 @@ const ChooseOrderAddress = () => {
             <FlatList
                 data={listAddress}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item._id}
                 ListFooterComponent={
-                    <Button title="Thêm địa chỉ mới" icon='pluscircleo' onPress={() => {/* Navigate to add address screen */ }} />
+                    <Button title="Thêm địa chỉ mới" icon='pluscircleo' onPress={() => { navigate.navigate('AddAddress') }} />
                 }
             />
 

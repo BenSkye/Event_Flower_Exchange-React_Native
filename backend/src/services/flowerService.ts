@@ -5,9 +5,9 @@ import AppError from "~/utils/appError"
 
 class FlowerService {
   static async createFlower(userId: string, flower: any) {
-    const currentTime = new Date().toLocaleString();
-    const startTime = new Date(flower.startTime).toLocaleString();
-    const endTime = new Date(flower.endTime).toLocaleString();
+    const currentTime = new Date();
+    const startTime = new Date(flower.startTime);
+    const endTime = new Date(flower.endTime);
     if (flower.saleType === 'auction') {
       console.log('currentTime', currentTime)
       console.log('startTime', startTime)

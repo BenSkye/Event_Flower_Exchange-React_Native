@@ -5,7 +5,13 @@ import catchAsync from "~/utils/catchAsync"
 class AddressController {
   static addAddress = catchAsync(async (req: any, res: any, next: any) => {
     const updateAddress = await AddressService.addAddress(req.user.id, req.body)
-    res.status(200).json(updateAddress)
+    res.status(201).json({
+      status: 'success',
+      data: {
+        updateAddress
+        // token: token,
+      }
+    })
   })
   static getAddressByUserId = catchAsync(async (req: any, res: any, next: any) => {
     const address = await AddressService.getAddressByUserId(req.user.id)
