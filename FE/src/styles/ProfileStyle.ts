@@ -71,6 +71,14 @@ const ProfileStyle = StyleSheet.create({
     marginLeft: 16,
     flex: 1,
   },
+  editIconContainer: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    // backgroundColor: '#5a61c9',
+    borderRadius: 15,
+    padding: 5,
+  },
 });
 
 export default ProfileStyle;

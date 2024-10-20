@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert, FlatList, KeyboardAvoidingView, Platform, Switch } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -32,6 +32,8 @@ const PostProduct = () => {
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  const [isBuyNow, setIsBuyNow] = useState(false);
+  const [buyNowPrice, setBuyNowPrice] = useState('');
 
   useEffect(() => {
     fetchCategories();
@@ -113,7 +115,7 @@ const PostProduct = () => {
     }
 
     if (saleType === 'auction' && (!startingPrice || !startDate || !endDate)) {
-      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin đấu giá");
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin đu giá");
       return;
     }
 
@@ -133,7 +135,9 @@ const PostProduct = () => {
           : { 
               startingPrice: parseFloat(startingPrice),
               startTime: formatDateTime(startDate, startTime),
-              endTime: formatDateTime(endDate, endTime)
+              endTime: formatDateTime(endDate, endTime),
+              isBuyNow,
+              ...(isBuyNow ? { buyNowPrice: parseFloat(buyNowPrice) } : {})
             }
         ),
       };
@@ -347,6 +351,31 @@ const PostProduct = () => {
                 display="default"
                 onChange={onChangeEndTime}
               />
+            )}
+
+            <View style={PostProductStyle.switchContainer}>
+              <Text style={PostProductStyle.switchLabel}>Thêm giá mua ngay?</Text>
+              <Switch
+                value={isBuyNow}
+                onValueChange={setIsBuyNow}
+                style={PostProductStyle.switch}
+              />
+            </View>
+            
+            {isBuyNow && (
+              <>
+                <Text style={PostProductStyle.noteText}>
+                  Giá mua ngay là giá mà người đấu sẽ ngay lập tức có được hoa của bạn mà không cần đợi hết phiên đấu giá
+                </Text>
+                <Text style={PostProductStyle.label}>Giá mua ngay</Text>
+                <TextInput
+                  style={PostProductStyle.input}
+                  value={buyNowPrice}
+                  onChangeText={setBuyNowPrice}
+                  placeholder="Nhập giá mua ngay"
+                  keyboardType="numeric"
+                />
+              </>
             )}
           </>
         )}

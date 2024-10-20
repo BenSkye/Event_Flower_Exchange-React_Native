@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
+  Alert,
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -13,6 +14,9 @@ import ProfileStyle from '../styles/ProfileStyle';
 import { useAuth } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/RootNavigator";
+import * as ImagePicker from 'expo-image-picker';
+import { storage } from '../utils/firebase/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 type ProfileScreenProps = {
   navigate(arg0: string): void;
@@ -21,12 +25,32 @@ type ProfileScreenProps = {
 
 const ProfileScreen = () => {
   const navigation = useNavigation<ProfileScreenProps>();
-  const { user, logout } = useAuth();
+  const { user, updateUser, logout } = useAuth();
 
-  useEffect(() => {
-    // Log user information to check if avatar is updated
-    console.log('Current user:', user);
-  }, [user]); // This will run every time user changes
+  const handleImagePicker = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets[0].uri) {
+      try {
+        const response = await fetch(result.assets[0].uri);
+        const blob = await response.blob();
+        const avatarRef = ref(storage, `avatar/${user?.userEmail}.jpg`);
+        await uploadBytes(avatarRef, blob);
+        const avatarUrl = await getDownloadURL(avatarRef);
+
+        await updateUser({ avatar: avatarUrl });
+        Alert.alert("Thành công", "Avatar đã được cập nhật");
+      } catch (error) {
+        console.error("Error updating avatar: ", error);
+        Alert.alert("Lỗi", "Không thể cập nhật avatar. Vui lòng thử lại sau.");
+      }
+    }
+  };
 
   return (
     <View style={ProfileStyle.container}>
@@ -34,10 +58,15 @@ const ProfileScreen = () => {
       <ScrollView>
         {/* Header Section */}
         <View style={ProfileStyle.headerSection}>
-          <Image
-            source={{ uri: user?.avatar }} // Sử dụng avatar
-            style={ProfileStyle.profilePicture}
-          />
+          <TouchableOpacity onPress={handleImagePicker}>
+            <Image
+              source={{ uri: user?.avatar || 'https://via.placeholder.com/150' }}
+              style={ProfileStyle.profilePicture}
+            />
+            <View style={ProfileStyle.editIconContainer}>
+              <Feather name="edit-2" size={20} color="#fff" />
+            </View>
+          </TouchableOpacity>
           <Text style={ProfileStyle.userName}>{user?.userName}</Text>
         </View>
 

@@ -100,7 +100,25 @@ const PostProductStyle = StyleSheet.create({
     borderRadius: 12,
     padding: 2,
   },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  switchLabel: {
+    flex: 1,
+    fontSize: 16,
+    color: '#5a61c9',
+  },
+  switch: {
+    // Các style cho switch nếu cần
+  },
+  noteText: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 15,
+    fontStyle: 'italic',
+  },
 });
 
 export default PostProductStyle;
-
