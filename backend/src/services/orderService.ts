@@ -4,6 +4,7 @@ import orderRepository from "~/repository/orderRepository";
 class OrderService {
   static async createOrder(order: any) {
     const newOrder = await orderRepository.createOrder({
+      orderCode: order.orderCode,
       buyerId: order.buyerId,
       sellerId: order.sellerId,
       flowerId: order.flowerId,

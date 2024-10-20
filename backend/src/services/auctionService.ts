@@ -77,7 +77,10 @@ class AuctionService {
       throw new AppError('Auction is not buy now', 400)
     }
     //thực hiện cấu hình order
+    // lấy ngày giờ hiện tại để generate orderCode với orderCode là number
+    const orderCode = Number(String(Date.now()).slice(-6));
     const newOrder = await OrderService.createOrder({
+      orderCode: orderCode,
       buyerId: userId,
       sellerId: auction.sellerId,
       flowerId: auction.flowerId,
@@ -130,8 +133,11 @@ class AuctionService {
       });
 
       // Nếu có người thắng, tạo order
+      const currentTime = new Date();
+      const orderCode = currentTime.getTime();
       if (updatedAuction && updatedAuction.winner) {
         await orderRepository.createOrder({
+          orderCode: orderCode,
           buyerId: updatedAuction.winner,
           sellerId: updatedAuction.sellerId,
           flowerId: updatedAuction.flowerId,

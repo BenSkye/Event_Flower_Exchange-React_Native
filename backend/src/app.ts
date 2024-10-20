@@ -17,6 +17,7 @@ import notificationRoute from '~/routes/notificationRoute'
 import AuctionService from '~/services/auctionService'
 import orderRoute from '~/routes/orderRoute'
 import addressRoute from '~/routes/addressRoute'
+import checkoutRoute from '~/routes/checkoutRoute'
 
 dotenv.config()
 
@@ -33,6 +34,7 @@ app.use('/api/v1/flower', flowerRoute)
 app.use('/api/v1/auction', auctionRoute)
 app.use('/api/v1/order', orderRoute)
 app.use('/api/v1/address', addressRoute)
+app.use('/api/v1/checkout', checkoutRoute)
 app.use('/api/v1/notification', notificationRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))

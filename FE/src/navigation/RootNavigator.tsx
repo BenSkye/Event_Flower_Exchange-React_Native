@@ -18,6 +18,7 @@ import Checkout from '../screens/Checkout';
 import ChooseOrderAddress from '../screens/ChooseOrderAddress';
 import AddAddress from '../screens/AddAddress';
 import AddressPicker from '../screens/AddressPicker';
+import OrderDetail from '../screens/OrderDetail';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,6 +40,7 @@ export type RootStackParamList = {
     ChooseOrderAddress: undefined;
     AddAddress: undefined;
     AddressPicker: undefined;
+    OrderDetail: { orderCode: number, pageBack: string };
 };
 
 // Material Design 3 color palette
@@ -181,6 +183,19 @@ const RootNavigator = () => (
             ),
         }} />
         <Stack.Screen name="AddressPicker" component={AddressPicker} />
+        <Stack.Screen name="OrderDetail" component={OrderDetail} options={{
+            headerShown: true,
+            title: 'Thông tin đơn hàng',
+            headerStyle: {
+                backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.onPrimary,
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+            headerBackTitleVisible: false
+        }}
+        />
     </Stack.Navigator>
 );
 
