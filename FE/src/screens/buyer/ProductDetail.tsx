@@ -70,11 +70,11 @@ const ProductDetail = () => {
                             ? `${formatPrice(product.fixedPrice)}`
                             : 'Auction'}
                     </Text>
-                    <Text style={ProductDetailStyle.seller}>Seller: {product.sellerId.userName}</Text>
-                    <Text style={ProductDetailStyle.description}>{product.description}</Text>
+                    <Text style={ProductDetailStyle.seller}>Người bán: {product.sellerId.userName}</Text>
+                    <Text style={ProductDetailStyle.description}>Mô tả: {product.description}</Text>
                     <View style={ProductDetailStyle.detailsContainer}>
-                        <Text style={ProductDetailStyle.detailItem}>Category: {product.categoryId.name}</Text>
-                        <Text style={ProductDetailStyle.detailItem}>Status: {product.status}</Text>
+                        <Text style={ProductDetailStyle.detailItem}>Danh mục: {product.categoryId.name}</Text>
+                        <Text style={ProductDetailStyle.detailItem}>Trạng thái: {product.status}</Text>
                     </View>
                 </View>
                 {product.saleType === 'fixed_price' ? (

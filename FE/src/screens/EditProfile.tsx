@@ -6,6 +6,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
 import EditProfileStyles from '../styles/EditProfileStyles'; // Nhập các kiểu
 import { useNavigation } from '@react-navigation/native';
+
 const EditProfile = () => {
   const { user, updateUser } = useAuth();
   const [username, setUsername] = useState(user?.userName || '');
@@ -25,6 +26,7 @@ const EditProfile = () => {
       setAvatar(result.assets[0].uri);
     }
   };
+
   const navigation = useNavigation();
   const handleBackPress = () => {
     navigation.goBack();
@@ -49,6 +51,14 @@ const EditProfile = () => {
     };
 
     await updateUser(updatedUser);
+    
+    // Điều hướng về màn hình ProfileScreen sau khi cập nhật thành công
+    navigation.navigate('Profile');
+  };
+
+  const handlePhoneChange = (text: string) => {
+    const numericText = text.replace(/[^0-9]/g, ''); // Chỉ giữ lại số
+    setPhone(numericText);
   };
 
   return (
@@ -74,7 +84,8 @@ const EditProfile = () => {
         style={EditProfileStyles.input}
         placeholder="Phone"
         value={phone}
-        onChangeText={setPhone}
+        onChangeText={handlePhoneChange}
+        keyboardType="numeric"
       />
       <TextInput
         style={EditProfileStyles.input}

@@ -6,6 +6,7 @@ const ProductDetailStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding: 16,
   },
   loadingContainer: {
     flex: 1,
@@ -14,8 +15,10 @@ const ProductDetailStyle = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 400,
+    height: 300,
     resizeMode: 'cover',
+    borderRadius: 10,
+    marginBottom: 16,
   },
   carouselContainer: {
     height: 300,
@@ -39,9 +42,21 @@ const ProductDetailStyle = StyleSheet.create({
   },
   infoContainer: {
     padding: 20,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    marginBottom: 20,
   },
   name: {
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   price: {
@@ -57,6 +72,7 @@ const ProductDetailStyle = StyleSheet.create({
   description: {
     fontSize: 16,
     marginBottom: 20,
+    lineHeight: 24,
   },
   detailsContainer: {
     marginBottom: 20,
