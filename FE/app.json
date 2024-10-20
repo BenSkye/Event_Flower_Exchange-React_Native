@@ -28,7 +28,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./local/assets/notification-icon.png",
+          "icon": "./local/assets/splashDaisy.png",
           "color": "#ffffff",
           "defaultChannel": "default"
         }

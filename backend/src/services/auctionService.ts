@@ -3,6 +3,7 @@ import flowerRepository from "~/repository/flowerRepository";
 import orderRepository from "~/repository/orderRepository";
 import userRepository from "~/repository/userRepository";
 import notificationService from "~/services/notificationService";
+import OrderService from "~/services/orderService";
 import { convertToObjectID } from "~/utils";
 import AppError from "~/utils/appError";
 
@@ -72,24 +73,18 @@ class AuctionService {
     if (auction.status !== 'active') {
       throw new AppError('Auction is not active', 400)
     }
-    //thực hiện cấu hình thanh toán
-
-  }
-
-  static async buyNowAuction(auctionId: string, userId: string) {
-    const auction = await auctionRepository.getAuctionById(auctionId)
-    if (!auction) {
-      throw new AppError('Auction not found', 404)
-    }
-    if (auction.sellerId.toString() === userId) {
-      throw new AppError('You are the seller of this auction', 400)
-    }
-    if (auction.status !== 'active') {
-      throw new AppError('Auction is not active', 400)
-    }
     if (auction.isBuyNow !== true) {
       throw new AppError('Auction is not buy now', 400)
     }
+    //thực hiện cấu hình order
+    const newOrder = await OrderService.createOrder({
+      buyerId: userId,
+      sellerId: auction.sellerId,
+      flowerId: auction.flowerId,
+      price: auction.buyNowPrice
+    });
+
+    //thực hiện update auction và flower
     auction.buyNowUser = convertToObjectID(userId)
     auction.status = 'sold'
     auction.winner = convertToObjectID(userId)
@@ -100,10 +95,6 @@ class AuctionService {
     const updateFlower = await flowerRepository.updateFlower(updateAuction.flowerId.toString(), { status: 'sold' })
     if (!updateFlower) {
       throw new AppError('Update flower failed', 400)
-    }
-    return {
-      auction: updateAuction,
-      flower: updateFlower
     }
   }
 
@@ -139,15 +130,17 @@ class AuctionService {
       });
 
       // Nếu có người thắng, tạo order
-      if (updatedAuction) {
+      if (updatedAuction && updatedAuction.winner) {
         await orderRepository.createOrder({
           buyerId: updatedAuction.winner,
           sellerId: updatedAuction.sellerId,
           flowerId: updatedAuction.flowerId,
           price: updatedAuction.currentPrice,
-          status: 'pending_payment'
+          status: 'pending'
         });
       }
+      // gửi thông báo tới người thắng
+
       return updatedAuction;
     });
     const updatedAuctions = await Promise.all(updatePromises);

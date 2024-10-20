@@ -4,9 +4,15 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  backgroundLinearGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '100%',
+  },
   background: {
     flex: 1,
-    backgroundColor: '#66BB6A',
   },
   scrollView: {
     flexGrow: 1,
@@ -81,7 +87,7 @@ export const styles = StyleSheet.create({
     color: '#5a4633',
   },
   button: {
-    backgroundColor: '#000000',
+    backgroundColor: '#bfc9ca',
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',

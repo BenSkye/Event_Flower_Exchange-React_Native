@@ -1,9 +1,31 @@
+import orderRepository from "~/repository/orderRepository";
 
 
 class OrderService {
-  static async createOrder(sellerId: string, flower: any) {
-
+  static async createOrder(order: any) {
+    const newOrder = await orderRepository.createOrder({
+      buyerId: order.buyerId,
+      sellerId: order.sellerId,
+      flowerId: order.flowerId,
+      price: order.price,
+    });
+    return newOrder;
   }
 
+  static async changeOrderStatus(orderId: string, status: string) {
+    const updateOrder = await orderRepository.updateOrder({ _id: orderId }, { status: status })
+    return updateOrder
+  }
+
+  static async getPersonalOrderByBuyerId(userId: string) {
+    const orders = await orderRepository.findOrder({ buyerId: userId }, [])
+    console.log('orders', orders)
+    return orders
+  }
+
+  static async getPersonalOrderBySellerId(userId: string) {
+    const orders = await orderRepository.findOrder({ sellerId: userId }, [])
+    return orders
+  }
 }
 export default OrderService

@@ -24,7 +24,7 @@ const orderSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'delivering', 'delivered'],
+      enum: ['pending', 'completed', 'delivering', 'delivered', 'cancel', 'boom'],
       default: 'pending'
     },
     price: {
@@ -39,11 +39,8 @@ const orderSchema = new Schema(
       enum: ['pending', 'paid', 'failed'],
       default: 'pending'
     },
-    address: {
-      type: String,
-    },
-    phone: {
-      type: String,
+    delivery: {
+      type: Object
     }
   },
   { timestamps: true, collection: COLLECTION_NAME }
