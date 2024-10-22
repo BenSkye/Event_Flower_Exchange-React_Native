@@ -9,6 +9,7 @@ interface AuthContextType {
     logout: () => void;
     user: any;
     register: (user: any) => Promise<any>; // Update the return type
+    updateUser: (userData: any) => Promise<any>; // Thêm phương thức updateUser
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -69,8 +70,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(null);
     };
 
+    const updateUser = async (userData: any) => {
+        try {
+            const response = await apiClient.put('/user/update', userData); // Gọi API update
+            console.log('Update response:', response.data);
+            setUser(response.data.data.user); // Cập nhật thông tin người dùng
+            return response.data;
+        } catch (error) {
+            console.error('Update error:', error);
+            throw error;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, user, register }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, user, register, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

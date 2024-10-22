@@ -2,35 +2,46 @@
   "expo": {
     "name": "fe",
     "slug": "fe",
+    "scheme": "flowerapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/splashDaisy.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splashDaisy.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": {
+      "icon": "./assets/splashDaisy.png",
+      "color": "#9c84e8",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Updates from My App",
+      "iosDisplayInForeground": true
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/splashDaisy.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/splashDaisy.png"
     },
     "plugins": [
-      "expo-localization",
       [
         "expo-notifications",
         {
-          "icon": "./local/assets/splashDaisy.png",
-          "color": "#ffffff",
-          "defaultChannel": "default"
+          "icon": "./assets/splashDaisy.png",
+          "color": "#9c84e8",
+          "defaultChannel": "default",
+          "sounds": [
+            "./assets/notification-sound.wav",
+            "./assets/notification-sound-other.wav"
+          ]
         }
       ]
     ],

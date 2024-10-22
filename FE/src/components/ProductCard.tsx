@@ -16,7 +16,7 @@ const ProductCard = ({ data }: { data: any }) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => navigation.navigate('HomeStack', { screen: 'Detail', params: { id: data._id } })}>
+            <TouchableOpacity onPress={() => navigation.navigate('Detail', { id: data._id })}>
                 <Image source={{ uri: data.images[0] }} style={styles.image} />
                 <View style={styles.infoContainer}>
                     <Text style={styles.name} numberOfLines={1}>{data.name}</Text>

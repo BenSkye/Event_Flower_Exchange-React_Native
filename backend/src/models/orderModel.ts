@@ -7,6 +7,10 @@ const COLLECTION_NAME = 'Orders';
 
 const orderSchema = new Schema(
   {
+    orderCode: {
+      type: Number,
+      required: true
+    },
     buyerId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -33,11 +37,6 @@ const orderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-    },
-    paymentStatus: {
-      type: String,
-      enum: ['pending', 'paid', 'failed'],
-      default: 'pending'
     },
     delivery: {
       type: Object
