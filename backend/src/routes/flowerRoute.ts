@@ -9,4 +9,5 @@ flowerRoute.route('/create').post(authController.protect, authController.restric
 flowerRoute.route('/get-list').get(FlowerController.getListFlower)
 flowerRoute.route('/get-flower-by-id/:flowerId').get(FlowerController.getFlowerById)
 flowerRoute.route('/update/:flowerId').put(authController.protect, authController.restricTO('customer'), FlowerController.updateFlower)
+flowerRoute.route('/get-flower-by-seller-id').get(authController.protect, authController.restricTO('customer'), FlowerController.getFlowerBySellerId)
 export default flowerRoute

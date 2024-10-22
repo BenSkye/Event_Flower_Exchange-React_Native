@@ -19,5 +19,9 @@ class FlowerController {
     const flower = await FlowerService.updateFlower(req.params.flowerId, req.body)
     res.status(200).json(flower)
   })
+  static getFlowerBySellerId = catchAsync(async (req: any, res: any, next: any) => {
+    const flowers = await FlowerService.getFlowerBySellerId(req.user.id)
+    res.status(200).json(flowers)
+  })
 }
 export default FlowerController
