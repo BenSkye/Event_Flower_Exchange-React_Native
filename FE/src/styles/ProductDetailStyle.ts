@@ -140,6 +140,24 @@ const ProductDetailStyle = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  auctionInfo: {
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+  },
+  auctionInfoText: {
+    fontSize: 14,
+    marginBottom: 5,
+  },
 });
 
 export default ProductDetailStyle;

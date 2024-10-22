@@ -8,3 +8,8 @@ export const getAuctionByFlowerId = async (flowerId: string) => {
         return error
     }
 }
+
+export const placeBid = async (auctionId: string, amount: number) => {
+    const response = await apiClient.post('/auction/bid', { auctionId, amount });
+    return response.data;
+}
