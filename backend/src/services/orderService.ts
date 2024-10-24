@@ -28,6 +28,13 @@ class OrderService {
     const orders = await orderRepository.findOrder({ sellerId: userId }, [])
     return orders
   }
-
+  static async getOrderById(orderId: string) {
+    const order = await orderRepository.findOrderById(orderId, [])
+    return order
+  }
+  static async getOrderbyOrdercode(orderCode: string) {
+    const order = await orderRepository.findOneOrder({ orderCode: orderCode }, [])
+    return order
+  }
 }
 export default OrderService

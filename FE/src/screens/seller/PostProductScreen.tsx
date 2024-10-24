@@ -114,11 +114,6 @@ const PostProduct = () => {
       return;
     }
 
-    if (saleType === 'auction' && (!startingPrice || !startDate || !endDate)) {
-      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin đu giá");
-      return;
-    }
-
     setUploading(true);
     try {
       const imageUrls = await uploadImages(images);
@@ -142,8 +137,10 @@ const PostProduct = () => {
         ),
       };
 
+      console.log("Sending flower data:", JSON.stringify(flowerData, null, 2));
       const response = await createFlower(flowerData);
-      console.log("Flower created with ID: ", response.id);
+      console.log("Server response:", response);
+
       Alert.alert("Thành công", "Hoa đã được đăng bán");
       // Reset form
       setName('');
