@@ -20,12 +20,6 @@ const Header = ({ setSearch }: { setSearch: (search: string) => void }) => {
                     onChangeText={handleSearchChange}
                 />
             </View>
-            <TouchableOpacity style={styles.cartButton}>
-                <Ionicons name="cart-outline" size={24} color="black" />
-                <View style={styles.badge}>
-                    <Text style={styles.badgeText}>1</Text>
-                </View>
-            </TouchableOpacity>
         </View>
     );
 };

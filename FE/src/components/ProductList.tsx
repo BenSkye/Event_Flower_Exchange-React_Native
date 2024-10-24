@@ -1,9 +1,19 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native';
 import ProductCard from './ProductCard';
 
-const ProductList = ({ products, loadMoreProducts, refreshing, onRefresh, }: { products: Array<any>, loadMoreProducts: () => void, refreshing: boolean, onRefresh: () => void }) => {
+const ProductList = ({ products, loadMoreProducts, refreshing, onRefresh, hasMore }: { products: Array<any>, loadMoreProducts: () => void, refreshing: boolean, onRefresh: () => void, hasMore: boolean }) => {
     const numColumns = 2;
+
+    const renderFooter = () => {
+        if (!hasMore) return null;
+        return (
+            <View style={styles.footer}>
+                <ActivityIndicator   size="small" color="#0000ff" />
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <FlatList
@@ -28,6 +38,7 @@ const ProductList = ({ products, loadMoreProducts, refreshing, onRefresh, }: { p
                         colors={['#9Bd35A', '#689F38']}
                     />
                 }
+                ListFooterComponent={renderFooter}
             />
         </View>
     );
@@ -52,5 +63,9 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         paddingBottom: 80,
+    },
+    footer: {
+        paddingVertical: 20,
+        alignItems: 'center',
     },
 });
