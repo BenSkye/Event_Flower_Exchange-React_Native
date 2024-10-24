@@ -38,6 +38,7 @@ const OrdersScreen = () => {
 
     const tabs = [
         { key: 'pending', label: 'Pending' },
+        { key: 'completed', label: 'Completed' },
         { key: 'delivering', label: 'Delivering' },
         { key: 'delivered', label: 'Delivered' },
     ];
@@ -84,6 +85,10 @@ const OrdersScreen = () => {
                     if (item.status === 'pending') {
                         navigation.navigate('Checkout', { flowerId: item.flowerId._id });
                     }
+                    if (item.status === 'completed') {
+                        navigation.navigate('OrderDetail', { orderCode: item.orderCode });
+
+                    }
                 }}
             >
                 <OrderItem order={item} />
@@ -127,8 +132,10 @@ const OrdersScreen = () => {
                 onPageSelected={e => setActiveTab(e.nativeEvent.position)}
             >
                 <View key="pending">{renderOrderList('pending')}</View>
+                <View key="completed">{renderOrderList('completed')}</View>
                 <View key="delivering">{renderOrderList('delivering')}</View>
                 <View key="delivered">{renderOrderList('delivered')}</View>
+
             </PagerView>
         </View>
     );

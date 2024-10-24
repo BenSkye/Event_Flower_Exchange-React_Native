@@ -12,7 +12,12 @@ class OrderRepository {
   async findOrder(query: any, select: any) {
     return await Order.find(query).select(selectedObject(select)).populate('flowerId')
   }
-
+  findOrderById(orderId: string, select: any) {
+    return Order.findById(orderId).select(selectedObject(select)).populate('flowerId')
+  }
+  findOneOrder(query: any, select: any) {
+    return Order.findOne(query).select(selectedObject(select)).populate('flowerId')
+  }
   async deleteOrder(query: any) {
     return await Order.findOneAndDelete(query)
   }
