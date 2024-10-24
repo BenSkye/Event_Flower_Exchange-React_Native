@@ -130,15 +130,15 @@ const PostProduct = () => {
         saleType,
         status: "available",
         freshness: condition,
-        ...(saleType === 'fixed_price' 
+        ...(saleType === 'fixed_price'
           ? { fixedPrice: parseFloat(price) }
-          : { 
-              startingPrice: parseFloat(startingPrice),
-              startTime: formatDateTime(startDate, startTime),
-              endTime: formatDateTime(endDate, endTime),
-              isBuyNow,
-              ...(isBuyNow ? { buyNowPrice: parseFloat(buyNowPrice) } : {})
-            }
+          : {
+            startingPrice: parseFloat(startingPrice),
+            startTime: formatDateTime(startDate, startTime),
+            endTime: formatDateTime(endDate, endTime),
+            isBuyNow,
+            ...(isBuyNow ? { buyNowPrice: parseFloat(buyNowPrice) } : {})
+          }
         ),
       };
 
@@ -190,11 +190,11 @@ const PostProduct = () => {
   const formatDateTime = (date: Date, time: Date) => {
     const formattedDate = date.toISOString().split('T')[0];
     const formattedTime = time.toTimeString().split(' ')[0];
-    return `${formattedDate}T${formattedTime}.000+00:00`;
+    return `${formattedDate}T${formattedTime}`;
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
@@ -204,7 +204,7 @@ const PostProduct = () => {
         </TouchableOpacity>
         <Text style={PostProductStyle.headerTitle}>Đăng bán hoa</Text>
       </View>
-      <ScrollView 
+      <ScrollView
         style={PostProductStyle.container}
         ref={scrollViewRef as React.RefObject<ScrollView>}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
@@ -292,7 +292,7 @@ const PostProduct = () => {
               keyboardType="numeric"
             />
             <Text style={PostProductStyle.label}>Thời gian bắt đầu</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={PostProductStyle.input}
               onPress={() => setShowStartDatePicker(true)}
             >
@@ -306,7 +306,7 @@ const PostProduct = () => {
                 onChange={onChangeStartDate}
               />
             )}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={PostProductStyle.input}
               onPress={() => setShowStartTimePicker(true)}
             >
@@ -323,7 +323,7 @@ const PostProduct = () => {
             )}
 
             <Text style={PostProductStyle.label}>Thời gian kết thúc</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={PostProductStyle.input}
               onPress={() => setShowEndDatePicker(true)}
             >
@@ -337,7 +337,7 @@ const PostProduct = () => {
                 onChange={onChangeEndDate}
               />
             )}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={PostProductStyle.input}
               onPress={() => setShowEndTimePicker(true)}
             >
@@ -361,7 +361,7 @@ const PostProduct = () => {
                 style={PostProductStyle.switch}
               />
             </View>
-            
+
             {isBuyNow && (
               <>
                 <Text style={PostProductStyle.noteText}>
@@ -394,8 +394,8 @@ const PostProduct = () => {
         </Picker>
 
         <View style={PostProductStyle.buttonContainer}>
-          <TouchableOpacity 
-            style={[PostProductStyle.button, uploading && PostProductStyle.disabledButton]} 
+          <TouchableOpacity
+            style={[PostProductStyle.button, uploading && PostProductStyle.disabledButton]}
             onPress={handleSubmit}
             disabled={uploading}
           >

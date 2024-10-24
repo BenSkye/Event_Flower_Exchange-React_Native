@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, TextInput, Alert, RefreshControl } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, TextInput, Alert, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ImageView from "react-native-image-viewing";
+import { Image } from 'expo-image';
+
 import { getFlowerById } from '../../services/flower';
 import { placeBid, getAuctionByFlowerId } from '../../services/auction';
 import AuctionDetail from './AuctionDetail';
@@ -19,6 +21,7 @@ const { width: screenWidth } = Dimensions.get('window');
 const ProductDetail = () => {
     const navigation = useNavigation();
     const route = useRoute<RouteProp<ParamList, 'Detail'>>();
+    const scrollViewRef = useRef<ScrollView>(null);
     const [product, setProduct] = useState<any>(null);
     const [isImageViewVisible, setIsImageViewVisible] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -61,7 +64,7 @@ const ProductDetail = () => {
             Alert.alert('Error', 'Auction information not available');
             return;
         }
-        
+
         const amount = parseFloat(bidAmount);
         if (isNaN(amount) || amount <= auctionInfo.currentPrice) {
             Alert.alert('Invalid Bid', 'Please enter a valid amount higher than the current price');
@@ -74,10 +77,15 @@ const ProductDetail = () => {
             // Update auction info
             setAuctionInfo(result);
             setBidAmount('');
+            onRefresh();
         } catch (error) {
             console.error('Error placing bid:', error);
             Alert.alert('Error', 'Failed to place bid. Please try again.');
         }
+    };
+
+    const handleInputFocus = () => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
     };
 
     if (!product) {
@@ -96,11 +104,13 @@ const ProductDetail = () => {
     };
 
     return (
-        <View style={ProductDetailStyle.container}>
-            <TouchableOpacity style={ProductDetailStyle.backButton} onPress={handleBackPress}>
-                <Text style={ProductDetailStyle.backButtonText}>←</Text>
-            </TouchableOpacity>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
             <ScrollView
+                ref={scrollViewRef}
+                style={ProductDetailStyle.container}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -108,9 +118,24 @@ const ProductDetail = () => {
                     />
                 }
             >
-                <TouchableOpacity onPress={() => setIsImageViewVisible(true)}>
-                    <Image source={{ uri: product.images[0] }} style={ProductDetailStyle.image} />
+                <TouchableOpacity style={ProductDetailStyle.backButton} onPress={handleBackPress}>
+                    <Text style={ProductDetailStyle.backButtonText}>←</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => setIsImageViewVisible(true)}>
+                    <Image
+                        style={ProductDetailStyle.image}
+                        source={{ uri: product.images[0] }}
+                        contentFit="cover"
+                        placeholder={require('../../../assets/splashDaisy.png')}
+                        placeholderContentFit="contain"
+                        transition={1000}
+                    />
+                    <View style={[ProductDetailStyle.freshness, getFreshnessStyle(product.freshness)]}>
+                        <Text style={getFreshnessStyle(product.freshness)}>{product.freshness}</Text>
+                    </View>
+                </TouchableOpacity>
+
                 <View style={ProductDetailStyle.infoContainer}>
                     <Text style={ProductDetailStyle.name}>{product.name}</Text>
                     <Text style={ProductDetailStyle.price}>
@@ -123,12 +148,16 @@ const ProductDetail = () => {
                             <Text style={ProductDetailStyle.auctionInfoText}>
                                 Giá khởi điểm: {formatPrice(auctionInfo.startingPrice)}
                             </Text>
-                            <Text style={ProductDetailStyle.auctionInfoText}>
-                                Giá mua ngay: {formatPrice(auctionInfo.buyNowPrice)}
-                            </Text>
-                            <Text style={ProductDetailStyle.auctionInfoText}>
-                                Giá hiện tại: {formatPrice(auctionInfo.currentPrice)}
-                            </Text>
+                            {auctionInfo.isBuyNow && (
+                                <Text style={ProductDetailStyle.auctionInfoText}>
+                                    Giá mua ngay: {formatPrice(auctionInfo.buyNowPrice)}
+                                </Text>
+                            )}
+                            {product.currentPrice && (
+                                <Text style={ProductDetailStyle.auctionInfoText}>
+                                    Giá hiện tại: {formatPrice(auctionInfo.currentPrice)}
+                                </Text>)
+                            }
                         </View>
                     )}
                     <Text style={ProductDetailStyle.seller}>Người bán: {product.sellerId.userName}</Text>
@@ -138,10 +167,12 @@ const ProductDetail = () => {
                         <Text style={ProductDetailStyle.detailItem}>Trạng thái: {product.status}</Text>
                     </View>
                 </View>
+
                 {product.saleType === 'fixed_price' ? (
-                    <TouchableOpacity style={ProductDetailStyle.button}
+                    <TouchableOpacity
+                        style={ProductDetailStyle.button}
                         onPress={() => {
-                            navigation.navigate('Checkout', { flowerId : product._id });
+                            navigation.navigate('Checkout', { flowerId: product._id });
                         }}
                     >
                         <Text style={ProductDetailStyle.buttonText}>
@@ -149,27 +180,27 @@ const ProductDetail = () => {
                         </Text>
                     </TouchableOpacity>
                 ) : (
-                    <View>
-                        <TextInput
-                            style={ProductDetailStyle.input}
-                            value={bidAmount}
-                            onChangeText={setBidAmount}
-                            placeholder="Nhập giá đấu"
-                            keyboardType="numeric"
-                        />
-                        <TouchableOpacity style={ProductDetailStyle.button} onPress={handlePlaceBid}>
-                            <Text style={ProductDetailStyle.buttonText}>
-                                Đặt giá
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                    auctionInfo?.status === 'active' && (
+                        <View>
+                            <TextInput
+                                style={ProductDetailStyle.input}
+                                value={bidAmount}
+                                onChangeText={setBidAmount}
+                                placeholder="Nhập giá đấu"
+                                keyboardType="numeric"
+                                onFocus={handleInputFocus}
+                            />
+                            <TouchableOpacity style={ProductDetailStyle.button} onPress={handlePlaceBid}>
+                                <Text style={ProductDetailStyle.buttonText}>
+                                    Đặt giá
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
                 )}
 
-                <View style={[ProductDetailStyle.freshness, getFreshnessStyle(product.freshness)]}>
-                    <Text style={getFreshnessStyle(product.freshness)}>{product.freshness}</Text>
-                </View>
                 {product.saleType === 'auction' && (
-                    <AuctionDetail key={auctionKey} flowerId={product._id} auctionInfo={auctionInfo} />
+                    <AuctionDetail key={auctionKey} flowerId={product._id} />
                 )}
             </ScrollView>
             <ImageView
@@ -178,7 +209,7 @@ const ProductDetail = () => {
                 visible={isImageViewVisible}
                 onRequestClose={() => setIsImageViewVisible(false)}
             />
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

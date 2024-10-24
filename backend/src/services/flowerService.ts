@@ -10,7 +10,9 @@ class FlowerService {
     const timeZone = 'Asia/Ho_Chi_Minh';
     const currentTime = toZonedTime(new Date(), timeZone);
     const startTime = toZonedTime(parseISO(flower.startTime), timeZone);
+    //
     const endTime = toZonedTime(parseISO(flower.endTime), timeZone);
+    //
     if (flower.saleType === 'auction') {
       console.log('currentTime', currentTime)
       console.log('startTime', startTime)

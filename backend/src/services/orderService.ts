@@ -28,5 +28,6 @@ class OrderService {
     const orders = await orderRepository.findOrder({ sellerId: userId }, [])
     return orders
   }
+
 }
 export default OrderService

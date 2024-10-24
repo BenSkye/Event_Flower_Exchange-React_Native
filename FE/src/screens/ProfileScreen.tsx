@@ -120,23 +120,23 @@ const ProfileScreen = () => {
 
         {/* Mimi Headline Section */}
         {user && ( // Kiểm tra nếu người dùng đã đăng nhập
-            <View style={ProfileStyle.section}>
-                <Text style={ProfileStyle.sectionTitle}>Bài bán hàng</Text>
-                <View style={ProfileStyle.card}>
-                    <TouchableOpacity onPress={() => navigation.navigate('SellProduct')} style={ProfileStyle.sectionItem}>
-                        <Text style={ProfileStyle.sectionText}>Đăng bài bán</Text>
-                        <Feather name="chevron-right" size={24} color="#5a61c9" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('ManageProduct')} style={ProfileStyle.sectionItem}>
-                        <Text style={ProfileStyle.sectionText}>Quản lý bài bán</Text>
-                        <Feather name="chevron-right" size={24} color="#5a61c9" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => logout()} style={ProfileStyle.sectionItem}>
-                        <Text style={ProfileStyle.sectionText}>Đăng xuất</Text>
-                        <Feather name="chevron-right" size={24} color="#5a61c9" />
-                    </TouchableOpacity>
-                </View>
+          <View style={ProfileStyle.section}>
+            <Text style={ProfileStyle.sectionTitle}>Bài bán hàng</Text>
+            <View style={ProfileStyle.card}>
+              <TouchableOpacity onPress={() => navigation.navigate('SellProduct')} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Đăng bài bán</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('ManageProduct')} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Quản lý bài bán</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => logout()} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Đăng xuất</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
             </View>
+          </View>
         )}
 
       </ScrollView>

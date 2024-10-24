@@ -61,6 +61,11 @@ class AuctionService {
     const user = await userRepositoryInstance.findUser({ _id: userId }, ['userName']);
     const flower = await flowerRepository.getFlowerById(auction.flowerId.toString())
     notificationService.createNotification(auction.sellerId.toString(), 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
+    for (const bidder of auction.bids) {
+      if (bidder.bidder && bidder.bidder.toString() !== userId) {
+        notificationService.createNotification(bidder.bidder.toString(), 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
+      }
+    }
     return updateAuction
   }
 
@@ -117,7 +122,7 @@ class AuctionService {
       status: { $in: ['active', 'pending'] },
       endTime: { $lte: currentTime }
     });
-    console.log('endedAuctions', endedAuctions)
+
     const updatePromises = endedAuctions.map(async (auction: any) => {
       const updateData: any = {
         status: 'ended'
@@ -160,7 +165,7 @@ class AuctionService {
       status: 'pending',
       startTime: { $lte: currentTime }
     });
-    console.log('startAuctions', startAuctions)
+
 
     const updatePromisesStart = startAuctions.map(async (auction: any) => {
       const updateData: any = {
