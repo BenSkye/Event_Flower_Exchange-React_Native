@@ -24,12 +24,12 @@ const ProductCard = ({ data }: { data: any }) => {
                     placeholder={require('../../assets/splashDaisy.png')}
                     placeholderContentFit="contain"
                     transition={1000}
+                    cachePolicy="memory-disk"
                 />
                 <View style={styles.infoContainer}>
                     <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
                     <View style={styles.priceContainer}>
                         {renderPriceInfo()}
-
                     </View>
                     <View style={styles.userStatusContainer}>
                         <Text style={styles.seller} numberOfLines={1}>{data.sellerId.userName}</Text>

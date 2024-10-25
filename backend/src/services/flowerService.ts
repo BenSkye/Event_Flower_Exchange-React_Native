@@ -7,6 +7,7 @@ import { toZonedTime, format } from 'date-fns-tz';
 
 class FlowerService {
   static async createFlower(userId: string, flower: any) {
+    console.log('flower', flower)
     const timeZone = 'Asia/Ho_Chi_Minh';
     const currentTime = toZonedTime(new Date(), timeZone);
     const startTime = toZonedTime(parseISO(flower.startTime), timeZone);

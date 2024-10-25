@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { getAuctionByFlowerId } from '../../services/auction';
 import { styles } from '../../styles/AuctionDetailStyles';
 import { format } from 'date-fns-tz';
+import { formatPrice } from '../../utils';
 
 const AuctionDetail = ({ flowerId }: { flowerId: any }) => {
     console.log('flowerId', flowerId);
@@ -31,7 +32,7 @@ const AuctionDetail = ({ flowerId }: { flowerId: any }) => {
                 auction.bids.slice().reverse().map((bid: any) => (
                     <View key={bid._id} style={styles.bidContainer}>
                         <Text style={styles.bidderText}>Người đấu giá: {bid.bidder.userName}</Text>
-                        <Text style={styles.amountText}>Số tiền: {bid.amount}</Text>
+                        <Text style={styles.amountText}>Số tiền: {formatPrice(bid.amount)}</Text>
                         <Text style={styles.timeText}>Thời gian đấu giá: {new Date(bid.time).toLocaleString()}</Text>
                     </View>
                 ))

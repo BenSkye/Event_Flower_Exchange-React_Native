@@ -42,7 +42,7 @@ class userRepository implements IUserRepository {
     return await User.findOne({ userEmail })
   }
   async findAndUpdateMany(query: any, update: any) {
-    return await User.updateMany(query, update)
+    return await User.updateMany(query, update, { new: true })
   }
 
   // async create(userDetails: {

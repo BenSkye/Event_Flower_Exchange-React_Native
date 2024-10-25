@@ -24,6 +24,7 @@ const ChooseOrderAddress = () => {
     )
     const handleSelectAddress = (address: any) => {
         changeAddress(address);
+        navigate.goBack();
     };
 
     const renderItem = ({ item }: { item: any }) => (

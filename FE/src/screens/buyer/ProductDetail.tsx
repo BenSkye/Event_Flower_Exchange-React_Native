@@ -8,7 +8,8 @@ import { getFlowerById } from '../../services/flower';
 import { placeBid, getAuctionByFlowerId } from '../../services/auction';
 import AuctionDetail from './AuctionDetail';
 import ProductDetailStyle from '../../styles/ProductDetailStyle';
-import { formatPrice } from '../../utils';
+import { formatInputPrice, formatPrice, parseInputPrice } from '../../utils';
+import { useAuth } from '../../context/AuthContext';
 
 type ParamList = {
     Detail: {
@@ -29,6 +30,8 @@ const ProductDetail = () => {
     const [auctionInfo, setAuctionInfo] = useState<any>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [auctionKey, setAuctionKey] = useState(0);
+
+    const { user } = useAuth();
 
     const fetchProductData = useCallback(async () => {
         try {
@@ -58,6 +61,10 @@ const ProductDetail = () => {
     const handleBackPress = () => {
         navigation.goBack();
     };
+    const handleBidAmountChange = (value: string) => {
+        const formattedValue = formatInputPrice(value);
+        setBidAmount(formattedValue);
+    };
 
     const handlePlaceBid = async () => {
         if (!auctionInfo) {
@@ -65,7 +72,7 @@ const ProductDetail = () => {
             return;
         }
 
-        const amount = parseFloat(bidAmount);
+        const amount = parseInputPrice(bidAmount);
         if (isNaN(amount) || amount <= auctionInfo.currentPrice) {
             Alert.alert('Invalid Bid', 'Please enter a valid amount higher than the current price');
             return;
@@ -84,9 +91,6 @@ const ProductDetail = () => {
         }
     };
 
-    const handleInputFocus = () => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-    };
 
     if (!product) {
         return (
@@ -108,6 +112,12 @@ const ProductDetail = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ flex: 1 }}
         >
+            <ImageView
+                images={images}
+                imageIndex={currentImageIndex}
+                visible={isImageViewVisible}
+                onRequestClose={() => setIsImageViewVisible(false)}
+            />
             <ScrollView
                 ref={scrollViewRef}
                 style={ProductDetailStyle.container}
@@ -153,7 +163,7 @@ const ProductDetail = () => {
                                     Giá mua ngay: {formatPrice(auctionInfo.buyNowPrice)}
                                 </Text>
                             )}
-                            {product.currentPrice && (
+                            {auctionInfo.currentPrice && (
                                 <Text style={ProductDetailStyle.auctionInfoText}>
                                     Giá hiện tại: {formatPrice(auctionInfo.currentPrice)}
                                 </Text>)
@@ -167,49 +177,64 @@ const ProductDetail = () => {
                         <Text style={ProductDetailStyle.detailItem}>Trạng thái: {product.status}</Text>
                     </View>
                 </View>
-
-                {product.saleType === 'fixed_price' ? (
+                {product.saleType === 'auction' && auctionInfo?.status === 'active' && auctionInfo.isBuyNow && user?._id !== product.sellerId._id && (
                     <TouchableOpacity
                         style={ProductDetailStyle.button}
                         onPress={() => {
                             navigation.navigate('Checkout', { flowerId: product._id });
                         }}
                     >
-                        <Text style={ProductDetailStyle.buttonText}>
-                            Mua ngay
+                        <Text style={ProductDetailStyle.buttonTextBuyNow}>
+                            Mua ngay trong đấu giá với {formatPrice(auctionInfo.buyNowPrice)}
                         </Text>
                     </TouchableOpacity>
-                ) : (
-                    auctionInfo?.status === 'active' && (
-                        <View>
-                            <TextInput
-                                style={ProductDetailStyle.input}
-                                value={bidAmount}
-                                onChangeText={setBidAmount}
-                                placeholder="Nhập giá đấu"
-                                keyboardType="numeric"
-                                onFocus={handleInputFocus}
-                            />
-                            <TouchableOpacity style={ProductDetailStyle.button} onPress={handlePlaceBid}>
-                                <Text style={ProductDetailStyle.buttonText}>
-                                    Đặt giá
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    )
                 )}
-
                 {product.saleType === 'auction' && (
                     <AuctionDetail key={auctionKey} flowerId={product._id} />
                 )}
+
             </ScrollView>
-            <ImageView
-                images={images}
-                imageIndex={currentImageIndex}
-                visible={isImageViewVisible}
-                onRequestClose={() => setIsImageViewVisible(false)}
-            />
-        </KeyboardAvoidingView>
+            {product.saleType === 'fixed_price' && user?._id !== product.sellerId._id ? (
+                <TouchableOpacity
+                    style={ProductDetailStyle.button}
+                    onPress={() => {
+                        if (user) {
+                            navigation.navigate('Checkout', { flowerId: product._id });
+                        } else {
+                            navigation.navigate('Login');
+                        }
+                    }}
+                >
+                    <Text style={ProductDetailStyle.buttonText}>
+                        Mua ngay
+                    </Text>
+                </TouchableOpacity>
+            ) : (
+                auctionInfo?.status === 'active' && user?._id !== product.sellerId._id && (
+                    <View>
+                        <TextInput
+                            style={ProductDetailStyle.input}
+                            value={bidAmount}
+                            onChangeText={handleBidAmountChange}
+                            placeholder="Nhập giá đấu"
+                            keyboardType="numeric"
+                        />
+                        <TouchableOpacity style={ProductDetailStyle.button} onPress={() => {
+                            if (user) {
+                                handlePlaceBid();
+                            } else {
+                                navigation.navigate('Login');
+                            }
+                        }}>
+                            <Text style={ProductDetailStyle.buttonText}>
+                                Đặt giá
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+            )}
+
+        </KeyboardAvoidingView >
     );
 };
 

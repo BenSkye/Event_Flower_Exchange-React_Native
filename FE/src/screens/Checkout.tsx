@@ -6,10 +6,11 @@ import { getFlowerById } from '../services/flower';
 import { useAddress } from '../context/AddressContext';
 import { formatPrice } from '../utils';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { cancelPayment, checkoutFixedFlower, checkPaymentStatus } from '../services/checkout';
+import { cancelPayment, checkoutBuyNowAuction, checkoutFixedFlower, checkPaymentStatus } from '../services/checkout';
 import * as Linking from 'expo-linking';
 import Button from '../components/Button';
 import { RootStackParamList } from '../navigation/RootNavigator';
+import { getAuctionByFlowerId } from '../services/auction';
 
 const Checkout = () => {
     const { selectedAddress } = useAddress();
@@ -19,15 +20,27 @@ const Checkout = () => {
     const [paymentUrl, setPaymentUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [flower, setFlower] = useState<any>(null);
+    const [auction, setAuction] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const fetchFlower = useCallback(async () => {
         const response = await getFlowerById(routeParams.flowerId.toString());
         setFlower(response);
+        if (response?.saleType === 'auction') {
+            const auctionResponse = await getAuctionByFlowerId(routeParams.flowerId.toString());
+            setAuction(auctionResponse);
+            if (auctionResponse && auctionResponse.isBuyNow) {
+                response.fixedPrice = auctionResponse.buyNowPrice
+                setFlower(response);
+            }
+        }
+
     }, [routeParams.flowerId]);
 
     useFocusEffect(
         useCallback(() => {
             fetchFlower();
+            setIsLoading(false);
         }, [fetchFlower])
     );
 
@@ -38,12 +51,23 @@ const Checkout = () => {
         }
         setIsProcessing(true);
         try {
-            const paymentLink = await checkoutFixedFlower(routeParams.flowerId.toString(), selectedAddress);
-            console.log('paymentLink', paymentLink)
-            if (paymentLink) {
-                setPaymentUrl(paymentLink.checkoutUrl);
-            } else {
-                alert('Có lỗi xảy ra khi tạo đơn hàng');
+            if (flower?.saleType === 'fixed_price') {
+                const paymentLink = await checkoutFixedFlower(routeParams.flowerId.toString(), selectedAddress);
+                console.log('paymentLink', paymentLink)
+                if (paymentLink) {
+                    setPaymentUrl(paymentLink.checkoutUrl);
+                } else {
+                    alert('Có lỗi xảy ra khi tạo đơn hàng');
+                }
+            } else if (flower?.saleType === 'auction' && auction) {
+                console.log('auction', auction)
+                const paymentLink = await checkoutBuyNowAuction(auction._id.toString(), selectedAddress);
+                console.log('paymentLink', paymentLink)
+                if (paymentLink) {
+                    setPaymentUrl(paymentLink.checkoutUrl);
+                } else {
+                    alert('Có lỗi xảy ra khi tạo đơn hàng');
+                }
             }
         } catch (error) {
             console.error('Error during checkout:', error);
@@ -55,7 +79,7 @@ const Checkout = () => {
 
     const handleNavigationStateChange = (navState: any) => {
         const url = navState.url;
-        if (url.includes('handle-payos-return') || url.includes('handle-payos-cancel')) {
+        if (url.includes('handle-payos-return') || url.includes('handle-payos-cancel') || url.includes('handle-buy-now-auction-payos-return') || url.includes('handle-buy-now-auction-payos-cancel')) {
             setPaymentUrl(null);
         }
     };
@@ -69,7 +93,7 @@ const Checkout = () => {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));
             return false; // Ngăn WebView load URL này
         }
-        if (url.includes('handle-payos-return')) {
+        if (url.includes('handle-payos-return') || url.includes('handle-buy-now-auction-payos-return')) {
             // Xử lý payment success
             checkPaymentStatus(queryParams);
             if (queryParams.code === '00') {
@@ -82,7 +106,7 @@ const Checkout = () => {
             }
             return false;
         }
-        if (url.includes('handle-payos-cancel')) {
+        if (url.includes('handle-payos-cancel') || url.includes('handle-buy-now-auction-payos-cancel')) {
             cancelPayment(queryParams);
             alert('Thanh toán đã bị hủy');
             navigation.goBack();
@@ -102,57 +126,66 @@ const Checkout = () => {
         );
     }
 
+
+
     return (
         <View style={styles.wrapper}>
-            <ScrollView contentContainerStyle={styles.container}>
-                <TouchableOpacity onPress={() => { navigation.navigate('ChooseOrderAddress') }}>
-                    <View style={styles.sectionAddress}>
-                        <AntDesign name="enviromento" size={24} color="#5a61c9" style={styles.sallerIcon} />
-                        <View>
-                            <Text style={styles.sectionTitle}>Địa chỉ nhận hàng</Text>
-                            {selectedAddress ? (
-                                <>
-                                    <Text style={styles.text}>{selectedAddress.name} | {selectedAddress.phone}</Text>
-                                    <Text style={styles.text}>{selectedAddress.address}</Text>
-                                </>
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#5a61c9" />
+            ) : (
+                <>
+                    <ScrollView contentContainerStyle={styles.container}>
+                        <TouchableOpacity onPress={() => { navigation.navigate('ChooseOrderAddress') }}>
+                            <View style={styles.sectionAddress}>
+                                <AntDesign name="enviromento" size={24} color="#5a61c9" style={styles.sallerIcon} />
+                                <View>
+                                    <Text style={styles.sectionTitle}>Địa chỉ nhận hàng</Text>
+                                    {selectedAddress ? (
+                                        <>
+                                            <Text style={styles.text}>{selectedAddress.name} | {selectedAddress.phone}</Text>
+                                            <Text style={styles.text}>{selectedAddress.address}</Text>
+                                        </>
+                                    ) : (
+                                        <Text style={styles.text}>Chưa có địa chỉ nhận hàng</Text>
+                                    )}
+                                </View>
+                                <View style={styles.rightIcon}>
+                                    <AntDesign name="right" size={24} color="black" />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Thông tin sản phẩm</Text>
+                            {flower ? (
+                                <View style={styles.productRow}>
+                                    <Image source={{ uri: flower.images[0] }} style={styles.image} />
+                                    <View style={styles.productDetails}>
+                                        <Text style={styles.textName}>{flower.name}</Text>
+                                        {flower?.saleType === 'fixed_price' && <Text style={styles.text}>{formatPrice(flower.fixedPrice)}</Text>}
+                                        {flower?.saleType === 'auction' && auction && auction.isBuyNow && <Text style={styles.text}>{formatPrice(auction?.buyNowPrice)}</Text>}
+                                    </View>
+                                </View>
                             ) : (
-                                <Text style={styles.text}>Chưa có địa chỉ nhận hàng</Text>
+                                <Text style={styles.text}>Đang tải thông tin sản phẩm...</Text>
                             )}
                         </View>
-                        <View style={styles.rightIcon}>
-                            <AntDesign name="right" size={24} color="black" />
-                        </View>
-                    </View>
-                </TouchableOpacity>
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Thông tin sản phẩm</Text>
-                    {flower ? (
-                        <View style={styles.productRow}>
-                            <Image source={{ uri: flower.images[0] }} style={styles.image} />
-                            <View style={styles.productDetails}>
-                                <Text style={styles.textName}>{flower.name}</Text>
-                                {flower.saleType === 'fixed_price' && <Text style={styles.text}>{formatPrice(flower.fixedPrice)}</Text>}
-                            </View>
-                        </View>
-                    ) : (
-                        <Text style={styles.text}>Đang tải thông tin sản phẩm...</Text>
-                    )}
-                </View>
-            </ScrollView>
+                    </ScrollView>
 
-            <View style={styles.fixedBottom}>
-                <TouchableOpacity
-                    style={[styles.checkoutButton, isProcessing && styles.disabledButton]}
-                    onPress={handleCheckout}
-                    disabled={isProcessing}
-                >
-                    {isProcessing ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <Text style={styles.checkoutText}>Đặt hàng</Text>
-                    )}
-                </TouchableOpacity>
-            </View>
+                    <View style={styles.fixedBottom}>
+                        <TouchableOpacity
+                            style={[styles.checkoutButton, isProcessing && styles.disabledButton]}
+                            onPress={handleCheckout}
+                            disabled={isProcessing}
+                        >
+                            {isProcessing ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.checkoutText}>Đặt hàng</Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </>
+            )}
         </View>
     );
 }

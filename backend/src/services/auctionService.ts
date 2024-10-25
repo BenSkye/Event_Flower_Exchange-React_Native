@@ -61,51 +61,17 @@ class AuctionService {
     const user = await userRepositoryInstance.findUser({ _id: userId }, ['userName']);
     const flower = await flowerRepository.getFlowerById(auction.flowerId.toString())
     notificationService.createNotification(auction.sellerId.toString(), 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
-    for (const bidder of auction.bids) {
-      if (bidder.bidder && bidder.bidder.toString() !== userId) {
-        notificationService.createNotification(bidder.bidder.toString(), 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
+    const notifiedBidders = new Set<string>();
+
+    // Thông báo cho những người đặt giá chưa nhận thông báo
+    for (const bid of auction.bids) {
+      const bidderId = bid.bidder?.toString();
+      if (bidderId && bidderId !== userId && !notifiedBidders.has(bidderId)) {
+        notificationService.createNotification(bidderId, 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
+        notifiedBidders.add(bidderId);
       }
     }
     return updateAuction
-  }
-
-  static async checkoutBuyNowAuction(auctionId: string, userId: string) {
-    const auction = await auctionRepository.getAuctionById(auctionId)
-    if (!auction) {
-      throw new AppError('Auction not found', 404)
-    }
-    if (auction.sellerId.toString() === userId) {
-      throw new AppError('You are the seller of this auction', 400)
-    }
-    if (auction.status !== 'active') {
-      throw new AppError('Auction is not active', 400)
-    }
-    if (auction.isBuyNow !== true) {
-      throw new AppError('Auction is not buy now', 400)
-    }
-    //thực hiện cấu hình order
-    // lấy ngày giờ hiện tại để generate orderCode với orderCode là number
-    const orderCode = Number(String(Date.now()).slice(-6));
-    const newOrder = await OrderService.createOrder({
-      orderCode: orderCode,
-      buyerId: userId,
-      sellerId: auction.sellerId,
-      flowerId: auction.flowerId,
-      price: auction.buyNowPrice
-    });
-
-    //thực hiện update auction và flower
-    auction.buyNowUser = convertToObjectID(userId)
-    auction.status = 'sold'
-    auction.winner = convertToObjectID(userId)
-    const updateAuction = await auctionRepository.updateAuction(auctionId, auction)
-    if (!updateAuction) {
-      throw new AppError('Update auction failed', 400)
-    }
-    const updateFlower = await flowerRepository.updateFlower(updateAuction.flowerId.toString(), { status: 'sold' })
-    if (!updateFlower) {
-      throw new AppError('Update flower failed', 400)
-    }
   }
 
   static async getPersonalBid(userId: string) {

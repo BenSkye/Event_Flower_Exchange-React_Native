@@ -54,7 +54,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={ProfileStyle.container}>
-      <StatusBar backgroundColor="#5a61c9" barStyle="light-content" />
+
       <ScrollView>
         {/* Header Section */}
         <View style={ProfileStyle.headerSection}>
