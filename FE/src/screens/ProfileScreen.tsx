@@ -17,6 +17,7 @@ import { RootStackParamList } from "../navigation/RootNavigator";
 import * as ImagePicker from 'expo-image-picker';
 import { storage } from '../utils/firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import defaultAvatar from '../assets/img/avt.jpg';
 
 type ProfileScreenProps = {
   navigate(arg0: string): void;
@@ -60,7 +61,7 @@ const ProfileScreen = () => {
         <View style={ProfileStyle.headerSection}>
           <TouchableOpacity onPress={handleImagePicker}>
             <Image
-              source={{ uri: user?.avatar || 'https://via.placeholder.com/150' }}
+              source={user?.avatar ? { uri: user.avatar } : defaultAvatar}
               style={ProfileStyle.profilePicture}
             />
             <View style={ProfileStyle.editIconContainer}>
