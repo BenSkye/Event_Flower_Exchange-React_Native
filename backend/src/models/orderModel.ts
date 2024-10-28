@@ -26,6 +26,10 @@ const orderSchema = new Schema(
       ref: 'Flower',
       required: true
     },
+    auctionId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Auction',
+    },
     status: {
       type: String,
       enum: ['pending', 'completed', 'delivering', 'delivered', 'cancel', 'boom'],

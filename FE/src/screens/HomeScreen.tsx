@@ -78,9 +78,9 @@ const HomeScreen = () => {
                 onRefresh={onRefresh}
                 hasMore={hasMore}
             />
-            {!hasMore && products.length > 0 && (
+            {/* {!hasMore && products.length > 0 && (
                 <Text style={styles.endMessage}>Đã hết sản phẩm</Text>
-            )}
+            )} */}
         </SafeAreaView>
     );
 };

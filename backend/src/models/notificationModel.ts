@@ -29,6 +29,11 @@ const notificationSchema = new Schema(
     },
     type: {
       type: String,
+      //new-auction-bid: đấu giá mới gửi thông báo cho tất cả người tham gia đấu giá 
+      //order-success: đơn hàng thành công gửi thông báo cho seller
+      //auction-end: đấu giá kết thúc gửi thông báo cho seller
+      //auction-lose: đấu giá kết thúc gửi thông báo cho người tham gia đấu giá thua
+      //auction-end: đấu giá kết thúc gửi thông báo cho seller và người tham gia đấu giá
     }
   },
   { timestamps: true, collection: COLLECTION_NAME }

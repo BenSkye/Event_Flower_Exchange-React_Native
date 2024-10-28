@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { ORDER_STATUS_COLORS } from '../constant/indext';
+import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from '../constant/indext';
 import { formatDate, formatPrice } from '../utils';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -14,7 +14,7 @@ const OrderItem = ({ order }: { order: any }) => {
                     {/* <Text style={styles.saller}>{order.saller}</Text> */}
                 </View>
                 <Text style={[styles.orderStatus, { color: ORDER_STATUS_COLORS[order.status as keyof typeof ORDER_STATUS_COLORS] }]}>
-                    {order.status}
+                    {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS]}
                 </Text>
             </View>
             <View style={styles.productInfo}>

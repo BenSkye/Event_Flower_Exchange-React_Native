@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { formatPrice } from '../utils';
-
+import { Image } from 'expo-image';
 const ProductCard = ({ data }: { data: any }) => {
     const navigation = useNavigation();
 
@@ -17,12 +17,19 @@ const ProductCard = ({ data }: { data: any }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => navigation.navigate('Detail', { id: data._id })}>
-                <Image source={{ uri: data.images[0] }} style={styles.image} />
+                <Image
+                    style={styles.image}
+                    source={{ uri: data.images[0] }}
+                    contentFit="cover"
+                    placeholder={require('../../assets/splashDaisy.png')}
+                    placeholderContentFit="contain"
+                    transition={1000}
+                    cachePolicy="memory-disk"
+                />
                 <View style={styles.infoContainer}>
                     <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
                     <View style={styles.priceContainer}>
                         {renderPriceInfo()}
-
                     </View>
                     <View style={styles.userStatusContainer}>
                         <Text style={styles.seller} numberOfLines={1}>{data.sellerId.userName}</Text>

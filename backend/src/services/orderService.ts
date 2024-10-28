@@ -9,6 +9,7 @@ class OrderService {
       sellerId: order.sellerId,
       flowerId: order.flowerId,
       price: order.price,
+      delivery: order.delivery
     });
     return newOrder;
   }

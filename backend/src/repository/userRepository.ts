@@ -14,6 +14,7 @@ interface IUserRepository {
   addUser(user: IUser): Promise<any>
   findUser(query: any): Promise<any>
   findByEmail(userEmail: string): Promise<any>
+  findUsers(query: any, select?: string[]): Promise<any>
   // create(userDetails: any): Promise<any>
   updatePassword(userId: string, password: string): Promise<any>
   updateUser(userId: string, updatedUser: object): Promise<any>
@@ -31,8 +32,17 @@ class userRepository implements IUserRepository {
     const user = User.findOne(query).select(selectedObject(select || []))
     return user
   }
+
+  async findUsers(query: any, select?: string[]) {
+    const users = User.find(query).select(selectedObject(select || []))
+    return users
+  }
+
   async findByEmail(userEmail: string) {
     return await User.findOne({ userEmail })
+  }
+  async findAndUpdateMany(query: any, update: any) {
+    return await User.updateMany(query, update, { new: true })
   }
 
   // async create(userDetails: {

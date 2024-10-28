@@ -12,16 +12,22 @@ const payos = new PayOS(
 export const createPaymentLink = async (
   orderCode: number,
   amount: number,
-  description: string
-
+  description: string,
+  cancelUrl: string,
+  returnUrl: string
 ) => {
   const requestData = {
     orderCode: orderCode,
     amount: amount,
     description: description,
-    cancelUrl: process.env.DOMAIN_URL + "/v1/api/checkout/handle-payos-cancel",
-    returnUrl: process.env.DOMAIN_URL + "/v1/api/checkout/handle-payos-return",
+    cancelUrl: process.env.DOMAIN_URL + "/v1/api/checkout/" + cancelUrl,
+    returnUrl: process.env.DOMAIN_URL + "/v1/api/checkout/" + returnUrl,
   }
-  const paymentLink = await payos.createPaymentLink(requestData);
-  return paymentLink;
+  try {
+    const paymentLink = await payos.createPaymentLink(requestData);
+    return paymentLink;
+  } catch (error) {
+    console.log('error', error)
+    return null
+  }
 }
