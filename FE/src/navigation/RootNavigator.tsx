@@ -95,7 +95,8 @@ const TabNavigator = () => (
             headerShown: false,
         })}
     >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={HomeScreen}
+        />
         <Tab.Screen name="Orders" component={OrdersScreen}
             options={{
                 headerShown: true,

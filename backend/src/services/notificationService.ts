@@ -21,6 +21,11 @@ class NotificationService {
     // Giả sử bạn có một cách để lấy pushToken từ userId
     const userRepositoryInstance = new userRepository();
     const user = await userRepositoryInstance.findUser({ _id: userId }, ['pushToken']);
+    if (user?.pushToken === '') {
+      console.log('pushToken is empty')
+      return;
+    }
+
     const pushToken = user?.pushToken;
 
     if (!Expo.isExpoPushToken(pushToken)) {

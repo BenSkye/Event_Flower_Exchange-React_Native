@@ -37,10 +37,10 @@ const OrdersScreen = () => {
     );
 
     const tabs = [
-        { key: 'pending', label: 'Pending' },
-        { key: 'completed', label: 'Completed' },
-        { key: 'delivering', label: 'Delivering' },
-        { key: 'delivered', label: 'Delivered' },
+        { key: 'pending', label: 'Chờ xác nhận' },
+        { key: 'completed', label: 'Xác nhận' },
+        { key: 'delivering', label: 'Đang giao' },
+        { key: 'delivered', label: 'Đã giao' },
     ];
 
     // useEffect(() => {
@@ -111,7 +111,7 @@ const OrdersScreen = () => {
                 ListFooterComponent={
                     filteredOrders.length > 0 ? (
                         <View style={styles.footer}>
-                            <Text>No more orders</Text>
+                            <Text>Hết đơn hàng</Text>
                         </View>
                     ) : null
                 }
