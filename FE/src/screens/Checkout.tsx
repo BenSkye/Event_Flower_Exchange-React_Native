@@ -6,7 +6,7 @@ import { getFlowerById } from '../services/flower';
 import { useAddress } from '../context/AddressContext';
 import { formatPrice } from '../utils';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { cancelPayment, checkoutBuyNowAuction, checkoutFixedFlower, checkPaymentStatus } from '../services/checkout';
+import { cancelBuyNowAuctionPayment, cancelPayment, cancelWinAuctionPayment, checkBuyNowAuctionPaymentStatus, checkoutBuyNowAuction, checkoutFixedFlower, checkoutWinAuction, checkPaymentStatus, returnWinAuctionPayment } from '../services/checkout';
 import * as Linking from 'expo-linking';
 import Button from '../components/Button';
 import { RootStackParamList } from '../navigation/RootNavigator';
@@ -59,9 +59,17 @@ const Checkout = () => {
                 } else {
                     alert('Có lỗi xảy ra khi tạo đơn hàng');
                 }
-            } else if (flower?.saleType === 'auction' && auction) {
+            } else if (flower?.saleType === 'auction' && auction && auction.isBuyNow) {
                 console.log('auction', auction)
                 const paymentLink = await checkoutBuyNowAuction(auction._id.toString(), selectedAddress);
+                console.log('paymentLink', paymentLink)
+                if (paymentLink) {
+                    setPaymentUrl(paymentLink.checkoutUrl);
+                } else {
+                    alert('Có lỗi xảy ra khi tạo đơn hàng');
+                }
+            } else if (flower?.saleType === 'auction' && auction && !auction.isBuyNow) {
+                const paymentLink = await checkoutWinAuction(auction.flowerId.toString(), selectedAddress);
                 console.log('paymentLink', paymentLink)
                 if (paymentLink) {
                     setPaymentUrl(paymentLink.checkoutUrl);
@@ -79,7 +87,9 @@ const Checkout = () => {
 
     const handleNavigationStateChange = (navState: any) => {
         const url = navState.url;
-        if (url.includes('handle-payos-return') || url.includes('handle-payos-cancel') || url.includes('handle-buy-now-auction-payos-return') || url.includes('handle-buy-now-auction-payos-cancel')) {
+        if (url.includes('handle-payos-return') || url.includes('handle-payos-cancel') || url.includes('handle-buy-now-auction-payos-return') || url.includes('handle-buy-now-auction-payos-cancel')
+            || url.includes('handle-win-auction-payos-return') || url.includes('handle-win-auction-payos-cancel')
+        ) {
             setPaymentUrl(null);
         }
     };
@@ -93,9 +103,15 @@ const Checkout = () => {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));
             return false; // Ngăn WebView load URL này
         }
-        if (url.includes('handle-payos-return') || url.includes('handle-buy-now-auction-payos-return')) {
+        if (url.includes('handle-payos-return') || url.includes('handle-buy-now-auction-payos-return') || url.includes('handle-win-auction-payos-return')) {
             // Xử lý payment success
-            checkPaymentStatus(queryParams);
+            if (url.includes('handle-payos-return')) {
+                checkPaymentStatus(queryParams);
+            } else if (url.includes('handle-buy-now-auction-payos-return')) {
+                checkBuyNowAuctionPaymentStatus(queryParams);
+            } else {
+                returnWinAuctionPayment(queryParams);
+            }
             if (queryParams.code === '00') {
                 navigation.navigate('OrderDetail', {
                     orderCode: queryParams.orderCode,
@@ -106,8 +122,14 @@ const Checkout = () => {
             }
             return false;
         }
-        if (url.includes('handle-payos-cancel') || url.includes('handle-buy-now-auction-payos-cancel')) {
-            cancelPayment(queryParams);
+        if (url.includes('handle-payos-cancel') || url.includes('handle-buy-now-auction-payos-cancel') || url.includes('handle-win-auction-payos-cancel')) {
+            if (url.includes('handle-payos-cancel')) {
+                cancelPayment(queryParams);
+            } else if (url.includes('handle-buy-now-auction-payos-cancel')) {
+                cancelBuyNowAuctionPayment(queryParams);
+            } else {
+                cancelWinAuctionPayment(queryParams);
+            }
             alert('Thanh toán đã bị hủy');
             navigation.goBack();
             return false;
@@ -163,6 +185,7 @@ const Checkout = () => {
                                         <Text style={styles.textName}>{flower.name}</Text>
                                         {flower?.saleType === 'fixed_price' && <Text style={styles.text}>{formatPrice(flower.fixedPrice)}</Text>}
                                         {flower?.saleType === 'auction' && auction && auction.isBuyNow && <Text style={styles.text}>{formatPrice(auction?.buyNowPrice)}</Text>}
+                                        {flower?.saleType === 'auction' && auction && <Text style={styles.text}>{formatPrice(auction?.currentPrice)}</Text>}
                                     </View>
                                 </View>
                             ) : (
@@ -180,7 +203,7 @@ const Checkout = () => {
                             {isProcessing ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.checkoutText}>Đặt hàng</Text>
+                                <Text style={styles.checkoutText}>Thanh Toán</Text>
                             )}
                         </TouchableOpacity>
                     </View>

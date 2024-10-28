@@ -42,7 +42,7 @@ class CheckoutService {
     if (!auction) {
       throw new AppError('Auction not found', 404)
     }
-    if (auction.sellerId.toString() === userId) {
+    if (auction.sellerId.toString() === userId.toString()) {
       throw new AppError('You are the seller of this auction', 400)
     }
     if (auction.status !== 'active') {
@@ -70,12 +70,28 @@ class CheckoutService {
     return paymentLink
   }
 
+  static async CheckoutWinAuction(userId: string, flowerId: string, delivery: any) {
+    console.log('flowerId', flowerId)
+    const order = await orderRepository.findOneOrder({ flowerId: flowerId }, [])
+    console.log('order', order)
+    if (!order) {
+      throw new AppError('Order not found', 400)
+    }
+    console.log('userId', userId)
+    if (order.buyerId.toString() !== userId.toString()) {
+      throw new AppError('You are not the buyer of this order', 400)
+    }
+    const updateOrder = await orderRepository.updateOrder(order._id, { delivery: delivery })
+    console.log('updateOrder', updateOrder)
+    const paymentLink = await createPaymentLink(updateOrder.orderCode, updateOrder.price, 'Thanh toán đáu giá thắng', 'handle-win-auction-payos-cancel', 'handle-win-auction-payos-return')
+    return paymentLink
+  }
+
 
   static async getPayosCancelBuyNowAuction(reqQuery: any) {
     const deleteOrder = await orderRepository.deleteOrder({ orderCode: reqQuery.orderCode })
     return null
   }
-
 
   static async getPayosReturnBuyNowAuction(reqQuery: any) {
     if (reqQuery.code === '00') {
@@ -98,6 +114,18 @@ class CheckoutService {
       if (!updateFlower) {
         throw new AppError('Update flower failed', 400)
       }
+
+      //gửi thông báo cho seller và các người tham gia đấu giá khác
+      const flower = await flowerRepository.getFlowerById(updateAuction.flowerId.toString())
+      await notificationService.createNotification(updateOrder.sellerId.toString(), 'Hoa được bán', 'Bạn đã bán được hoa ' + flower?.name + ' với giá ' + updateOrder.price, { orderId: updateOrder._id, flowerId: flower?._id, orderCode: updateOrder.orderCode }, 'order-success')
+      const notifiedBidders = new Set<string>();
+      for (const bid of auction.bids) {
+        const bidderId = bid.bidder?.toString();
+        if (bidderId && bidderId !== updateOrder.buyerId.toString() && !notifiedBidders.has(bidderId)) {
+          await notificationService.createNotification(bidderId, 'Đấu giá kết thúc', 'Đấu giá ' + flower?.name + ' đã kết thúc', { auctionId: auction?._id, flowerId: flower?._id }, 'auction-end')
+          notifiedBidders.add(bidderId);
+        }
+      }
       return updateOrder
     } else {
       //xóa order 
@@ -105,6 +133,20 @@ class CheckoutService {
       return null
     }
 
+  }
+
+  static async getPayosReturnWinAuction(reqQuery: any) {
+    if (reqQuery.code === '00') {
+      const updateOrder = await orderRepository.updateOrder({ orderCode: reqQuery.orderCode }, { status: 'completed' })
+      const flower = await flowerRepository.getFlowerById(updateOrder.flowerId.toString())
+      if (!flower) {
+        throw new AppError('Flower not found', 404)
+      }
+      const notification = await notificationService.createNotification(updateOrder.sellerId.toString(), 'Hoa được bán', 'Bạn đã bán được hoa ' + flower.name + ' với giá ' + updateOrder.price, { orderId: updateOrder._id, flowerId: flower._id, orderCode: updateOrder.orderCode }, 'order-success')
+      return updateOrder
+    } else {
+      return null
+    }
   }
 
   static async getPayosReturn(reqQuery: any) {
@@ -135,6 +177,11 @@ class CheckoutService {
     const deleteOrder = await orderRepository.deleteOrder({ orderCode: reqQuery.orderCode })
     return null
   }
+
+  static async getPayosCancelWinAuction(reqQuery: any) {
+    return null
+  }
+
 
 }
 export default CheckoutService

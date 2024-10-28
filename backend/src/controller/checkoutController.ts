@@ -13,6 +13,11 @@ class CheckoutController {
     res.status(200).json(paymentLink)
   })
 
+  static checkoutWinAuction = catchAsync(async (req: any, res: any, next: any) => {
+    const paymentLink = await CheckoutService.CheckoutWinAuction(req.user._id, req.body.flowerId, req.body.delivery)
+    res.status(200).json(paymentLink)
+  })
+
   static handlePayosReturn = catchAsync(async (req: any, res: any, next: any) => {
     const updateOrder = await CheckoutService.getPayosReturn(req.query)
     res.status(200).json(updateOrder)
@@ -33,6 +38,16 @@ class CheckoutController {
     res.status(200).json(deleteOrder)
   })
 
+
+  static handleWinAuctionPayosReturn = catchAsync(async (req: any, res: any, next: any) => {
+    const updateOrder = await CheckoutService.getPayosReturnWinAuction(req.query)
+    res.status(200).json(updateOrder)
+  })
+
+  static handleWinAuctionPayosCancel = catchAsync(async (req: any, res: any, next: any) => {
+    const deleteOrder = await CheckoutService.getPayosCancelWinAuction(req.query)
+    res.status(200).json(deleteOrder)
+  })
 
 
 

@@ -67,7 +67,7 @@ class AuctionService {
     for (const bid of auction.bids) {
       const bidderId = bid.bidder?.toString();
       if (bidderId && bidderId !== userId && !notifiedBidders.has(bidderId)) {
-        notificationService.createNotification(bidderId, 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
+        await notificationService.createNotification(bidderId, 'Đặt giá mới', `${user?.userName} đã đặt giá ${amount} cho ${flower?.name}`, { auctionId: auction?._id, flowerId: flower?._id }, 'new-auction-bid')
         notifiedBidders.add(bidderId);
       }
     }
@@ -121,8 +121,46 @@ class AuctionService {
           status: 'pending'
         });
       }
-      // gửi thông báo tới người thắng
+      // gửi thông báo tới seller
+      if (updatedAuction && updatedAuction.winner) {
+        const flower = await flowerRepository.getFlowerById(updatedAuction.flowerId.toString());
+        const userRepositoryInstance = new userRepository();
+        const winner = await userRepositoryInstance.findUser({ _id: updatedAuction.winner }, ['userName']);
+        if (flower && winner) {
+          await notificationService.createNotification(
+            updatedAuction.sellerId.toString(),
+            'Đấu giá kết thúc',
+            `${winner.userName} đã thắng ${flower.name} của bạn với giá ${updatedAuction.currentPrice}`,
+            { auctionId: updatedAuction._id, flowerId: flower._id },
+            'auction-end',
+          );
 
+          const notifiedBidders = new Set<string>();
+
+          // Thông báo cho những người đặt giá chưa nhận thông báo
+          for (const bid of updatedAuction.bids) {
+            const bidderId = bid.bidder?.toString();
+            if (bidderId && bidderId !== updatedAuction.winner.toString() && !notifiedBidders.has(bidderId)) {
+              await notificationService.createNotification(
+                bidderId,
+                'Đấu giá kết thúc',
+                `${winner.userName} đã thắng ${flower.name} với giá ${updatedAuction.currentPrice}`,
+                { auctionId: updatedAuction._id, flowerId: flower._id },
+                'auction-lose',
+              );
+              notifiedBidders.add(bidderId);
+            }
+          }
+
+          await notificationService.createNotification(
+            updatedAuction.winner.toString(),
+            'Đấu giá kết thúc',
+            `Bạn đã đấu giá thắng ${flower.name} với giá ${updatedAuction.currentPrice}`,
+            { auctionId: updatedAuction._id, flowerId: flower._id },
+            'auction-win',
+          );
+        }
+      }
       return updatedAuction;
     });
     const updatedAuctions = await Promise.all(updatePromises);

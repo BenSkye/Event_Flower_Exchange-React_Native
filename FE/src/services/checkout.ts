@@ -19,6 +19,15 @@ const checkoutBuyNowAuction = async (auctionId: string, delivery: any) => {
     }
 }
 
+const checkoutWinAuction = async (flowerId: string, delivery: any) => {
+    try {
+        const response = await apiClient.post('/checkout/checkout-win-auction', { flowerId, delivery })
+        return response.data
+    } catch (error) {
+        return error
+    }
+}
+
 const checkPaymentStatus = async (queryParams: Record<string, string>) => {
     try {
         const queryString = new URLSearchParams(queryParams).toString();
@@ -59,4 +68,24 @@ const cancelBuyNowAuctionPayment = async (queryParams: Record<string, string>) =
     }
 };
 
-export { checkoutFixedFlower, checkPaymentStatus, cancelPayment, checkBuyNowAuctionPaymentStatus, cancelBuyNowAuctionPayment, checkoutBuyNowAuction }  
+const cancelWinAuctionPayment = async (queryParams: Record<string, string>) => {
+    try {
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await apiClient.get(`/checkout/handle-win-auction-payos-cancel?${queryString}`);
+        return response.data;
+    } catch (error) {
+        return error
+    }
+};
+
+const returnWinAuctionPayment = async (queryParams: Record<string, string>) => {
+    try {
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await apiClient.get(`/checkout/handle-win-auction-payos-return?${queryString}`);
+        return response.data;
+    } catch (error) {
+        return error
+    }
+};
+
+export { checkoutFixedFlower, checkPaymentStatus, cancelPayment, checkBuyNowAuctionPaymentStatus, cancelBuyNowAuctionPayment, checkoutBuyNowAuction, checkoutWinAuction, cancelWinAuctionPayment, returnWinAuctionPayment }  
