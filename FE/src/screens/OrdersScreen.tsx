@@ -19,13 +19,9 @@ const OrdersScreen = () => {
     useFocusEffect(
         useCallback(() => {
             const fetchOrder = async () => {
-                try {
-                    const response = await getPersonalBuyOrder();
-                    console.log('response Order', response);
-                    setOrders(response);
-                } catch (error) {
-                    console.error('Error fetching notifications:', error);
-                }
+                const response = await getPersonalBuyOrder();
+                console.log('response Order', response);
+                setOrders(response);
             };
 
             fetchOrder();

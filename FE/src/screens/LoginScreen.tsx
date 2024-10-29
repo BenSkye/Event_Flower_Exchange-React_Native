@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -20,6 +20,8 @@ import { styles } from '../styles/LoginScreenStyles';
 import { RootStackParamList } from "../navigation/RootNavigator";
 import { LinearGradient } from "expo-linear-gradient";
 
+type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 // type RootStackParamList = {
 //   Profile: undefined;
 //   Register: undefined;
@@ -27,34 +29,94 @@ import { LinearGradient } from "expo-linear-gradient";
 //   // Add other screen names and their param types here
 // };
 
-type LoginScreenProps = {
-  navigate(arg0: never): unknown;
-  reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
-  navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
-
-};
-type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
+interface LoginScreenProps {
+  navigation: LoginScreenNavigationProp;
+  route: LoginScreenRouteProp;
+}
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
-  const navigation = useNavigation<LoginScreenProps>();
-  const route = useRoute<LoginScreenRouteProp>();
+  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const route = useRoute<any>();
+
+  useEffect(() => {
+    console.log('route', route)
+  }, [])
+
   const handleLogin = async () => {
-    const response = await login(email, password)
-    if (response?.status === 'success') {
-      if (route.params?.returnTo) {
-        navigation.navigate(route.params.returnTo as never);
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MainTabs' }],
-        });
+    try {
+      const response = await login(email, password);
+      if (response?.status === 'success') {
+        const returnTo = route.params?.returnTo;
+        const returnParams = route.params?.params;
+        if (returnTo) {
+          // Xử lý điều hướng sau đăng nhập
+          switch (returnTo) {
+            // Các tab screens
+            case 'Home':
+            case 'Orders':
+            case 'Notifications':
+            case 'Profile':
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'MainTabs',
+                    state: {
+                      routes: [{ name: returnTo }],
+                    },
+                  },
+                ],
+              });
+              break;
+
+            // Các stack screens
+            case 'OrderDetail':
+            case 'Checkout':
+            case 'EditProfile':
+            case 'SellProduct':
+            case 'ManageProduct':
+            case 'ChooseOrderAddress':
+            case 'AddAddress':
+              navigation.reset({
+                index: 1,
+                routes: [
+                  { name: 'MainTabs' },
+                  {
+                    name: returnTo,
+                    params: returnParams
+                  },
+                ],
+              });
+              break;
+
+            default:
+              // Mặc định về MainTabs
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'MainTabs' }],
+              });
+          }
+        } else {
+          // Không có returnTo, về MainTabs
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainTabs' }],
+          });
+        }
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      // Thêm xử lý hiển thị lỗi cho người dùng ở đây
     }
   };
 
+  const handleBackPress = () => {
+    // Không có returnTo, thực hiện goBack bình thường
+    navigation.goBack();
+  }
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -65,7 +127,9 @@ const LoginScreen = () => {
       />
 
       <ScrollView contentContainerStyle={styles.scrollView}>
-
+        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
         <Image
           source={require('../../assets/splashDaisy.png')}
           style={styles.logo}

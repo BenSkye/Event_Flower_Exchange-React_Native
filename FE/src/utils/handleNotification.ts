@@ -56,3 +56,9 @@ export const updateToken = async (token: string) => {
     const response = await apiClient.put('/user/update-push-token', { pushToken: token });
     return response.data;
 }
+
+export const deletePushToken = async () => {
+    const response = await apiClient.put('/user/update-push-token', { pushToken: '' });
+    console.log('response 62', response)
+    return response.data;
+}
