@@ -6,7 +6,6 @@ const BASE_URL = process.env.EXPO_API_URL;
 console.log('BASE_URL', BASE_URL)
 
 const TOKEN_KEY = 'token';
-
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
 });
@@ -41,5 +40,9 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+
+
+
 
 export default apiClient;

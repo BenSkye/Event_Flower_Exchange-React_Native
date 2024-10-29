@@ -17,7 +17,9 @@ export const AddressProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [selectedAddress, setSelectedAddress] = useState<any>(null);
 
     useEffect(() => {
-        getAddress();
+        if (user) {
+            getAddress();
+        }
     }, [user]);
 
     const getAddress = async () => {

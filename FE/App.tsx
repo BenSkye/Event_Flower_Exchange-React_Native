@@ -1,11 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import RootNavigator, { RootStackParamList } from './src/navigation/RootNavigator';
-import { AuthProvider } from './src/context/AuthContext';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 import * as Notifications from 'expo-notifications';
 import { AddressProvider } from './src/context/AddressContext';
-import OrderDetail from './src/screens/OrderDetail';
-import * as Linking from 'expo-linking';
 import { StatusBar } from 'react-native';
 
 Notifications.setNotificationHandler({
