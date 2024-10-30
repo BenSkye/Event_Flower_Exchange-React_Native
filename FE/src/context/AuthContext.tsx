@@ -10,6 +10,7 @@ interface AuthContextType {
     user: any;
     register: (user: any) => Promise<any>; // Update the return type
     updateUser: (userData: any) => Promise<any>; // Thêm phương thức updateUser
+    changePassword: (oldPassword: string, newPassword: string, confirmPassword: string) => Promise<any>; // Thêm phương thức changePassword
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -82,8 +83,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const changePassword = async (oldPassword: string, newPassword: string, confirmPassword: string) => {
+        const response = await apiClient.patch('/auth/change-password', { 
+            oldPassword, 
+            newPassword,
+            confirmPassword 
+        });
+        console.log('Change password response:', response.data);
+        return response.data;
+    };
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, user, register, updateUser }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout, user, register, updateUser, changePassword }}>
             {children}
         </AuthContext.Provider>
     );
