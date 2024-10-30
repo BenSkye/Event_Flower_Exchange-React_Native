@@ -75,6 +75,7 @@ buttonIcon: {
     borderRadius: 8,
     padding: 16,
     elevation: 1,
+    marginBottom: 12,
   },
   sectionItem: {
     flexDirection: "row",
