@@ -5,6 +5,7 @@ import {
     FlatList,
     RefreshControl,
     ActivityIndicator,
+    Text,
 } from 'react-native';
 import ProductCard from './ProductCard';
 
@@ -24,7 +25,13 @@ const ProductList = ({
     hasMore,
 }: ProductListProps) => {
     const renderFooter = () => {
-        if (!hasMore) return null;
+        if (!hasMore) {
+            return (
+                <View style={styles.footerMessage}>
+                    <Text style={styles.endMessage}>Đã tải hết sản phẩm</Text>
+                </View>
+            );
+        }
         return (
             <View style={styles.footerLoader}>
                 <ActivityIndicator size="small" color="#4CAF50" />
@@ -72,6 +79,15 @@ const styles = StyleSheet.create({
     footerLoader: {
         paddingVertical: 20,
         alignItems: 'center',
+    },
+    footerMessage: {
+        paddingVertical: 20,
+        alignItems: 'center',
+    },
+    endMessage: {
+        color: '#666',
+        fontSize: 14,
+        fontStyle: 'italic',
     },
 });
 
