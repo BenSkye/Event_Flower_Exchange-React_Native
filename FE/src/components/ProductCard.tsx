@@ -3,140 +3,206 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { formatPrice } from '../utils';
 import { Image } from 'expo-image';
-import { FLOWER_FRENSHNESS_LABELS, FLOWER_STATUS_LABELS } from '../constant/indext';
+import { LinearGradient } from 'expo-linear-gradient';
+import { AUCTION_STATUS_COLORS, AUCTION_STATUS_LABELS, FRESHNESS_LABELS } from '../constant/indext';
+
+const FRESHNESS_COLORS = {
+    fresh: ['#4CAF50', '#45B649'],
+    slightly_wilted: ['#FF9800', '#F7971E'],
+    wilted: ['#F44336', '#E57373'],
+    expired: ['#795548', '#8D6E63']
+};
+
 const ProductCard = ({ data }: { data: any }) => {
     const navigation = useNavigation();
 
     const renderPriceInfo = () => {
         if (data.saleType === 'fixed_price') {
-            return <Text style={styles.price}> {formatPrice(data?.fixedPrice)}</Text>;
+            return (
+                <View style={styles.priceTag}>
+                    <Text style={styles.price}>{formatPrice(data?.fixedPrice)}</Text>
+                </View>
+            );
         } else if (data.saleType === 'auction') {
-            return <Text style={styles.auctionText}>Đấu giá</Text>;
+            return (
+                <View style={[styles.priceTag, styles.auctionTag]}>
+                    <Text style={styles.auctionText}>Đấu giá</Text>
+                </View>
+            );
         }
     };
 
+    const getFreshnessColors = () => {
+        return FRESHNESS_COLORS[data.freshness as keyof typeof FRESHNESS_COLORS] || FRESHNESS_COLORS.expired;
+    };
+
     return (
-        <View style={styles.container}>
-            <TouchableOpacity onPress={() => navigation.navigate('Detail', { id: data._id })}>
+        <TouchableOpacity
+            style={styles.container}
+            onPress={() => navigation.navigate('Detail', { id: data._id })}
+            activeOpacity={0.95}
+        >
+            <View style={styles.imageContainer}>
                 <Image
                     style={styles.image}
                     source={{ uri: data.images[0] }}
                     contentFit="cover"
                     placeholder={require('../../assets/splashDaisy.png')}
-                    placeholderContentFit="contain"
-                    transition={1000}
+                    transition={300}
                     cachePolicy="memory-disk"
                 />
-                <View style={styles.infoContainer}>
-                    <Text style={styles.name} numberOfLines={1}>{data.name}</Text>
-                    <View style={styles.priceContainer}>
-                        {renderPriceInfo()}
-                    </View>
-                    <View style={styles.userStatusContainer}>
-                        <Text style={styles.seller} numberOfLines={1}>{data.sellerId.userName}</Text>
-                        <Text style={styles.status} numberOfLines={1}>{FLOWER_STATUS_LABELS[data?.status as keyof typeof FLOWER_STATUS_LABELS]}</Text>
-                    </View>
+                <LinearGradient
+                    colors={getFreshnessColors()}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.freshnessTag}
+                >
+                    <Text style={styles.freshnessText}>
+                        {FRESHNESS_LABELS[data.freshness as keyof typeof FRESHNESS_LABELS]}
+                    </Text>
+                </LinearGradient>
 
-                </View>
-                <View style={[styles.freshness, styles[data.freshness as keyof typeof styles]]}>
-                    <Text style={styles[data.freshness as keyof typeof styles]}>
-                        {FLOWER_FRENSHNESS_LABELS[data.freshness as keyof typeof FLOWER_FRENSHNESS_LABELS]}
+                <View style={[
+                    styles.statusBadge,
+                    { backgroundColor: AUCTION_STATUS_COLORS[data.status as keyof typeof AUCTION_STATUS_COLORS] }
+                ]}>
+                    <Text style={styles.statusText}>
+                        {AUCTION_STATUS_LABELS[data.status as keyof typeof AUCTION_STATUS_LABELS]}
                     </Text>
                 </View>
-            </TouchableOpacity>
+            </View>
 
-        </View>
+            <View style={styles.infoContainer}>
+                <Text style={styles.name} numberOfLines={1}>
+                    {data.name}
+                </Text>
+
+                <View style={styles.bottomContainer}>
+                    <View style={styles.sellerContainer}>
+                        <View style={styles.sellerAvatar}>
+                            <Text style={styles.sellerInitial}>
+                                {data.sellerId.userName.charAt(0).toUpperCase()}
+                            </Text>
+                        </View>
+                        <Text style={styles.sellerName} numberOfLines={1}>
+                            {data.sellerId.userName}
+                        </Text>
+                    </View>
+                    {renderPriceInfo()}
+                </View>
+            </View>
+        </TouchableOpacity>
     );
 };
-
-export default ProductCard;
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
-        borderRadius: 12,
+        borderRadius: 16,
         marginBottom: 16,
         width: '48%',
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowRadius: 8,
+        elevation: 5,
+        overflow: 'hidden',
+    },
+    imageContainer: {
+        position: 'relative',
+        aspectRatio: 1,
+        backgroundColor: '#f5f5f5',
     },
     image: {
         width: '100%',
-        height: 180,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
+        height: '100%',
     },
     infoContainer: {
         padding: 12,
     },
     name: {
-        fontSize: 14,
-        fontWeight: '400',
-        marginBottom: 4,
+        fontSize: 15,
+        fontWeight: '600',
         color: '#2c3e50',
+        marginBottom: 8,
     },
-    userStatusContainer: {
+    bottomContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    seller: {
-        fontSize: 12,
-        color: '#7f8c8d',
+    sellerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         flex: 1,
         marginRight: 8,
     },
-    status: {
-        fontSize: 12,
-        color: '#7f8c8d',
-    },
-    priceContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    sellerAvatar: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#E8F5E9',
+        justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 4,
+        marginRight: 6,
+    },
+    sellerInitial: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#4CAF50',
+    },
+    sellerName: {
+        fontSize: 13,
+        color: '#666',
+        flex: 1,
+    },
+    priceTag: {
+        backgroundColor: '#E8F5E9',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
     },
     price: {
         fontSize: 14,
         fontWeight: '700',
-        color: '#16a085',
+        color: '#4CAF50',
+    },
+    auctionTag: {
+        backgroundColor: '#FFE0B2',
     },
     auctionText: {
         fontSize: 14,
         fontWeight: '700',
-        color: '#e74c3c',
+        color: '#F57C00',
     },
-    freshness: {
-        fontSize: 12,
-        fontWeight: '600',
-        paddingHorizontal: 8,
+    freshnessTag: {
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
+    },
+    freshnessText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
+        textTransform: 'capitalize',
+    },
+    statusBadge: {
         position: 'absolute',
-        top: 5,
-        right: 5,
-    },
-    fresh: {
-        backgroundColor: '#e8f5e9',
-        color: '#4caf50',
+        bottom: 8,
+        left: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
         borderRadius: 12,
+        backgroundColor: '#4CAF50',
     },
-    slightly_wilted: {
-        backgroundColor: '#fff3e0',
-        color: '#ff9800',
-        borderRadius: 12,
-    },
-    wilted: {
-        backgroundColor: '#ffebee',
-        color: '#f44336',
-        borderRadius: 12,
-    },
-    expired: {
-        backgroundColor: '#efebe9',
-        color: '#795548',
-        borderRadius: 12,
+    statusText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
     },
 });
+
+export default ProductCard;

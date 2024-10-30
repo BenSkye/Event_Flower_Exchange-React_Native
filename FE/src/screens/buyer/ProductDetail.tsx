@@ -1,16 +1,37 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, TextInput, Alert, RefreshControl, KeyboardAvoidingView, Platform, FlatList } from 'react-native';
+import {
+    View,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    ActivityIndicator,
+    Dimensions,
+    TextInput,
+    Alert,
+    RefreshControl,
+    KeyboardAvoidingView,
+    Platform,
+    Animated
+} from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ImageView from "react-native-image-viewing";
 import { Image } from 'expo-image';
-
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { getFlowerById } from '../../services/flower';
 import { placeBid, getAuctionByFlowerId } from '../../services/auction';
 import AuctionDetail from './AuctionDetail';
 import ProductDetailStyle from '../../styles/ProductDetailStyle';
 import { formatInputPrice, formatPrice, parseInputPrice } from '../../utils';
 import { useAuth } from '../../context/AuthContext';
-import { FLOWER_FRENSHNESS_LABELS, FLOWER_STATUS_LABELS } from '../../constant/indext';
+import {
+    FRESHNESS_COLORS,
+    FRESHNESS_LABELS,
+    AUCTION_STATUS_COLORS,
+    AUCTION_STATUS_LABELS,
+    PRODUCT_STATUS_LABELS
+} from '../../constant/indext';
 
 type ParamList = {
     Detail: {
@@ -31,7 +52,7 @@ const ProductDetail = () => {
     const [auctionInfo, setAuctionInfo] = useState<any>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [auctionKey, setAuctionKey] = useState(0);
-    const [activeIndex, setActiveIndex] = useState(0);
+    const scrollY = useRef(new Animated.Value(0)).current;
 
     const { user } = useAuth();
 
@@ -63,6 +84,7 @@ const ProductDetail = () => {
     const handleBackPress = () => {
         navigation.goBack();
     };
+
     const handleBidAmountChange = (value: string) => {
         const formattedValue = formatInputPrice(value);
         setBidAmount(formattedValue);
@@ -82,8 +104,7 @@ const ProductDetail = () => {
 
         try {
             const result = await placeBid(auctionInfo._id, amount);
-            Alert.alert('Bid Placed', 'Your bid has been placed successfully');
-            // Update auction info
+            Alert.alert('Success', 'Your bid has been placed successfully');
             setAuctionInfo(result);
             setBidAmount('');
             onRefresh();
@@ -93,31 +114,10 @@ const ProductDetail = () => {
         }
     };
 
-
-    const renderImageItem = ({ item, index }: { item: string; index: number }) => (
-        <TouchableOpacity
-            onPress={() => {
-                setCurrentImageIndex(index);
-                setIsImageViewVisible(true);
-            }}
-        >
-            <Image
-                style={[
-                    ProductDetailStyle.slideImage,
-                    activeIndex === index && ProductDetailStyle.activeSlideImage
-                ]}
-                source={{ uri: item }}
-                contentFit="cover"
-                transition={1000}
-            />
-        </TouchableOpacity>
-    );
-
-
     if (!product) {
         return (
             <View style={ProductDetailStyle.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#4CAF50" />
             </View>
         );
     }
@@ -125,155 +125,215 @@ const ProductDetail = () => {
     const images = product.images.map((url: string) => ({ uri: url }));
 
     const getFreshnessStyle = (freshness: string) => {
-        const validFreshnessStyles = ['fresh', 'slightly_wilted', 'wilted', 'expired'];
-        return validFreshnessStyles.includes(freshness) ? ProductDetailStyle[freshness as keyof typeof ProductDetailStyle] : {};
+        return {
+            backgroundColor: FRESHNESS_COLORS[freshness as keyof typeof FRESHNESS_COLORS][0],
+            color: 'white'
+        };
     };
+
+    const headerOpacity = scrollY.interpolate({
+        inputRange: [0, 200],
+        outputRange: [0, 1],
+        extrapolate: 'clamp',
+    });
 
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: '#fff' }}
         >
+            <Animated.View style={[
+                ProductDetailStyle.header,
+                {
+                    opacity: headerOpacity,
+                    zIndex: 2,
+                }
+            ]}>
+                <BlurView intensity={100} style={ProductDetailStyle.headerBlur}>
+                    <TouchableOpacity onPress={handleBackPress} style={ProductDetailStyle.headerBackButton}>
+                        <MaterialIcons name="arrow-back-ios" size={24} color="#333" />
+                    </TouchableOpacity>
+                    <Text style={ProductDetailStyle.headerTitle} numberOfLines={1}>
+                        {product.name}
+                    </Text>
+                </BlurView>
+            </Animated.View>
+
             <ImageView
                 images={images}
                 imageIndex={currentImageIndex}
                 visible={isImageViewVisible}
                 onRequestClose={() => setIsImageViewVisible(false)}
+                swipeToCloseEnabled
+                doubleTapToZoomEnabled
             />
-            <ScrollView
+
+            <Animated.ScrollView
                 ref={scrollViewRef}
                 style={ProductDetailStyle.container}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: true }
+                )}
+                scrollEventThrottle={16}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
+                        tintColor="#4CAF50"
                     />
                 }
             >
-                <TouchableOpacity style={ProductDetailStyle.backButton} onPress={handleBackPress}>
-                    <Text style={ProductDetailStyle.backButtonText}>←</Text>
+                <TouchableOpacity
+                    style={ProductDetailStyle.backButton}
+                    onPress={handleBackPress}
+                >
+                    <MaterialIcons name="arrow-back-ios" size={24} color="#333" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => setIsImageViewVisible(true)}>
+                <TouchableOpacity
+                    onPress={() => setIsImageViewVisible(true)}
+                    activeOpacity={0.95}
+                >
                     <View style={ProductDetailStyle.imageContainer}>
-                        <FlatList
-                            data={product.images}
-                            renderItem={renderImageItem}
-                            horizontal
-                            pagingEnabled
-                            showsHorizontalScrollIndicator={false}
-                            onScroll={e => {
-                                const x = e.nativeEvent.contentOffset.x;
-                                setActiveIndex(Math.round(x / screenWidth));
-                            }}
-                            snapToInterval={screenWidth}
-                            decelerationRate="fast"
-                            keyExtractor={(_, index) => index.toString()}
+                        <Image
+                            style={ProductDetailStyle.image}
+                            source={{ uri: product.images[0] }}
+                            contentFit="cover"
+                            placeholder={require('../../../assets/splashDaisy.png')}
+                            placeholderContentFit="contain"
+                            transition={1000}
                         />
-                        <View style={ProductDetailStyle.pagination}>
-                            {product.images.map((_: string, index: number) => (
-                                <View
-                                    key={index}
-                                    style={[
-                                        ProductDetailStyle.paginationDot,
-                                        index === activeIndex && ProductDetailStyle.paginationDotActive
-                                    ]}
-                                />
-                            ))}
-                        </View>
-                        <View style={[ProductDetailStyle.freshness, getFreshnessStyle(product.freshness)]}>
-                            <Text style={getFreshnessStyle(product.freshness)}>
-                                {FLOWER_FRENSHNESS_LABELS[product.freshness as keyof typeof FLOWER_FRENSHNESS_LABELS]}
+                        <LinearGradient
+                            colors={['transparent', 'rgba(0,0,0,0.4)']}
+                            style={ProductDetailStyle.imageGradient}
+                        />
+                        <View style={[
+                            ProductDetailStyle.freshnessTag,
+                            getFreshnessStyle(product.freshness)
+                        ]}>
+                            <Text style={[
+                                ProductDetailStyle.freshnessText,
+                                { color: 'white' }
+                            ]}>
+                                {FRESHNESS_LABELS[product.freshness as keyof typeof FRESHNESS_LABELS]}
                             </Text>
                         </View>
                     </View>
                 </TouchableOpacity>
 
-                <View style={ProductDetailStyle.infoContainer}>
-                    <Text style={ProductDetailStyle.name}>{product.name}</Text>
-                    <Text style={ProductDetailStyle.price}>
-                        {product.saleType === 'fixed_price'
-                            ? `${formatPrice(product.fixedPrice)}`
-                            : 'Đấu giá'}
-                    </Text>
+                <View style={ProductDetailStyle.contentContainer}>
+                    <View style={ProductDetailStyle.mainInfo}>
+                        <Text style={ProductDetailStyle.name}>{product.name}</Text>
+                        <Text style={ProductDetailStyle.price}>
+                            {product.saleType === 'fixed_price'
+                                ? formatPrice(product.fixedPrice)
+                                : 'Đấu giá'}
+                        </Text>
+                    </View>
+
+                    <View style={ProductDetailStyle.sellerInfo}>
+                        <Ionicons name="person-circle-outline" size={24} color="#666" />
+                        <Text style={ProductDetailStyle.sellerName}>
+                            {product.sellerId.userName}
+                        </Text>
+                    </View>
+
                     {product.saleType === 'auction' && auctionInfo && (
-                        <View style={ProductDetailStyle.auctionInfo}>
-                            <Text style={ProductDetailStyle.auctionInfoText}>
-                                Giá khởi điểm: {formatPrice(auctionInfo.startingPrice)}
+                        <View style={ProductDetailStyle.auctionInfoCard}>
+                            <Text style={[
+                                ProductDetailStyle.auctionStatus,
+                                { color: AUCTION_STATUS_COLORS[auctionInfo.status as keyof typeof AUCTION_STATUS_COLORS] }
+                            ]}>
+                                {AUCTION_STATUS_LABELS[auctionInfo.status as keyof typeof AUCTION_STATUS_LABELS]}
                             </Text>
-                            {auctionInfo.isBuyNow && (
-                                <Text style={ProductDetailStyle.auctionInfoText}>
-                                    Giá mua ngay: {formatPrice(auctionInfo.buyNowPrice)}
-                                </Text>
-                            )}
-                            {auctionInfo.currentPrice && (
-                                <Text style={ProductDetailStyle.auctionInfoText}>
-                                    Giá hiện tại: {formatPrice(auctionInfo.currentPrice)}
-                                </Text>)
-                            }
+                            <Text style={ProductDetailStyle.auctionTitle}>Thông tin đấu giá</Text>
+                            <View style={ProductDetailStyle.auctionDetails}>
+                                <View style={ProductDetailStyle.auctionRow}>
+                                    <Text style={ProductDetailStyle.auctionLabel}>Giá khởi điểm:</Text>
+                                    <Text style={ProductDetailStyle.auctionValue}>
+                                        {formatPrice(auctionInfo.startingPrice)}
+                                    </Text>
+                                </View>
+                                {auctionInfo.isBuyNow && (
+                                    <View style={ProductDetailStyle.auctionRow}>
+                                        <Text style={ProductDetailStyle.auctionLabel}>Giá mua ngay:</Text>
+                                        <Text style={ProductDetailStyle.auctionValue}>
+                                            {formatPrice(auctionInfo.buyNowPrice)}
+                                        </Text>
+                                    </View>
+                                )}
+                                {auctionInfo.currentPrice && (
+                                    <View style={ProductDetailStyle.auctionRow}>
+                                        <Text style={ProductDetailStyle.auctionLabel}>Giá hiện tại:</Text>
+                                        <Text style={[ProductDetailStyle.auctionValue, ProductDetailStyle.currentPrice]}>
+                                            {formatPrice(auctionInfo.currentPrice)}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
                         </View>
                     )}
-                    <Text style={ProductDetailStyle.seller}>Người bán: {product.sellerId.userName}</Text>
-                    <Text style={ProductDetailStyle.description}>Mô tả: {product.description}</Text>
-                    <View style={ProductDetailStyle.detailsContainer}>
-                        <Text style={ProductDetailStyle.detailItem}>Danh mục: {product.categoryId.name}</Text>
-                        <Text style={ProductDetailStyle.detailItem}>Trạng thái: {FLOWER_STATUS_LABELS[product.status as keyof typeof FLOWER_STATUS_LABELS]}</Text>
-                    </View>
-                </View>
-                {product.saleType === 'auction' && auctionInfo?.status === 'active' && auctionInfo.isBuyNow && user?._id !== product.sellerId._id && (
-                    <TouchableOpacity
-                        style={ProductDetailStyle.button}
-                        onPress={() => {
-                            navigation.navigate('Checkout', { flowerId: product._id });
-                        }}
-                    >
-                        <Text style={ProductDetailStyle.buttonTextBuyNow}>
-                            Mua ngay trong đấu giá với {formatPrice(auctionInfo.buyNowPrice)}
+
+                    <View style={ProductDetailStyle.descriptionCard}>
+                        <Text style={ProductDetailStyle.descriptionTitle}>Mô tả sản phẩm</Text>
+                        <Text style={ProductDetailStyle.descriptionText}>
+                            {product.description}
                         </Text>
-                    </TouchableOpacity>
-                )}
-                {product.saleType === 'auction' && (
-                    <AuctionDetail key={auctionKey} flowerId={product._id} />
-                )}
-
-            </ScrollView>
-            {product.saleType === 'fixed_price' && user?._id !== product.sellerId._id ? (
-                <TouchableOpacity
-                    style={ProductDetailStyle.button}
-                    onPress={() => {
-                        navigation.navigate('Checkout', { flowerId: product._id });
-                    }}
-                >
-                    <Text style={ProductDetailStyle.buttonText}>
-                        Mua ngay
-                    </Text>
-                </TouchableOpacity>
-            ) : (
-                auctionInfo?.status === 'active' && user?._id !== product.sellerId._id && (
-                    <View>
-                        <TextInput
-                            style={ProductDetailStyle.input}
-                            value={bidAmount}
-                            onChangeText={handleBidAmountChange}
-                            placeholder="Nhập giá đấu"
-                            keyboardType="numeric"
-                        />
-                        <TouchableOpacity style={ProductDetailStyle.button} onPress={() => {
-                            if (user) {
-                                handlePlaceBid();
-                            } else {
-                                navigation.navigate('Login');
-                            }
-                        }}>
-                            <Text style={ProductDetailStyle.buttonText}>
-                                Đặt giá
-                            </Text>
-                        </TouchableOpacity>
                     </View>
-                )
-            )}
 
-        </KeyboardAvoidingView >
+                    <View style={ProductDetailStyle.detailsCard}>
+                        <View style={ProductDetailStyle.detailRow}>
+                            <Ionicons name="flower-outline" size={20} color="#666" />
+                            <Text style={ProductDetailStyle.detailText}>
+                                Danh mục: {product.categoryId.name}
+                            </Text>
+                        </View>
+                        <View style={ProductDetailStyle.detailRow}>
+                            <Ionicons name="information-circle-outline" size={20} color="#666" />
+                            <Text style={ProductDetailStyle.detailText}>
+                                Trạng thái: {PRODUCT_STATUS_LABELS[product.status as keyof typeof PRODUCT_STATUS_LABELS]}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {product.saleType === 'auction' && (
+                        <AuctionDetail key={auctionKey} flowerId={product._id} />
+                    )}
+                </View>
+            </Animated.ScrollView>
+
+            {/* Bottom Action Buttons */}
+            <View style={ProductDetailStyle.bottomActions}>
+                {product.saleType === 'fixed_price' && user?._id !== product.sellerId._id ? (
+                    <TouchableOpacity
+                        style={ProductDetailStyle.buyButton}
+                        onPress={() => navigation.navigate('Checkout', { flowerId: product._id })}
+                    >
+                        <Text style={ProductDetailStyle.buyButtonText}>Mua ngay</Text>
+                    </TouchableOpacity>
+                ) : (
+                    auctionInfo?.status === 'active' && user?._id !== product.sellerId._id && (
+                        <View style={ProductDetailStyle.bidContainer}>
+                            <TextInput
+                                style={ProductDetailStyle.bidInput}
+                                value={bidAmount}
+                                onChangeText={handleBidAmountChange}
+                                placeholder="Nhập giá đấu"
+                                keyboardType="numeric"
+                                placeholderTextColor="#999"
+                            />
+                            <TouchableOpacity
+                                style={ProductDetailStyle.bidButton}
+                                onPress={() => user ? handlePlaceBid() : navigation.navigate('Login')}
+                            >
+                                <Text style={ProductDetailStyle.bidButtonText}>Đặt giá</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                )}
+            </View>
+        </KeyboardAvoidingView>
     );
 };
 

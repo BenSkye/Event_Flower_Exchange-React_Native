@@ -1,87 +1,182 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  backgroundLinearGradient: {
+  backgroundImage: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
+    width: '100%',
     height: '100%',
+    resizeMode: 'cover',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   scrollView: {
     flexGrow: 1,
+  },
+  contentContainer: {
+    flex: 1,
     justifyContent: 'center',
     padding: 20,
   },
-  logo: {
-    width: 120,
-    height: 120,
-    alignSelf: 'center',
-    marginBottom: 20,
-    borderRadius: 60, // Thêm dòng này để bo tròn logo
-  },
-  slogan: {
-    fontSize: 18,
-    color: '#FFFFFF', // Đổi màu chữ slogan thành trắng để tương phản với nền
-    textAlign: 'center',
+  headerContainer: {
+    alignItems: 'center',
     marginBottom: 30,
-    fontStyle: 'italic',
+  },
+  welcomeText: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  subText: {
+    fontSize: 18,
+    color: '#fff',
+    opacity: 0.9,
+  },
+  formContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)', // Tăng độ đục của nền input
-    borderRadius: 10,
-    marginBottom: 15,
-    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    height: 56,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   icon: {
-    marginRight: 10,
+    marginRight: 12,
   },
   input: {
     flex: 1,
-    padding: 15,
     fontSize: 16,
     color: '#333',
   },
-  button: {
-    backgroundColor: '#bfc9ca', // Black color for login button
-    borderRadius: 10,
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 10,
+  eyeIcon: {
+    padding: 8,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  rememberContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  // checkbox: {
+  //   width: 20,
+  //   height: 20,
+  //   borderRadius: 4,
+  //   borderWidth: 1,
+  //   borderColor: '#2E7D32',
+  //   marginRight: 8,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: '#fff',
+  // },
+  rememberText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  forgotText: {
+    fontSize: 14,
+    color: '#2E7D32',
+    fontWeight: '600',
+  },
+  loginButton: {
+    backgroundColor: '#2E7D32',
+    borderRadius: 12,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  loginButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    alignItems: 'center',
+    marginTop: 16,
   },
   footerText: {
-    color: '#FFFFFF', // Đảm bảo màu chữ là trắng
     fontSize: 14,
+    color: '#666',
   },
-  footerLink: {
-    color: '#FFFFFF', // Đảm bảo màu chữ là trắng
+  signUpText: {
     fontSize: 14,
-    fontWeight: 'bold',
-    marginLeft: 5,
-    textDecorationLine: 'underline',
+    color: '#2E7D32',
+    fontWeight: '600',
+    marginLeft: 4,
   },
   backButton: {
     position: 'absolute',
-    left: 10,
-    top: 20,
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: '#006400',
-  },
+    top: 40,
+    left: 20,
+    zIndex: 1,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },loginButtonDisabled: {
+  backgroundColor: '#cccccc', 
+  opacity: 0.7,
+},errorMessage: {
+  color: '#ff0000',
+  fontSize: 14,
+  marginBottom: 10,
+  textAlign: 'center',
+  padding: 5,
+},
+checkbox: {
+  width: 20,
+  height: 20,
+  borderWidth: 1,
+  borderColor: '#2E7D32',
+  borderRadius: 4,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginRight: 8,
+},
+checkboxChecked: {
+  backgroundColor: '#fff',
+},
 });

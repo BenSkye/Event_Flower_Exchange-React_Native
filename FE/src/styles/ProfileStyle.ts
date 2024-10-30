@@ -7,7 +7,7 @@ const ProfileStyle = StyleSheet.create({
   },
   headerSection: {
     alignItems: "center",
-    backgroundColor: "#5a61c9",
+    backgroundColor: "#4CAF50",
     paddingVertical: 40,
     paddingHorizontal: 20,
   },
@@ -47,7 +47,7 @@ const ProfileStyle = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    color: "#5a61c9",
+    color: "#4CAF50",
     marginBottom: 8,
     fontWeight: "600",
   },

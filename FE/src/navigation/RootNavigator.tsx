@@ -65,9 +65,9 @@ const PROTECTED_SCREENS = [
 
 // Material Design 3 color palette
 const colors = {
-    primary: '#5a61c9',
-    secondary: '#03DAC6',
-    background: '#F5F5F5',
+    primary: '#4CAF50',
+    secondary: '#4CAF50',
+    background: '#4CAF50',
     surface: '#FFFFFF',
     onPrimary: '#FFFFFF',
     onSecondary: '#000000',

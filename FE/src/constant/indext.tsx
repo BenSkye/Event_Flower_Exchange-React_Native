@@ -41,12 +41,30 @@ export const FLOWER_STATUS_LABELS = {
     'unavailable': 'Không có sẵn',
 }
 
-export const FLOWER_FRENSHNESS_LABELS = {
-    'fresh': 'Tươi',
-    'slightly_wilted': 'Hơi héo',
-    'wilted': 'Héo',
-    'expired': 'Hết hạn',
+export const FRESHNESS_COLORS = {
+    'fresh': ['#4CAF50', '#45B649'],
+    'slightly_wilted': ['#FF9800', '#F7971E'],
+    'wilted': ['#F44336', '#E57373'],
+    'expired': ['#795548', '#8D6E63']
 }
 
+export const FRESHNESS_LABELS = {
+    'fresh': 'Tươi mới',
+    'slightly_wilted': 'Hơi héo',
+    'wilted': 'Đã héo',
+    'expired': 'Hết hạn'
+}
+export const PRODUCT_STATUS_LABELS = {
+    'available': 'Có sẵn',
+    'unavailable': 'Không có sẵn',
+    'sold': 'Đã bán',
+    'pending': 'Chờ xác nhận',
+}
+
+
+export type FreshnessColors = keyof typeof FRESHNESS_COLORS;
+export type FreshnessLabels = keyof typeof FRESHNESS_LABELS;
 export type OrderStatus = keyof typeof ORDER_STATUS_COLORS;
 export type OrderStatusLabel = keyof typeof ORDER_STATUS_LABELS;
+export type ProductStatus = keyof typeof PRODUCT_STATUS_LABELS;
+export type ProductStatusLabel = keyof typeof PRODUCT_STATUS_LABELS;
