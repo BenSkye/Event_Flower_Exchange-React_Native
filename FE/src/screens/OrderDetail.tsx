@@ -3,7 +3,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import React, { useLayoutEffect, useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import { getOrderbyOrdercode } from '../services/order';
-import { Button, Text, Image } from 'react-native-elements';
 
 const OrderDetail = ({ route }: { route: any }) => {
     const { orderCode, pageBack } = route.params;
@@ -41,28 +40,29 @@ const OrderDetail = ({ route }: { route: any }) => {
         fetchOrderDetails();
     }, [orderCode]);
 
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.header}>Order Details</Text>
             {orderDetails ? (
-                <View style={styles.detailContainer}>
-                    <Text style={styles.title}>Thông tin đơn hàng</Text>
-                    <Text style={styles.label}>Mã đơn hàng:</Text>
+                <View style={styles.detailsContainer}>
+                    <Text style={styles.label}>Order Code:</Text>
                     <Text style={styles.value}>{orderDetails.orderCode}</Text>
-                    <Text style={styles.label}>Giá:</Text>
-                    <Text style={styles.value}>{orderDetails.price} vnđ</Text>
-                    <Text style={styles.label}>Trạng thái đơn hàng:</Text>
-                    <Text style={styles.value}>
-                        {orderDetails.status === 'completed' ? 'Đã thanh toán' : orderDetails.status}
-                    </Text>
-                    <Text style={styles.label}>Tên:</Text>
-                    <Text style={styles.value}>{orderDetails.flowerId.name}</Text>
-                    <Text style={styles.label}>Mô tả:</Text>
-                    <Text style={styles.value}>{orderDetails.flowerId.description}</Text>
-                    <Image
-                        source={{ uri: orderDetails.flowerId.images[0] }}
-                        style={styles.flowerImage}
-                        PlaceholderContent={<Text>Loading...</Text>}
-                    />
+                    <Text style={styles.label}>Price:</Text>
+                    <Text style={styles.value}>{orderDetails.price}</Text>
+                    <Text style={styles.label}>Status:</Text>
+                    <Text style={styles.value}>{orderDetails.status}</Text>
+                    <View style={styles.flowerContainer}>
+                        <Text style={styles.subHeader}>Flower Details</Text>
+                        <Text style={styles.label}>Name:</Text>
+                        <Text style={styles.value}>{orderDetails.flowerId.name}</Text>
+                        <Text style={styles.label}>Description:</Text>
+                        <Text style={styles.value}>{orderDetails.flowerId.description}</Text>
+                        <Image
+                            source={{ uri: orderDetails.flowerId.images[0] }}
+                            style={styles.flowerImage}
+                        />
+                    </View>
                 </View>
             ) : (
                 <Text style={styles.loadingText}>Loading...</Text>
@@ -74,45 +74,89 @@ const OrderDetail = ({ route }: { route: any }) => {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
+        padding: 20,
         backgroundColor: '#f8f9fa',
     },
-    detailContainer: {
-        padding: 16,
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+        color: '#333',
+    },
+    detailsContainer: {
         backgroundColor: '#fff',
-        borderRadius: 8,
-        margin: 16,
+        borderRadius: 10,
+        padding: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowRadius: 5,
+        elevation: 3,
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 16,
-        textAlign: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+        paddingBottom: 8,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#333',
+        marginLeft: 8,
+    },
+    sectionContent: {
+        gap: 8,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 4,
     },
     label: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#555',
-        marginTop: 10,
+        fontSize: 15,
+        color: '#666',
+        flex: 1,
     },
     value: {
-        fontSize: 16,
+        fontSize: 15,
         color: '#333',
+        flex: 2,
+    },
+    subHeader: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop: 20,
         marginBottom: 10,
+        color: '#333',
+    },
+    flowerContainer: {
+        marginTop: 20,
     },
     flowerImage: {
         width: '100%',
         height: 200,
-        borderRadius: 10,
-        marginTop: 10,
+        borderRadius: 8,
+        marginBottom: 12,
+    },
+    flowerName: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 8,
+    },
+    description: {
+        fontSize: 15,
+        color: '#666',
+        lineHeight: 22,
     },
     loadingText: {
-        fontSize: 18,
-        color: '#999',
+        fontSize: 16,
+        color: '#666',
         textAlign: 'center',
         marginTop: 20,
     },

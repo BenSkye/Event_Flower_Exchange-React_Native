@@ -24,3 +24,29 @@ export const parseInputPrice = (value: string): number => {
 export const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString();
 }
+
+export const formatDateTime = {
+  // Format: DD/MM/YYYY HH:mm
+  short: (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  },
+
+  // Format: DD tháng MM, YYYY HH:mm
+  full: (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getDate()} tháng ${date.getMonth() + 1}, ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  },
+
+  // Chỉ lấy ngày tháng năm
+  dateOnly: (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+  },
+
+  // Chỉ lấy giờ phút
+  timeOnly: (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  }
+};

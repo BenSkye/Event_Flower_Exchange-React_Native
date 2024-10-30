@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 import {
     View,
     Text,
@@ -97,6 +100,7 @@ const HomeScreen = () => {
     }, []);
 
     const handleSearch = (search: string) => {
+        setProducts([]);
         setSearch(search);
         fetchData(1, true);
     }
@@ -616,6 +620,13 @@ const styles = StyleSheet.create({
     },
     filterOptionTextActive: {
         fontWeight: '500',
+    },
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#ebedef',
+    },
+    scrollContainer: {
+        flexGrow: 1,
     },
     loadingContainer: {
         flex: 1,

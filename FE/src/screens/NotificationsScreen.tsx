@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { getPersonalNotification } from '../services/notification';
 import { Link, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { formatDateTime } from '../utils';
 
 interface NotificationItemProps {
     title: string;
@@ -77,7 +78,6 @@ const NotificationsScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.screenTitle}>Thông báo</Text>
             <FlatList
                 data={notifications}
                 keyExtractor={(item) => item._id}
