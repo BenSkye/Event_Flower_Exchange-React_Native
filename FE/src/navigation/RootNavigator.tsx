@@ -21,7 +21,7 @@ import AddressPicker from '../screens/AddressPicker';
 import OrderDetail from '../screens/OrderDetail';
 import { useAuth } from '../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
-
+import ChangePassword from '../screens/ChangePassword';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -46,6 +46,7 @@ export type RootStackParamList = {
     AddAddress: undefined;
     AddressPicker: undefined;
     OrderDetail: { orderCode: number, pageBack: string };
+    ChangePassword: undefined;
 };
 
 const PROTECTED_SCREENS = [
@@ -214,6 +215,7 @@ const RootNavigator = () => {
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name='SellProduct' component={PostProduct} />
             <Stack.Screen name='ManageProduct' component={ManageProduct} />
+            
             <Stack.Screen
                 name="Checkout"
                 component={withProtectedScreen(Checkout, 'Checkout')}
@@ -276,6 +278,25 @@ const RootNavigator = () => {
                 },
                 headerBackTitleVisible: false
             }}
+            />
+            <Stack.Screen 
+              name='ChangePassword' 
+              component={ChangePassword} 
+              options={{
+                headerShown: true,
+                title: 'Đổi mật khẩu',
+                headerStyle: {
+                    backgroundColor: colors.primary,
+                },
+                headerTintColor: colors.onPrimary,
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false,
+                headerBackImage: () => (
+                    <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
+                ),
+              }}
             />
         </Stack.Navigator>
     );
