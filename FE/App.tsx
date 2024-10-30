@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import * as Notifications from 'expo-notifications';
 import { AddressProvider } from './src/context/AddressContext';
 import { StatusBar } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -60,16 +61,18 @@ export default function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <AddressProvider>
-        <NavigationContainer ref={navigationRef}>
-          <StatusBar
-            backgroundColor="#fff"
-            barStyle="dark-content"
-          />
-          <RootNavigator />
-        </NavigationContainer>
-      </AddressProvider>
-    </AuthProvider>
+    <PaperProvider>
+      <AuthProvider>
+        <AddressProvider>
+          <NavigationContainer ref={navigationRef}>
+            <StatusBar
+              backgroundColor="#fff"
+              barStyle="dark-content"
+            />
+            <RootNavigator />
+          </NavigationContainer>
+        </AddressProvider>
+      </AuthProvider>
+    </PaperProvider>
   );
 }

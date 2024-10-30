@@ -16,5 +16,8 @@ class FlowerRepository {
   async getFlowerBySellerId(sellerId: string) {
     return Flower.find({ sellerId })
   }
+  async deleteFlower(flowerId: string) {
+    return Flower.findByIdAndDelete(flowerId)
+  }
 }
 export default new FlowerRepository()

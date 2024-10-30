@@ -21,7 +21,9 @@ import AddressPicker from '../screens/AddressPicker';
 import OrderDetail from '../screens/OrderDetail';
 import { useAuth } from '../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
+import EditProductScreen from '../screens/seller/EditProductScreen';
 import ChangePassword from '../screens/ChangePassword';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -211,11 +213,12 @@ const RootNavigator = () => {
             <Stack.Screen name="Detail" component={DetailScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="EditProduct" component={EditProductScreen} />
 
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name='SellProduct' component={PostProduct} />
             <Stack.Screen name='ManageProduct' component={ManageProduct} />
-            
+
             <Stack.Screen
                 name="Checkout"
                 component={withProtectedScreen(Checkout, 'Checkout')}
@@ -279,24 +282,24 @@ const RootNavigator = () => {
                 headerBackTitleVisible: false
             }}
             />
-            <Stack.Screen 
-              name='ChangePassword' 
-              component={ChangePassword} 
-              options={{
-                headerShown: true,
-                title: 'Đổi mật khẩu',
-                headerStyle: {
-                    backgroundColor: colors.primary,
-                },
-                headerTintColor: colors.onPrimary,
-                headerTitleStyle: {
-                    fontWeight: 'bold',
-                },
-                headerBackTitleVisible: false,
-                headerBackImage: () => (
-                    <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
-                ),
-              }}
+            <Stack.Screen
+                name='ChangePassword'
+                component={ChangePassword}
+                options={{
+                    headerShown: true,
+                    title: 'Đổi mật khẩu',
+                    headerStyle: {
+                        backgroundColor: colors.primary,
+                    },
+                    headerTintColor: colors.onPrimary,
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    headerBackTitleVisible: false,
+                    headerBackImage: () => (
+                        <Icon name="arrow-back" size={24} color={colors.onPrimary} style={{ marginLeft: 10 }} />
+                    ),
+                }}
             />
         </Stack.Navigator>
     );
