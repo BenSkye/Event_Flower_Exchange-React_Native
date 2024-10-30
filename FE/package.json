@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "expo/AppEntry.js",
   "scripts": {
-    
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -25,6 +24,7 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "expo": "~51.0.28",
+    "expo-blur": "^13.0.2",
     "expo-device": "^6.0.2",
     "expo-image": "~1.13.0",
     "expo-image-picker": "^15.0.7",

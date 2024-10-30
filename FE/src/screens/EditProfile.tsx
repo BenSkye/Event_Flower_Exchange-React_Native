@@ -23,7 +23,7 @@ const EditProfile = () => {
     };
 
     await updateUser(updatedUser);
-    
+
     navigation.navigate('Profile');
   };
 
