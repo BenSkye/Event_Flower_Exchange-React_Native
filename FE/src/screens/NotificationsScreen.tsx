@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { getPersonalNotification } from '../services/notification';
 import { Link, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { formatDateTime } from '../utils';
 
 interface NotificationItemProps {
     title: string;

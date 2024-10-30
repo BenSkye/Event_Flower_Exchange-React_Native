@@ -101,13 +101,13 @@ const OrdersScreen = () => {
                 keyExtractor={item => item._id}
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
-                        <Text>No orders found</Text>
+                        <Text>Không có đơn hàng</Text>
                     </View>
                 }
                 ListFooterComponent={
                     filteredOrders.length > 0 ? (
                         <View style={styles.footer}>
-                            <Text>Hết đơn hàng</Text>
+                            <Text></Text>
                         </View>
                     ) : null
                 }

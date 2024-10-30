@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
         backgroundColor: '#fff',
+        height: '100%',
     },
     selectedText: {
         fontSize: 20,

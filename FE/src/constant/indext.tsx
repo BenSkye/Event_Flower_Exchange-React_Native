@@ -34,6 +34,13 @@ export const AUCTION_STATUS_LABELS = {
     'active': 'Đang diễn ra',
 }
 
+export const FLOWER_STATUS_LABELS = {
+    'in_auction': 'Đang đấu giá',
+    'sold': 'Đã bán',
+    'available': 'Đang bán',
+    'unavailable': 'Không có sẵn',
+}
+
 export const FRESHNESS_COLORS = {
     'fresh': ['#4CAF50', '#45B649'],
     'slightly_wilted': ['#FF9800', '#F7971E'],
