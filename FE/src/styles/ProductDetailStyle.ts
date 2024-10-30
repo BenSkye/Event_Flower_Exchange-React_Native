@@ -33,13 +33,6 @@ const ProductDetailStyle = StyleSheet.create({
     bottom: 0,
     paddingVertical: 10,
   },
-  paginationDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.92)',
-  },
   fresh: {
     backgroundColor: '#e8f5e9',
     color: '#4caf50',
@@ -193,6 +186,39 @@ const ProductDetailStyle = StyleSheet.create({
     top: 20,
     right: 20,
     zIndex: 10,
+  },
+  imageContainer: {
+    position: 'relative',
+    height: screenWidth,  // Giữ tỷ lệ vuông
+    width: screenWidth,
+  },
+  slideImage: {
+    width: screenWidth,
+    height: screenWidth,
+  },
+  pagination: {
+    position: 'absolute',
+    bottom: 16,
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    backgroundColor: '#fff',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  activeSlideImage: {
+    opacity: 1,
   },
 });
 

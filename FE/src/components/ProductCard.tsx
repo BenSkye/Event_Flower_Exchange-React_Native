@@ -3,14 +3,15 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { formatPrice } from '../utils';
 import { Image } from 'expo-image';
+import { FLOWER_FRENSHNESS_LABELS, FLOWER_STATUS_LABELS } from '../constant/indext';
 const ProductCard = ({ data }: { data: any }) => {
     const navigation = useNavigation();
 
     const renderPriceInfo = () => {
         if (data.saleType === 'fixed_price') {
-            return <Text style={styles.price}> ${formatPrice(data?.fixedPrice)}</Text>;
+            return <Text style={styles.price}> {formatPrice(data?.fixedPrice)}</Text>;
         } else if (data.saleType === 'auction') {
-            return <Text style={styles.auctionText}>Auction</Text>;
+            return <Text style={styles.auctionText}>Đấu giá</Text>;
         }
     };
 
@@ -33,12 +34,14 @@ const ProductCard = ({ data }: { data: any }) => {
                     </View>
                     <View style={styles.userStatusContainer}>
                         <Text style={styles.seller} numberOfLines={1}>{data.sellerId.userName}</Text>
-                        <Text style={styles.status} numberOfLines={1}>{data?.status}</Text>
+                        <Text style={styles.status} numberOfLines={1}>{FLOWER_STATUS_LABELS[data?.status as keyof typeof FLOWER_STATUS_LABELS]}</Text>
                     </View>
 
                 </View>
-                <View style={[styles.freshness, styles[data.freshness]]}>
-                    <Text style={styles[data.freshness]}>{data.freshness}</Text>
+                <View style={[styles.freshness, styles[data.freshness as keyof typeof styles]]}>
+                    <Text style={styles[data.freshness as keyof typeof styles]}>
+                        {FLOWER_FRENSHNESS_LABELS[data.freshness as keyof typeof FLOWER_FRENSHNESS_LABELS]}
+                    </Text>
                 </View>
             </TouchableOpacity>
 

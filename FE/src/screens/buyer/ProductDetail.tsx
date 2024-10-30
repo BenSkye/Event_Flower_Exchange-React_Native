@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, TextInput, Alert, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, TextInput, Alert, RefreshControl, KeyboardAvoidingView, Platform, FlatList } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ImageView from "react-native-image-viewing";
 import { Image } from 'expo-image';
@@ -10,6 +10,7 @@ import AuctionDetail from './AuctionDetail';
 import ProductDetailStyle from '../../styles/ProductDetailStyle';
 import { formatInputPrice, formatPrice, parseInputPrice } from '../../utils';
 import { useAuth } from '../../context/AuthContext';
+import { FLOWER_FRENSHNESS_LABELS, FLOWER_STATUS_LABELS } from '../../constant/indext';
 
 type ParamList = {
     Detail: {
@@ -30,6 +31,7 @@ const ProductDetail = () => {
     const [auctionInfo, setAuctionInfo] = useState<any>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [auctionKey, setAuctionKey] = useState(0);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const { user } = useAuth();
 
@@ -92,6 +94,26 @@ const ProductDetail = () => {
     };
 
 
+    const renderImageItem = ({ item, index }: { item: string; index: number }) => (
+        <TouchableOpacity
+            onPress={() => {
+                setCurrentImageIndex(index);
+                setIsImageViewVisible(true);
+            }}
+        >
+            <Image
+                style={[
+                    ProductDetailStyle.slideImage,
+                    activeIndex === index && ProductDetailStyle.activeSlideImage
+                ]}
+                source={{ uri: item }}
+                contentFit="cover"
+                transition={1000}
+            />
+        </TouchableOpacity>
+    );
+
+
     if (!product) {
         return (
             <View style={ProductDetailStyle.loadingContainer}>
@@ -133,16 +155,37 @@ const ProductDetail = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => setIsImageViewVisible(true)}>
-                    <Image
-                        style={ProductDetailStyle.image}
-                        source={{ uri: product.images[0] }}
-                        contentFit="cover"
-                        placeholder={require('../../../assets/splashDaisy.png')}
-                        placeholderContentFit="contain"
-                        transition={1000}
-                    />
-                    <View style={[ProductDetailStyle.freshness, getFreshnessStyle(product.freshness)]}>
-                        <Text style={getFreshnessStyle(product.freshness)}>{product.freshness}</Text>
+                    <View style={ProductDetailStyle.imageContainer}>
+                        <FlatList
+                            data={product.images}
+                            renderItem={renderImageItem}
+                            horizontal
+                            pagingEnabled
+                            showsHorizontalScrollIndicator={false}
+                            onScroll={e => {
+                                const x = e.nativeEvent.contentOffset.x;
+                                setActiveIndex(Math.round(x / screenWidth));
+                            }}
+                            snapToInterval={screenWidth}
+                            decelerationRate="fast"
+                            keyExtractor={(_, index) => index.toString()}
+                        />
+                        <View style={ProductDetailStyle.pagination}>
+                            {product.images.map((_: string, index: number) => (
+                                <View
+                                    key={index}
+                                    style={[
+                                        ProductDetailStyle.paginationDot,
+                                        index === activeIndex && ProductDetailStyle.paginationDotActive
+                                    ]}
+                                />
+                            ))}
+                        </View>
+                        <View style={[ProductDetailStyle.freshness, getFreshnessStyle(product.freshness)]}>
+                            <Text style={getFreshnessStyle(product.freshness)}>
+                                {FLOWER_FRENSHNESS_LABELS[product.freshness as keyof typeof FLOWER_FRENSHNESS_LABELS]}
+                            </Text>
+                        </View>
                     </View>
                 </TouchableOpacity>
 
@@ -174,7 +217,7 @@ const ProductDetail = () => {
                     <Text style={ProductDetailStyle.description}>Mô tả: {product.description}</Text>
                     <View style={ProductDetailStyle.detailsContainer}>
                         <Text style={ProductDetailStyle.detailItem}>Danh mục: {product.categoryId.name}</Text>
-                        <Text style={ProductDetailStyle.detailItem}>Trạng thái: {product.status}</Text>
+                        <Text style={ProductDetailStyle.detailItem}>Trạng thái: {FLOWER_STATUS_LABELS[product.status as keyof typeof FLOWER_STATUS_LABELS]}</Text>
                     </View>
                 </View>
                 {product.saleType === 'auction' && auctionInfo?.status === 'active' && auctionInfo.isBuyNow && user?._id !== product.sellerId._id && (

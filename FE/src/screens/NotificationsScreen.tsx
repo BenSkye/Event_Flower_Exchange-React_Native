@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { getPersonalNotification } from '../services/notification';
 import { Link, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { formatDateTime } from '../utils';
 
 const notifications = [
     { id: '1', title: 'New Message', message: 'Đơn hàng của bạn đang trên đường.', time: '2 minutes ago' },
@@ -21,7 +22,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ title, message, tim
     <View style={styles.notificationItem}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.message}>{message}</Text>
-        <Text style={styles.time}>{time}</Text>
+        <Text style={styles.time}>{formatDateTime.short(time)}</Text>
     </View>
 );
 

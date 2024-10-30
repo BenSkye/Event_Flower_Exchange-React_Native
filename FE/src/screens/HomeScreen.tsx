@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import ProductList from '../components/ProductList';
@@ -55,6 +56,7 @@ const HomeScreen = () => {
     }, []);
 
     const handleSearch = (search: string) => {
+        setProducts([]);
         setSearch(search);
         fetchData(1, true);
     }
@@ -69,18 +71,23 @@ const HomeScreen = () => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Header setSearch={handleSearch} />
-            <ProductList
-                products={products}
-                loadMoreProducts={loadMoreProducts}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                hasMore={hasMore}
-            />
-            {/* {!hasMore && products.length > 0 && (
-                <Text style={styles.endMessage}>Đã hết sản phẩm</Text>
-            )} */}
+        <SafeAreaView style={styles.safeArea}>
+            <KeyboardAwareScrollView
+                contentContainerStyle={styles.scrollContainer}
+                keyboardShouldPersistTaps="handled"
+                enableOnAndroid={true}
+                enableAutomaticScroll={true}
+            >
+                <Header setSearch={handleSearch} />
+
+                <ProductList
+                    products={products}
+                    loadMoreProducts={loadMoreProducts}
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    hasMore={hasMore}
+                />
+            </KeyboardAwareScrollView>
         </SafeAreaView>
     );
 };
@@ -89,8 +96,15 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         backgroundColor: '#ebedef',
+    },
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#ebedef',
+    },
+    scrollContainer: {
+        flexGrow: 1,
     },
     loadingContainer: {
         flex: 1,

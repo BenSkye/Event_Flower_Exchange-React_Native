@@ -126,6 +126,7 @@ const TabNavigator = () => {
                 tabBarActiveTintColor: colors.primary,
                 tabBarInactiveTintColor: 'gray',
                 tabBarStyle: styles.tabBar,
+                tabBarHideOnKeyboard: true,
                 headerShown: false,
             })}
         >
@@ -307,11 +308,16 @@ const RootNavigator = () => {
 
 const styles = StyleSheet.create({
     tabBar: {
-        backgroundColor: colors.surface,
         height: 60,
+        backgroundColor: colors.surface,
         borderTopWidth: 1,
         borderTopColor: 'rgba(0, 0, 0, 0.1)',
         elevation: 8,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 999,
     }
 })
 

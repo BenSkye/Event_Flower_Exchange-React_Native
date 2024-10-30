@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
+import { debounce } from 'lodash';
 const Header = ({ setSearch }: { setSearch: (search: string) => void }) => {
-    const [searchText, setSearchText] = useState('');
+
+    // Tạo debounced function
+    const debouncedSearch = useCallback(
+        debounce((text: string) => {
+            setSearch(text);
+        }, 2000),
+        []
+    );
 
     const handleSearchChange = (text: string) => {
-        setSearchText(text);
-        setSearch(text);
+        debouncedSearch(text);
     };
     return (
         <View style={styles.header}>
