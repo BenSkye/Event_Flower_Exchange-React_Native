@@ -12,10 +12,9 @@ const ProfileStyle = StyleSheet.create({
     paddingHorizontal: 20,
   },
   profilePicture: {
-    width: 120,
+    width: 150,
     height: 120,
     borderRadius: 60,
-    borderWidth: 4,
     borderColor: "#fff",
   },
   userName: {

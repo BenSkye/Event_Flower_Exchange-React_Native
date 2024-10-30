@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import RootNavigator, { RootStackParamList } from './src/navigation/RootNavigator';
-import { AuthProvider } from './src/context/AuthContext';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 import * as Notifications from 'expo-notifications';
 import { AddressProvider } from './src/context/AddressContext';
-import OrderDetail from './src/screens/OrderDetail';
-import * as Linking from 'expo-linking';
+import { StatusBar } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -38,6 +38,11 @@ export default function App() {
                 navigationRef.navigate('Detail', { id: data.notification.data.flowerId });
               }
               break;
+            case 'order-success':
+              if (data.notification) {
+                navigationRef.navigate('OrderDetail', { orderCode: data.notification.data.orderCode });
+              }
+              break;
             // Thêm các case khác tùy theo nhu cầu của bạn
             default:
               console.log('Unknown screen:', data.screen);
@@ -56,12 +61,18 @@ export default function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <AddressProvider>
-        <NavigationContainer ref={navigationRef}>
-          <RootNavigator />
-        </NavigationContainer>
-      </AddressProvider>
-    </AuthProvider>
+    <PaperProvider>
+      <AuthProvider>
+        <AddressProvider>
+          <NavigationContainer ref={navigationRef}>
+            <StatusBar
+              backgroundColor="#fff"
+              barStyle="dark-content"
+            />
+            <RootNavigator />
+          </NavigationContainer>
+        </AddressProvider>
+      </AuthProvider>
+    </PaperProvider>
   );
 }

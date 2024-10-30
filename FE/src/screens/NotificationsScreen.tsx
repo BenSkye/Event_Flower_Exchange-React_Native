@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { getPersonalNotification } from '../services/notification';
 import { Link, useFocusEffect, useNavigation } from '@react-navigation/native';
 
@@ -28,26 +28,29 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ title, message, tim
 const NotificationsScreen = () => {
     const [notifications, setNotifications] = useState([])
     const navigation = useNavigation();
-
+    const [refreshing, setRefreshing] = useState(false);
+    const fetchNotifications = async () => {
+        try {
+            const response = await getPersonalNotification();
+            console.log('response notifications', response);
+            setNotifications(response);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    };
     useFocusEffect(
         useCallback(() => {
-            const fetchNotifications = async () => {
-                try {
-                    const response = await getPersonalNotification();
-                    console.log('response notifications', response);
-                    setNotifications(response);
-                } catch (error) {
-                    console.error('Error fetching notifications:', error);
-                }
-            };
-
             fetchNotifications();
-
             return () => {
 
             };
         }, [])
     );
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchNotifications();
+        setRefreshing(false);
+    };
 
     return (
         <View style={styles.container}>
@@ -59,6 +62,14 @@ const NotificationsScreen = () => {
                         <NotificationItem title={item.message.title} message={item.message.body} time={item.createdAt} />
                     </TouchableOpacity>
                 )}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#9Bd35A', '#689F38']}
+                    />
+                }
+                ListFooterComponent={<Text>Đã hết thông báo</Text>}
             />
         </View>
     );

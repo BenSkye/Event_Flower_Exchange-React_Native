@@ -84,6 +84,12 @@ class UserController {
     const userId = req.user.id
     const { pushToken } = req.body
     await UserService.updatePushToken(userId, pushToken)
+    res.status(200).json({
+      status: 'success',
+      data: {
+        message: 'Cập nhật token thành công'
+      }
+    })
   })
 }
 

@@ -24,4 +24,19 @@ const createFlower = async (data: any) => {
     return response.data
 }
 
-export { getFlowers, getFlowerById, getCategory, createFlower }
+const getFlowerBySellerId = async () => {
+    const response = await apiClient.get('/flower/get-flower-by-seller-id')
+    return response.data
+}
+
+const deleteFlower = async (id: string) => {
+    const response = await apiClient.delete(`/flower/delete/${id}`)
+    return response.data
+}
+
+const updateFlowerById = async (id: string, data: any) => {
+    const response = await apiClient.put(`/flower/update/${id}`, data)
+    return response.data
+}
+
+export { getFlowers, getFlowerById, getCategory, createFlower, getFlowerBySellerId, deleteFlower, updateFlowerById }

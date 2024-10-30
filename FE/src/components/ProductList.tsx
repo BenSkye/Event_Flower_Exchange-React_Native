@@ -6,10 +6,10 @@ const ProductList = ({ products, loadMoreProducts, refreshing, onRefresh, hasMor
     const numColumns = 2;
 
     const renderFooter = () => {
-        if (!hasMore) return null;
+        if (!hasMore) return (<Text style={styles.endMessage}>Đã hết sản phẩm</Text>);
         return (
             <View style={styles.footer}>
-                <ActivityIndicator   size="small" color="#0000ff" />
+                <ActivityIndicator size="small" color="#0000ff" />
             </View>
         );
     };
@@ -67,5 +67,9 @@ const styles = StyleSheet.create({
     footer: {
         paddingVertical: 20,
         alignItems: 'center',
+    }, endMessage: {
+        textAlign: 'center',
+        padding: 10,
+        color: '#888',
     },
 });

@@ -17,6 +17,7 @@ import { RootStackParamList } from "../navigation/RootNavigator";
 import * as ImagePicker from 'expo-image-picker';
 import { storage } from '../utils/firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import defaultAvatar from '../assets/img/avt.jpg';
 
 type ProfileScreenProps = {
   navigate(arg0: string): void;
@@ -54,89 +55,95 @@ const ProfileScreen = () => {
 
   return (
     <View style={ProfileStyle.container}>
-      <StatusBar backgroundColor="#5a61c9" barStyle="light-content" />
+
       <ScrollView>
         {/* Header Section */}
         <View style={ProfileStyle.headerSection}>
-          <TouchableOpacity onPress={handleImagePicker}>
+          {user ? (
+            <TouchableOpacity onPress={handleImagePicker}>
+              <Image
+                source={user?.avatar ? { uri: user.avatar } : defaultAvatar}
+                style={ProfileStyle.profilePicture}
+              />
+              <View style={ProfileStyle.editIconContainer}>
+                <Feather name="edit-2" size={20} color="#fff" />
+              </View>
+            </TouchableOpacity>
+          ) : (
             <Image
-              source={{ uri: user?.avatar || 'https://via.placeholder.com/150' }}
+              source={defaultAvatar}
               style={ProfileStyle.profilePicture}
             />
-            <View style={ProfileStyle.editIconContainer}>
-              <Feather name="edit-2" size={20} color="#fff" />
-            </View>
-          </TouchableOpacity>
+          )}
           <Text style={ProfileStyle.userName}>{user?.userName}</Text>
         </View>
 
-        {/* Action Buttons */}
-        <View style={ProfileStyle.actionButtons}>
-          {!user ? ( // If user is not logged in
-            <>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Login')}
-                style={ProfileStyle.actionButton}
-              >
-                <Text style={ProfileStyle.actionButtonText}>Đăng nhập</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Register')}
-                style={ProfileStyle.actionButton}
-              >
-                <Text style={ProfileStyle.actionButtonText}>Đăng kí</Text>
-              </TouchableOpacity>
-            </>
-          ) : ( // If user is logged in
-            <>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('EditProfile')}
-                style={ProfileStyle.actionButton}
-              >
-                <Text style={ProfileStyle.actionButtonText}>Chỉnh sửa thông tin</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
+        {/* Action Buttons - Chỉ hiển thị khi chưa đăng nhập */}
+        {!user && (
+          <View style={ProfileStyle.actionButtons}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Login')}
+              style={ProfileStyle.actionButton}
+            >
+              <Text style={ProfileStyle.actionButtonText}>Đăng nhập</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Register')}
+              style={ProfileStyle.actionButton}
+            >
+              <Text style={ProfileStyle.actionButtonText}>Đăng kí</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Contact Section */}
-        <View style={ProfileStyle.section}>
-          <Text style={ProfileStyle.sectionTitle}>Thông tin liên lạc</Text>
-          <View style={ProfileStyle.card}>
-            <View style={ProfileStyle.sectionItem}>
-              <Ionicons name="mail-outline" size={24} color="#5a61c9" />
-              <Text style={ProfileStyle.sectionText}>{user?.userEmail}</Text>
-            </View>
-            <View style={ProfileStyle.sectionItem}>
-              <Ionicons name="call-outline" size={24} color="#5a61c9" />
-              <Text style={ProfileStyle.sectionText}>{user?.userPhone}</Text>
-            </View>
-            <View style={ProfileStyle.sectionItem}>
-              <Ionicons name="home-outline" size={24} color="#5a61c9" />
-              <Text style={ProfileStyle.sectionText}>{user?.userAddress}</Text>
+        {user && (
+          <View style={ProfileStyle.section}>
+            <Text style={ProfileStyle.sectionTitle}>Thông tin liên lạc</Text>
+            <View style={ProfileStyle.card}>
+              <View style={ProfileStyle.sectionItem}>
+                <Ionicons name="mail-outline" size={24} color="#5a61c9" />
+                <Text style={ProfileStyle.sectionText}>{user?.userEmail}</Text>
+              </View>
+              <View style={ProfileStyle.sectionItem}>
+                <Ionicons name="call-outline" size={24} color="#5a61c9" />
+                <Text style={ProfileStyle.sectionText}>{user?.userPhone}</Text>
+              </View>
+              <View style={ProfileStyle.sectionItem}>
+                <Ionicons name="home-outline" size={24} color="#5a61c9" />
+                <Text style={ProfileStyle.sectionText}>{user?.userAddress}</Text>
+              </View>
             </View>
           </View>
-        </View>
+        )}
 
-        {/* Mimi Headline Section */}
-        {user && ( // Kiểm tra nếu người dùng đã đăng nhập
-            <View style={ProfileStyle.section}>
-                <Text style={ProfileStyle.sectionTitle}>Bài bán hàng</Text>
-                <View style={ProfileStyle.card}>
-                    <TouchableOpacity onPress={() => navigation.navigate('SellProduct')} style={ProfileStyle.sectionItem}>
-                        <Text style={ProfileStyle.sectionText}>Đăng bài bán</Text>
-                        <Feather name="chevron-right" size={24} color="#5a61c9" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('ManageProduct')} style={ProfileStyle.sectionItem}>
-                        <Text style={ProfileStyle.sectionText}>Quản lý bài bán</Text>
-                        <Feather name="chevron-right" size={24} color="#5a61c9" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => logout()} style={ProfileStyle.sectionItem}>
-                        <Text style={ProfileStyle.sectionText}>Đăng xuất</Text>
-                        <Feather name="chevron-right" size={24} color="#5a61c9" />
-                    </TouchableOpacity>
-                </View>
+        {/* Menu Section */}
+        {user && (
+          <View style={ProfileStyle.section}>
+            <Text style={ProfileStyle.sectionTitle}>Quản lý tài khoản</Text>
+            <View style={ProfileStyle.card}>
+              <TouchableOpacity onPress={() => navigation.navigate('EditProfile')} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Chỉnh sửa thông tin</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('SellProduct')} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Đăng bài bán</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('ManageProduct')} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Quản lý bài bán</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('ChangePassword')} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Đổi mật khẩu</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => logout()} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Đăng xuất</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
             </View>
+          </View>
         )}
 
       </ScrollView>

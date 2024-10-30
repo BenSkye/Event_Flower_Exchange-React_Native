@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
         paddingVertical: 5,
-        marginTop: 20,
+        marginTop: 10,
     },
     searchContainer: {
         flex: 1,

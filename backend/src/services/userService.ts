@@ -66,7 +66,11 @@ class UserService {
   }
   static async updatePushToken(userId: string, pushToken: string) {
     const userRepositoryInstance = new userRepository()
-    return await userRepositoryInstance.updateUser(userId, { pushToken })
+    const updateUsers = await userRepositoryInstance.findAndUpdateMany({ pushToken: pushToken }, { pushToken: '' })
+    console.log('updateUser', updateUsers)
+    const updatedUser = await userRepositoryInstance.updateUser(userId, { pushToken })
+    console.log('updatedUser', updatedUser)
+    return updatedUser
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -20,6 +20,8 @@ import { styles } from '../styles/LoginScreenStyles';
 import { RootStackParamList } from "../navigation/RootNavigator";
 import { LinearGradient } from "expo-linear-gradient";
 
+type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 // type RootStackParamList = {
 //   Profile: undefined;
 //   Register: undefined;
@@ -27,13 +29,10 @@ import { LinearGradient } from "expo-linear-gradient";
 //   // Add other screen names and their param types here
 // };
 
-type LoginScreenProps = {
-  navigate(arg0: never): unknown;
-  reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
-  navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
-
-};
-type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
+interface LoginScreenProps {
+  navigation: LoginScreenNavigationProp;
+  route: LoginScreenRouteProp;
+}
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -95,6 +94,10 @@ const LoginScreen = () => {
     }
   };
 
+  const handleBackPress = () => {
+    // Không có returnTo, thực hiện goBack bình thường
+    navigation.goBack();
+  }
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -105,7 +108,9 @@ const LoginScreen = () => {
       />
 
       <ScrollView contentContainerStyle={styles.scrollView}>
-
+        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
         <Image
           source={require('../../assets/splashDaisy.png')}
           style={styles.logo}
