@@ -198,11 +198,7 @@ const ProductDetail = () => {
                 <TouchableOpacity
                     style={ProductDetailStyle.button}
                     onPress={() => {
-                        if (user) {
-                            navigation.navigate('Checkout', { flowerId: product._id });
-                        } else {
-                            navigation.navigate('Login');
-                        }
+                        navigation.navigate('Checkout', { flowerId: product._id });
                     }}
                 >
                     <Text style={ProductDetailStyle.buttonText}>

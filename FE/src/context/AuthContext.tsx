@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import apiClient from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { handleNotification } from '../utils/handleNotification';
+import { deletePushToken, handleNotification } from '../utils/handleNotification';
 
 interface AuthContextType {
     isLoggedIn: boolean;
@@ -65,10 +65,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const logout = () => {
-        setIsLoggedIn(false);
-        AsyncStorage.removeItem('token');
-        setUser(null);
+    const logout = async () => {
+        const response = await deletePushToken();
+        console.log('response69', response)
+        if (response.status === 'success') {
+            setIsLoggedIn(false);
+            AsyncStorage.removeItem('token');
+            setUser(null);
+        }
     };
 
     const updateUser = async (userData: any) => {
