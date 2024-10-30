@@ -78,7 +78,6 @@ const NotificationsScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.screenTitle}>Thông báo</Text>
             <FlatList
                 data={notifications}
                 keyExtractor={(item) => item._id}
