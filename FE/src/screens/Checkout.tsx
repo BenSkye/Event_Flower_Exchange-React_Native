@@ -53,16 +53,16 @@ const Checkout = () => {
         try {
             if (flower?.saleType === 'fixed_price') {
                 const paymentLink = await checkoutFixedFlower(routeParams.flowerId.toString(), selectedAddress);
-                console.log('paymentLink', paymentLink)
+                // console.log('paymentLink', paymentLink)
                 if (paymentLink) {
                     setPaymentUrl(paymentLink.checkoutUrl);
                 } else {
                     alert('Có lỗi xảy ra khi tạo đơn hàng');
                 }
             } else if (flower?.saleType === 'auction' && auction && auction.isBuyNow) {
-                console.log('auction', auction)
+                // console.log('auction', auction)
                 const paymentLink = await checkoutBuyNowAuction(auction._id.toString(), selectedAddress);
-                console.log('paymentLink', paymentLink)
+                // console.log('paymentLink', paymentLink)
                 if (paymentLink) {
                     setPaymentUrl(paymentLink.checkoutUrl);
                 } else {
@@ -70,7 +70,7 @@ const Checkout = () => {
                 }
             } else if (flower?.saleType === 'auction' && auction && !auction.isBuyNow) {
                 const paymentLink = await checkoutWinAuction(auction.flowerId.toString(), selectedAddress);
-                console.log('paymentLink', paymentLink)
+                // console.log('paymentLink', paymentLink)
                 if (paymentLink) {
                     setPaymentUrl(paymentLink.checkoutUrl);
                 } else {
@@ -95,9 +95,9 @@ const Checkout = () => {
     };
 
     const handleSpecialUrls = (event: any) => {
-        console.log('event', event)
+        // console.log('event', event)
         const { url } = event;
-        console.log('url115', url)
+        // console.log('url115', url)
         const queryParams = Linking.parse(url).queryParams as Record<string, string>;
         if (url.startsWith('https://dl.vietqr.io/pay')) {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));

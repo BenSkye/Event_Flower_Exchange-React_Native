@@ -177,8 +177,11 @@ const ManageProductScreen = () => {
             />
           }
         >
-          <Menu.Item onPress={() => handleEdit(item)} title="Chỉnh sửa" />
+          {item.saleType === 'fixed_price' && item.status === 'available' && (
+            <Menu.Item onPress={() => handleEdit(item)} title="Chỉnh sửa" />
+          )}
           <Menu.Item onPress={() => handleDelete(item)} title="Xóa" />
+
         </Menu>
       </Card.Content>
     </Card>
@@ -270,6 +273,12 @@ const styles = StyleSheet.create({
   },
   addButton: {
     margin: 16,
+    width: '40%',
+    alignSelf: 'flex-end',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
   },
   listContainer: {
     padding: 8,

@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import PostProductStyle from '../../styles/PostProductStyle';
 import { getCategory, createFlower } from '../../services/flower';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { formatInputPrice } from '../../utils';
 
 const PostProduct = () => {
   const navigation = useNavigation();
@@ -272,7 +273,7 @@ const PostProduct = () => {
             <Text style={PostProductStyle.label}>Giá cố định</Text>
             <TextInput
               style={PostProductStyle.input}
-              value={price}
+              value={formatInputPrice(price)}
               onChangeText={setPrice}
               placeholder="Nhập giá cố định"
               keyboardType="numeric"
@@ -283,7 +284,7 @@ const PostProduct = () => {
             <Text style={PostProductStyle.label}>Giá khởi điểm</Text>
             <TextInput
               style={PostProductStyle.input}
-              value={startingPrice}
+              value={formatInputPrice(startingPrice)}
               onChangeText={setStartingPrice}
               placeholder="Nhập giá khởi điểm"
               keyboardType="numeric"
