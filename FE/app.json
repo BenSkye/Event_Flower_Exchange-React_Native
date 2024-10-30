@@ -5,15 +5,15 @@
     "scheme": "flowerapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/splashDaisy.png",
+    "icon": "./assets/1.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splashDaisy.png",
+      "image": "./assets/1.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "notification": {
-      "icon": "./assets/splashDaisy.png",
+      "icon": "./assets/1.png",
       "color": "#9c84e8",
       "androidMode": "default",
       "androidCollapsedTitle": "Updates from My App",
