@@ -15,5 +15,16 @@ class OrderController {
     const order = await OrderService.getOrderbyOrdercode(req.params.orderCode)
     res.status(200).json(order)
   })
+  static changeOrderStatus = catchAsync(async (req: any, res: any, next: any) => {
+    const { status } = req.body
+    const order = await OrderService.changeOrderStatus(req.params.id, status)
+    res.status(200).json(order)
+    notificationService.sendNotification(req.user.id, 'Your order status has been updated')
+  })
+  static getPersonalSellOrder = catchAsync(async (req: any, res: any, next: any) => {
+    const orders = await OrderService.getPersonalOrderBySellerId(req.user.id)
+    console.log('orderssss', orders)
+    res.status(200).json(orders)
+  })
 }
 export default OrderController

@@ -23,6 +23,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import EditProductScreen from '../screens/seller/EditProductScreen';
 import ChangePassword from '../screens/ChangePassword';
+import ManageOrder from '../screens/seller/ManageOrder';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -218,7 +219,7 @@ const RootNavigator = () => {
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name='SellProduct' component={PostProduct} />
             <Stack.Screen name='ManageProduct' component={ManageProduct} />
-
+            <Stack.Screen name='ManageOrder' component={ManageOrder} />
             <Stack.Screen
                 name="Checkout"
                 component={withProtectedScreen(Checkout, 'Checkout')}
