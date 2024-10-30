@@ -102,15 +102,15 @@ const ProfileScreen = () => {
             <Text style={ProfileStyle.sectionTitle}>Thông tin liên lạc</Text>
             <View style={ProfileStyle.card}>
               <View style={ProfileStyle.sectionItem}>
-                <Ionicons name="mail-outline" size={24} color="#5a61c9" />
+                <Ionicons name="mail-outline" size={24} color="#4CAF50" />
                 <Text style={ProfileStyle.sectionText}>{user?.userEmail}</Text>
               </View>
               <View style={ProfileStyle.sectionItem}>
-                <Ionicons name="call-outline" size={24} color="#5a61c9" />
+                <Ionicons name="call-outline" size={24} color="#4CAF50" />
                 <Text style={ProfileStyle.sectionText}>{user?.userPhone}</Text>
               </View>
               <View style={ProfileStyle.sectionItem}>
-                <Ionicons name="home-outline" size={24} color="#5a61c9" />
+                <Ionicons name="home-outline" size={24} color="#4CAF50" />
                 <Text style={ProfileStyle.sectionText}>{user?.userAddress}</Text>
               </View>
             </View>
@@ -124,23 +124,23 @@ const ProfileScreen = () => {
             <View style={ProfileStyle.card}>
               <TouchableOpacity onPress={() => navigation.navigate('EditProfile')} style={ProfileStyle.sectionItem}>
                 <Text style={ProfileStyle.sectionText}>Chỉnh sửa thông tin</Text>
-                <Feather name="chevron-right" size={24} color="#5a61c9" />
+                <Feather name="chevron-right" size={24} color="#4CAF50" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('SellProduct')} style={ProfileStyle.sectionItem}>
                 <Text style={ProfileStyle.sectionText}>Đăng bài bán</Text>
-                <Feather name="chevron-right" size={24} color="#5a61c9" />
+                <Feather name="chevron-right" size={24} color="#4CAF50" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('ManageProduct')} style={ProfileStyle.sectionItem}>
                 <Text style={ProfileStyle.sectionText}>Quản lý bài bán</Text>
-                <Feather name="chevron-right" size={24} color="#5a61c9" />
+                <Feather name="chevron-right" size={24} color="#4CAF50" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('ChangePassword')} style={ProfileStyle.sectionItem}>
                 <Text style={ProfileStyle.sectionText}>Đổi mật khẩu</Text>
-                <Feather name="chevron-right" size={24} color="#5a61c9" />
+                <Feather name="chevron-right" size={24} color="#4CAF50" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => logout()} style={ProfileStyle.sectionItem}>
                 <Text style={ProfileStyle.sectionText}>Đăng xuất</Text>
-                <Feather name="chevron-right" size={24} color="#5a61c9" />
+                <Feather name="chevron-right" size={24} color="#4CAF50" />
               </TouchableOpacity>
             </View>
           </View>
