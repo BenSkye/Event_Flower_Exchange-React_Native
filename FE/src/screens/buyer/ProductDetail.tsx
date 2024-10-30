@@ -333,7 +333,7 @@ const ProductDetail = () => {
                     )
                 )}
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView >
     );
 };
 

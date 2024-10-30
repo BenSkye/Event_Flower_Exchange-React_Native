@@ -67,6 +67,7 @@ const ProductList = ({
     );
 };
 
+
 const styles = StyleSheet.create({
     listContainer: {
         padding: 8,
