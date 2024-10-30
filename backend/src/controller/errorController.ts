@@ -12,6 +12,7 @@ const errorController = (err: any, req: Request, res: Response, next: NextFuncti
   err.status = err.status || 'error'
   // res.locals.error = req.app.get('env') === 'development' ? err : {}
   // render the error page
+  console.log('errorr',err.stack)
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,

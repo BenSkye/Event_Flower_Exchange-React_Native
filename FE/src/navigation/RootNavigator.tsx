@@ -21,6 +21,7 @@ import AddressPicker from '../screens/AddressPicker';
 import OrderDetail from '../screens/OrderDetail';
 import { useAuth } from '../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
+import EditProductScreen from '../screens/seller/EditProductScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -210,6 +211,7 @@ const RootNavigator = () => {
             <Stack.Screen name="Detail" component={DetailScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="EditProduct" component={EditProductScreen} />
 
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name='SellProduct' component={PostProduct} />
