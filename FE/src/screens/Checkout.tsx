@@ -216,12 +216,14 @@ const Checkout = () => {
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
+        height: '100%',
     },
     container: {
         padding: 16,
         marginTop: 16,
         backgroundColor: '#f5f5f5',
         paddingBottom: 80, // To avoid overlap with the button
+        height: '100%',
     },
     section: {
         marginBottom: 24,
@@ -288,20 +290,21 @@ const styles = StyleSheet.create({
         borderTopColor: '#ddd',
     },
     checkoutButton: {
-        backgroundColor: '#5a61c9',
-        paddingVertical: 14,
-        borderRadius: 8,
+        backgroundColor: '#4CAF50',
+        borderRadius: 12,
+        padding: 16,
         alignItems: 'center',
     },
     checkoutText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 16,
+        fontWeight: '600',
     },
     rightIcon: {
         marginLeft: 'auto',
         justifyContent: 'center',
-    }, disabledButton: {
+    },
+    disabledButton: {
         backgroundColor: '#a0a0a0',
     },
 });
