@@ -9,25 +9,23 @@ import useDebounce from '../hooks/useDebounce';
 
 const HomeScreen = () => {
     const navigation = useNavigation();
-
-    const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState<any[]>([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [search, setSearch] = useState('');
     const debouncedSearch = useDebounce(search, 100);
+    const [hasMore, setHasMore] = useState(true);
 
     const fetchData = async (pageNumber: number, refresh: boolean = false) => {
         try {
-            const categoryResponse = await axios.get('https://66eaaa3d55ad32cda479e676.mockapi.io/categorys');
-            const flowerResponse = await getFlowers(pageNumber, 10, search);
-            setCategories(categoryResponse.data);
+            const { flowers, hasMore } = await getFlowers(pageNumber, 10, search);
             if (refresh) {
-                setProducts(flowerResponse);
+                setProducts(flowers);
             } else {
-                setProducts((prevProducts: any[]) => [...prevProducts, ...flowerResponse]);
+                setProducts((prevProducts: any[]) => [...prevProducts, ...flowers]);
             }
+            setHasMore(hasMore);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -43,8 +41,10 @@ const HomeScreen = () => {
 
 
     const loadMoreProducts = () => {
-        fetchData(page + 1);
-        setPage(page + 1);
+        if (hasMore) {
+            fetchData(page + 1);
+            setPage(page + 1);
+        }
     };
 
     const onRefresh = useCallback(() => {
@@ -76,7 +76,11 @@ const HomeScreen = () => {
                 loadMoreProducts={loadMoreProducts}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
+                hasMore={hasMore}
             />
+            {!hasMore && products.length > 0 && (
+                <Text style={styles.endMessage}>Đã hết sản phẩm</Text>
+            )}
         </SafeAreaView>
     );
 };
@@ -92,5 +96,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    endMessage: {
+        textAlign: 'center',
+        padding: 10,
+        color: '#888',
     },
 });

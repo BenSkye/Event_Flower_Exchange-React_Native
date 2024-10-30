@@ -28,8 +28,11 @@ const EditProfile = () => {
   };
 
   const handlePhoneChange = (text: string) => {
+    // Chỉ cho phép số và giữ lại số 0 ở đầu
     const numericText = text.replace(/[^0-9]/g, '');
-    setPhone(numericText);
+    // Giới hạn độ dài số điện thoại (ví dụ: 11 số)
+    const truncatedText = numericText.slice(0, 11);
+    setPhone(truncatedText);
   };
 
   return (

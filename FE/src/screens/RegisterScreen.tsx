@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View, TouchableOpacity, Alert, ScrollView, StatusBar, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { Text, TextInput, View, TouchableOpacity, Alert, ScrollView, StatusBar, Image, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -22,12 +22,96 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const [userPhone, setUserPhone] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({
+    userName: '',
+    userEmail: '',
+    userPhone: '',
+    userAddress: '',
+    password: '',
+  });
 
   const { register } = useAuth();
 
+  const validateName = (name: string) => {
+    if (!name) {
+      setErrors(prev => ({ ...prev, userName: 'Name is required' }));
+      return false;
+    }
+    if (/\d/.test(name)) {
+      setErrors(prev => ({ ...prev, userName: 'Name cannot contain numbers' }));
+      return false;
+    }
+    if (!/^[a-zA-Z\s]*$/.test(name)) {
+      setErrors(prev => ({ ...prev, userName: 'Name can only contain letters and spaces' }));
+      return false;
+    }
+    setErrors(prev => ({ ...prev, userName: '' }));
+    return true;
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setErrors(prev => ({ ...prev, userEmail: 'Email is required' }));
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      setErrors(prev => ({ ...prev, userEmail: 'Invalid email format' }));
+      return false;
+    }
+    setErrors(prev => ({ ...prev, userEmail: '' }));
+    return true;
+  };
+
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phone) {
+      setErrors(prev => ({ ...prev, userPhone: 'Phone number is required' }));
+      return false;
+    }
+    if (!phoneRegex.test(phone)) {
+      setErrors(prev => ({ ...prev, userPhone: 'Invalid phone number (10 digits required)' }));
+      return false;
+    }
+    setErrors(prev => ({ ...prev, userPhone: '' }));
+    return true;
+  };
+
+  const validateAddress = (address: string) => {
+    if (!address) {
+      setErrors(prev => ({ ...prev, userAddress: 'Address is required' }));
+      return false;
+    }
+    if (address.length < 5) {
+      setErrors(prev => ({ ...prev, userAddress: 'Address is too short' }));
+      return false;
+    }
+    setErrors(prev => ({ ...prev, userAddress: '' }));
+    return true;
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password) {
+      setErrors(prev => ({ ...prev, password: 'Password is required' }));
+      return false;
+    }
+    if (password.length < 6) {
+      setErrors(prev => ({ ...prev, password: 'Password must be at least 6 characters' }));
+      return false;
+    }
+    setErrors(prev => ({ ...prev, password: '' }));
+    return true;
+  };
+
   const handleRegister = async () => {
-    if (!userName || !userEmail || !password || !userPhone || !userAddress) {
-      Alert.alert('Error', 'Please fill in all fields');
+    // Validate all fields
+    const isNameValid = validateName(userName);
+    const isEmailValid = validateEmail(userEmail);
+    const isPhoneValid = validatePhone(userPhone);
+    const isAddressValid = validateAddress(userAddress);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isNameValid || !isEmailValid || !isPhoneValid || !isAddressValid || !isPasswordValid) {
       return;
     }
 
@@ -74,18 +158,28 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
           />
           <Text style={styles.title}>Create Account</Text>
 
-          <View style={styles.inputContainer}>
+          <View style={[
+            styles.inputContainer, 
+            errors.userName ? styles.inputContainerError : null
+          ]}>
             <Ionicons name="person-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
               style={styles.input} // Use the input style
               placeholder="Full Name"
               placeholderTextColor="#333"
               value={userName}
-              onChangeText={setUserName}
+              onChangeText={(text) => {
+                setUserName(text);
+                validateName(text);
+              }}
             />
           </View>
+          {errors.userName ? <Text style={styles.errorText}>{errors.userName}</Text> : null}
 
-          <View style={styles.inputContainer}>
+          <View style={[
+            styles.inputContainer, 
+            errors.userEmail ? styles.inputContainerError : null
+          ]}>
             <Ionicons name="mail-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
               style={styles.input} // Use the input style
@@ -93,11 +187,18 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               placeholderTextColor="#333"
               keyboardType="email-address"
               value={userEmail}
-              onChangeText={setUserEmail}
+              onChangeText={(text) => {
+                setUserEmail(text);
+                validateEmail(text);
+              }}
             />
           </View>
+          {errors.userEmail ? <Text style={styles.errorText}>{errors.userEmail}</Text> : null}
 
-          <View style={styles.inputContainer}>
+          <View style={[
+            styles.inputContainer, 
+            errors.userPhone ? styles.inputContainerError : null
+          ]}>
             <Ionicons name="call-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
               style={styles.input} // Use the input style
@@ -105,22 +206,36 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               placeholderTextColor="#333"
               keyboardType="phone-pad"
               value={userPhone}
-              onChangeText={setUserPhone}
+              onChangeText={(text) => {
+                setUserPhone(text);
+                validatePhone(text);
+              }}
             />
           </View>
+          {errors.userPhone ? <Text style={styles.errorText}>{errors.userPhone}</Text> : null}
 
-          <View style={styles.inputContainer}>
+          <View style={[
+            styles.inputContainer, 
+            errors.userAddress ? styles.inputContainerError : null
+          ]}>
             <Ionicons name="location-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
               style={styles.input} // Use the input style
               placeholder="Address"
               placeholderTextColor="#333"
               value={userAddress}
-              onChangeText={setUserAddress}
+              onChangeText={(text) => {
+                setUserAddress(text);
+                validateAddress(text);
+              }}
             />
           </View>
+          {errors.userAddress ? <Text style={styles.errorText}>{errors.userAddress}</Text> : null}
 
-          <View style={styles.inputContainer}>
+          <View style={[
+            styles.inputContainer, 
+            errors.password ? styles.inputContainerError : null
+          ]}>
             <Ionicons name="lock-closed-outline" size={24} color="#2e7d32" style={styles.icon} />
             <TextInput
               style={styles.input} // Use the input style
@@ -128,9 +243,13 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               placeholderTextColor="#333"
               secureTextEntry
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => {
+                setPassword(text);
+                validatePassword(text);
+              }}
             />
           </View>
+          {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Sign Up</Text>

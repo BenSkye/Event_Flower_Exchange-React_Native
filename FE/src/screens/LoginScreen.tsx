@@ -38,11 +38,51 @@ type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const { login } = useAuth();
   const navigation = useNavigation<LoginScreenProps>();
   const route = useRoute<LoginScreenRouteProp>();
+
+  // Validate email
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setEmailError('Email is required');
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError('Invalid email format');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  // Validate password
+  const validatePassword = (password: string) => {
+    if (!password) {
+      setPasswordError('Password is required');
+      return false;
+    }
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
   const handleLogin = async () => {
-    const response = await login(email, password)
+    // Validate both fields
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
+
+    const response = await login(email, password);
     if (response?.status === 'success') {
       if (route.params?.returnTo) {
         navigation.navigate(route.params.returnTo as never);
@@ -72,7 +112,10 @@ const LoginScreen = () => {
         />
         <Text style={styles.slogan}>Kết nối nở rộ, từng cánh hoa một</Text>
 
-        <View style={styles.inputContainer}>
+        <View style={[
+          styles.inputContainer, 
+          emailError ? styles.inputContainerError : null
+        ]}>
           <Ionicons name="mail-outline" size={24} color="#006400" style={styles.icon} />
           <TextInput
             style={styles.input}
@@ -80,11 +123,18 @@ const LoginScreen = () => {
             placeholderTextColor="#666"
             keyboardType="email-address"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              validateEmail(text);
+            }}
           />
         </View>
+        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-        <View style={styles.inputContainer}>
+        <View style={[
+          styles.inputContainer, 
+          passwordError ? styles.inputContainerError : null
+        ]}>
           <Ionicons name="lock-closed-outline" size={24} color="#006400" style={styles.icon} />
           <TextInput
             style={styles.input}
@@ -92,9 +142,13 @@ const LoginScreen = () => {
             placeholderTextColor="#666"
             secureTextEntry
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => {
+              setPassword(text);
+              validatePassword(text);
+            }}
           />
         </View>
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
@@ -110,5 +164,6 @@ const LoginScreen = () => {
     </KeyboardAvoidingView>
   );
 };
+
 
 export default LoginScreen;

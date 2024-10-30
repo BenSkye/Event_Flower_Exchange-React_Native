@@ -114,11 +114,6 @@ const PostProduct = () => {
       return;
     }
 
-    if (saleType === 'auction' && (!startingPrice || !startDate || !endDate)) {
-      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin đu giá");
-      return;
-    }
-
     setUploading(true);
     try {
       const imageUrls = await uploadImages(images);
@@ -130,20 +125,15 @@ const PostProduct = () => {
         saleType,
         status: "available",
         freshness: condition,
-        ...(saleType === 'fixed_price' 
-          ? { fixedPrice: parseFloat(price) }
-          : { 
-              startingPrice: parseFloat(startingPrice),
-              startTime: formatDateTime(startDate, startTime),
-              endTime: formatDateTime(endDate, endTime),
-              isBuyNow,
-              ...(isBuyNow ? { buyNowPrice: parseFloat(buyNowPrice) } : {})
-            }
-        ),
+        fixedPrice: saleType === 'fixed_price' ? parseFloat(price) : undefined,
+        startTime: formatDateTime(new Date(), new Date()), // Sử dụng thời gian hiện tại
+        endTime: formatDateTime(new Date(Date.now() + 24*60*60*1000), new Date()), // Kết thúc sau 24 giờ
       };
 
+      console.log("Sending flower data:", JSON.stringify(flowerData, null, 2));
       const response = await createFlower(flowerData);
-      console.log("Flower created with ID: ", response.id);
+      console.log("Server response:", response);
+
       Alert.alert("Thành công", "Hoa đã được đăng bán");
       // Reset form
       setName('');

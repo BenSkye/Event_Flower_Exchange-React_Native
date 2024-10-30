@@ -13,5 +13,8 @@ class FlowerRepository {
   async updateFlower(flowerId: string, flower: any) {
     return Flower.findByIdAndUpdate(flowerId, flower)
   }
+  async getFlowerBySellerId(sellerId: string) {
+    return Flower.find({ sellerId })
+  }
 }
 export default new FlowerRepository()

@@ -65,5 +65,8 @@ class FlowerService {
   static async updateFlower(flowerId: string, flower: any) {
     return flowerRepository.updateFlower(flowerId, flower)
   }
+  static async getFlowerBySellerId(sellerId: string) {
+    return flowerRepository.getFlowerBySellerId(sellerId)
+  }
 }
 export default FlowerService

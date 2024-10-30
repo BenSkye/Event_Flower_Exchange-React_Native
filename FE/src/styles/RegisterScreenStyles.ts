@@ -181,4 +181,25 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
     textDecorationLine: 'underline',
   },
+  errorText: {
+    color: '#ff3333',  // Màu đỏ tươi
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 10,
+    marginLeft: 10,
+    fontStyle: 'italic',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
+  },
+  inputContainerError: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#ff3333', // Viền đỏ khi có lỗi
+  },
 });
