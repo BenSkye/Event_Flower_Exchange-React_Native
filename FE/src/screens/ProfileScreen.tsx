@@ -83,15 +83,17 @@ const ProfileScreen = () => {
           <View style={ProfileStyle.actionButtons}>
             <TouchableOpacity
               onPress={() => navigation.navigate('Login')}
-              style={ProfileStyle.actionButton}
+              style={[ProfileStyle.actionButton, ProfileStyle.loginButton]}
             >
-              <Text style={ProfileStyle.actionButtonText}>Đăng nhập</Text>
+              <Ionicons name="log-in-outline" size={24} color="#fff" style={ProfileStyle.buttonIcon} />
+              <Text style={[ProfileStyle.actionButtonText, ProfileStyle.loginButtonText]}>Đăng nhập</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate('Register')}
-              style={ProfileStyle.actionButton}
+              style={[ProfileStyle.actionButton, ProfileStyle.registerButton]}
             >
-              <Text style={ProfileStyle.actionButtonText}>Đăng kí</Text>
+              <Ionicons name="person-add-outline" size={24} color="#4CAF50" style={ProfileStyle.buttonIcon} />
+              <Text style={[ProfileStyle.actionButtonText, ProfileStyle.registerButtonText]}>Đăng ký</Text>
             </TouchableOpacity>
           </View>
         )}

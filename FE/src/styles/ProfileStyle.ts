@@ -23,24 +23,43 @@ const ProfileStyle = StyleSheet.create({
     fontWeight: "600",
     color: "#fff",
   },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  actionButton: {
-    backgroundColor: "#03DAC6",
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    elevation: 2,
-  },
-  actionButtonText: {
-    color: "#000",
-    fontSize: 14,
-    fontWeight: "600",
-  },
+actionButtons: {
+  padding: 20,
+  gap: 12,
+},
+actionButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 12,
+  borderRadius: 8,
+  elevation: 1, // Giảm độ đổ bóng
+},
+oginButton: {
+  backgroundColor: '#66BB6A', // Màu xanh nhạt hơn
+},
+registerButton: {
+  backgroundColor: '#fff',
+  borderWidth: 0.8, // Giảm độ dày viền
+  borderColor: '#66BB6A',
+},
+actionButtonText: {
+  fontSize: 15, // Giảm kích thước chữ
+  fontWeight: '500', // Giảm độ đậm của chữ
+  marginLeft: 8,
+},
+loginButton: {
+  backgroundColor: '#66BB6A', // Màu xanh nhạt hơn
+},
+loginButtonText: {
+  color: '#fff',
+},
+registerButtonText: {
+  color: '#66BB6A',
+},
+buttonIcon: {
+  marginRight: 6,
+},
   section: {
     marginTop: 24,
     paddingHorizontal: 16,
@@ -78,6 +97,7 @@ const ProfileStyle = StyleSheet.create({
     borderRadius: 15,
     padding: 5,
   },
+  
 });
 
 export default ProfileStyle;
