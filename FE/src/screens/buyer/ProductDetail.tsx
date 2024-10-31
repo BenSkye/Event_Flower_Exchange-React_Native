@@ -92,25 +92,25 @@ const ProductDetail = () => {
 
     const handlePlaceBid = async () => {
         if (!auctionInfo) {
-            Alert.alert('Error', 'Auction information not available');
+            Alert.alert('Lỗi', 'Đặt giá chưa khả dụng');
             return;
         }
 
         const amount = parseInputPrice(bidAmount);
         if (isNaN(amount) || amount <= auctionInfo.currentPrice) {
-            Alert.alert('Invalid Bid', 'Please enter a valid amount higher than the current price');
+            Alert.alert('Lỗi', 'Vui lòng nhập giá lớn hơn giá hiện tại');
             return;
         }
 
         try {
             const result = await placeBid(auctionInfo._id, amount);
-            Alert.alert('Success', 'Your bid has been placed successfully');
+            Alert.alert('Thành công', 'Đặt giá thành công');
             setAuctionInfo(result);
             setBidAmount('');
             onRefresh();
         } catch (error) {
             console.error('Error placing bid:', error);
-            Alert.alert('Error', 'Failed to place bid. Please try again.');
+            Alert.alert('Lỗi', 'Đặt giá thất bại. Vui lòng thử lại.');
         }
     };
 
@@ -139,7 +139,8 @@ const ProductDetail = () => {
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
             style={{ flex: 1, backgroundColor: '#fff' }}
         >
             <Animated.View style={[
@@ -333,7 +334,7 @@ const ProductDetail = () => {
                     )
                 )}
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView >
     );
 };
 

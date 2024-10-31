@@ -100,9 +100,7 @@ const HomeScreen = () => {
     }, []);
 
     const handleSearch = (search: string) => {
-        setProducts([]);
         setSearch(search);
-        fetchData(1, true);
     }
 
     const resetFilters = () => {
@@ -390,6 +388,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        marginBottom: 60,
     },
     headerContainer: {
         paddingTop: 20,
