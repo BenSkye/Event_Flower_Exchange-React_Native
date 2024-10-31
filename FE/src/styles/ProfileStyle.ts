@@ -5,6 +5,7 @@ const ProfileStyle = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     marginBottom: 60,
+    marginTop: 20,
   },
   headerSection: {
     alignItems: "center",
@@ -64,6 +65,12 @@ const ProfileStyle = StyleSheet.create({
   section: {
     marginTop: 24,
     paddingHorizontal: 16,
+    // marginBottom: 40,
+  },
+  section2: {
+    marginTop: 24,
+    paddingHorizontal: 16,
+    marginBottom: 100,
   },
   sectionTitle: {
     fontSize: 16,
