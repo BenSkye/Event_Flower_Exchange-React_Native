@@ -102,6 +102,13 @@ const ProductDetail = () => {
             return;
         }
 
+        if (auctionInfo?.isBuyNow) {
+            if (amount >= auctionInfo.buyNowPrice) {
+                Alert.alert('Lỗi', 'Giá mua phải bé hơn giá mua ngay');
+                return;
+            }
+        }
+
         try {
             const result = await placeBid(auctionInfo._id, amount);
             Alert.alert('Thành công', 'Đặt giá thành công');
@@ -274,6 +281,16 @@ const ProductDetail = () => {
                                 )}
                             </View>
                         </View>
+                    )}
+                    {product.saleType === 'auction' && auctionInfo?.isBuyNow && user?._id !== product.sellerId._id ? (
+                        <TouchableOpacity
+                            style={ProductDetailStyle.buyButton}
+                            onPress={() => navigation.navigate('Checkout', { flowerId: product._id })}
+                        >
+                            <Text style={ProductDetailStyle.buyButtonText}>Mua ngay với giá {formatPrice(auctionInfo.buyNowPrice)}</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <></>
                     )}
 
                     <View style={ProductDetailStyle.descriptionCard}>

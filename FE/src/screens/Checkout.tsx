@@ -189,7 +189,7 @@ const Checkout = () => {
                                         <Text style={styles.textName}>{flower.name}</Text>
                                         {flower?.saleType === 'fixed_price' && <Text style={styles.text}>{formatPrice(flower.fixedPrice)}</Text>}
                                         {flower?.saleType === 'auction' && auction && auction.isBuyNow && <Text style={styles.text}>{formatPrice(auction?.buyNowPrice)}</Text>}
-                                        {flower?.saleType === 'auction' && auction && <Text style={styles.text}>{formatPrice(auction?.currentPrice)}</Text>}
+                                        {flower?.saleType === 'auction' && auction && !auction.isBuyNow && <Text style={styles.text}>{formatPrice(auction?.currentPrice)}</Text>}
                                     </View>
                                 </View>
                             ) : (
