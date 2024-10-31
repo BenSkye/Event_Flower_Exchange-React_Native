@@ -136,6 +136,10 @@ const ProfileScreen = () => {
                 <Text style={ProfileStyle.sectionText}>Quản lý bài bán</Text>
                 <Feather name="chevron-right" size={24} color="#4CAF50" />
               </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('ManageOrder')} style={ProfileStyle.sectionItem}>
+                <Text style={ProfileStyle.sectionText}>Quản lí sản phẩm</Text>
+                <Feather name="chevron-right" size={24} color="#5a61c9" />
+              </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('ChangePassword')} style={ProfileStyle.sectionItem}>
                 <Text style={ProfileStyle.sectionText}>Đổi mật khẩu</Text>
                 <Feather name="chevron-right" size={24} color="#4CAF50" />
