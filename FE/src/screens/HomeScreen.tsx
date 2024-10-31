@@ -100,9 +100,7 @@ const HomeScreen = () => {
     }, []);
 
     const handleSearch = (search: string) => {
-        setProducts([]);
         setSearch(search);
-        fetchData(1, true);
     }
 
     const resetFilters = () => {
