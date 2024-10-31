@@ -160,12 +160,16 @@ const Checkout = () => {
                         <TouchableOpacity onPress={() => { navigation.navigate('ChooseOrderAddress') }}>
                             <View style={styles.sectionAddress}>
                                 <AntDesign name="enviromento" size={24} color="#5a61c9" style={styles.sallerIcon} />
-                                <View>
+                                <View style={styles.addressContent}>
                                     <Text style={styles.sectionTitle}>Địa chỉ nhận hàng</Text>
                                     {selectedAddress ? (
                                         <>
-                                            <Text style={styles.text}>{selectedAddress.name} | {selectedAddress.phone}</Text>
-                                            <Text style={styles.text}>{selectedAddress.address}</Text>
+                                            <Text style={styles.text} numberOfLines={1}>
+                                                {selectedAddress.name} | {selectedAddress.phone}
+                                            </Text>
+                                            <Text style={styles.text} numberOfLines={2}>
+                                                {selectedAddress.address}
+                                            </Text>
                                         </>
                                     ) : (
                                         <Text style={styles.text}>Chưa có địa chỉ nhận hàng</Text>
@@ -218,6 +222,19 @@ const styles = StyleSheet.create({
         flex: 1,
         height: '100%',
     },
+    sectionAddress: {
+        marginBottom: 24,
+        padding: 16,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 2,
+        flexDirection: 'row',
+        alignItems: 'flex-start', // Changed from center to flex-start
+    },
     container: {
         padding: 16,
         marginTop: 16,
@@ -235,19 +252,22 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 2,
+    }, addressContent: {
+        flex: 1,
+        marginRight: 8, // Add margin to prevent text from touching the right arrow
     },
-    sectionAddress: {
-        marginBottom: 24,
-        padding: 16,
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 2,
-        flexDirection: 'row'
-    },
+    // sectionAddress: {
+    //     marginBottom: 24,
+    //     padding: 16,
+    //     backgroundColor: '#fff',
+    //     borderRadius: 8,
+    //     shadowColor: '#000',
+    //     shadowOffset: { width: 0, height: 2 },
+    //     shadowOpacity: 0.1,
+    //     shadowRadius: 8,
+    //     elevation: 2,
+    //     flexDirection: 'row'
+    // },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
