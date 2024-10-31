@@ -4,6 +4,7 @@ const ProfileStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    marginTop: 20,
   },
   headerSection: {
     alignItems: "center",
@@ -63,6 +64,12 @@ buttonIcon: {
   section: {
     marginTop: 24,
     paddingHorizontal: 16,
+    // marginBottom: 40,
+  },
+  section2: {
+    marginTop: 24,
+    paddingHorizontal: 16,
+    marginBottom: 100,
   },
   sectionTitle: {
     fontSize: 16,
