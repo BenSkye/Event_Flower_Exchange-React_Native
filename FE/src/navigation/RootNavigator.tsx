@@ -24,6 +24,8 @@ import { useNavigation } from '@react-navigation/native';
 import EditProductScreen from '../screens/seller/EditProductScreen';
 import ChangePassword from '../screens/ChangePassword';
 import ManageOrder from '../screens/seller/ManageOrder';
+import ChatScreen from '../screens/ChatScreen';
+import ConversationListScreen from '../screens/ConversationListScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -50,7 +52,8 @@ export type RootStackParamList = {
     AddressPicker: undefined;
     OrderDetail: { orderCode: number, pageBack: string };
     ChangePassword: undefined;
-};
+    Chat: { conversationId: string, sellerId: string, buyerId: string };
+}
 
 const PROTECTED_SCREENS = [
     'Orders',
@@ -105,6 +108,8 @@ const TabNavigator = () => {
                         iconName = focused ? 'notifications' : 'notifications-outline';
                     } else if (route.name === 'Profile') {
                         iconName = focused ? 'person' : 'person-outline';
+                    } else if (route.name === 'Conversation') {
+                        iconName = focused ? 'chatbox' : 'chatbox-outline';
                     }
 
                     return (
@@ -174,6 +179,7 @@ const TabNavigator = () => {
                     },
                 }} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
+            <Tab.Screen name="Conversation" component={ConversationListScreen} />
         </Tab.Navigator>
     );
 };
@@ -216,7 +222,7 @@ const RootNavigator = () => {
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="EditProduct" component={EditProductScreen} />
-
+            <Stack.Screen name="Chat" component={ChatScreen} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name='SellProduct' component={PostProduct} />
             <Stack.Screen name='ManageProduct' component={ManageProduct} />

@@ -1,4 +1,5 @@
 import express from 'express'
+import http from 'http'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import cron from 'node-cron'
@@ -18,15 +19,28 @@ import AuctionService from '~/services/auctionService'
 import orderRoute from '~/routes/orderRoute'
 import addressRoute from '~/routes/addressRoute'
 import checkoutRoute from '~/routes/checkoutRoute'
+import { SocketManager } from '~/socket/SocketManager'
+import conversationRoute from '~/routes/conversationRoute'
 
 dotenv.config()
 
 const app = express()
-app.use(cors())
+const server = http.createServer(app)
+
+// Initialize socket.io
+const socketManager = new SocketManager(server)
+
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}))
 app.use(morgan('dev'))
 app.use(compression())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/category', categoryRoute)
@@ -36,6 +50,7 @@ app.use('/api/v1/order', orderRoute)
 app.use('/api/v1/address', addressRoute)
 app.use('/api/v1/checkout', checkoutRoute)
 app.use('/api/v1/notification', notificationRoute)
+app.use('/api/v1/conversation', conversationRoute)
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
@@ -46,4 +61,4 @@ cron.schedule('* * * * *', () => {
 });
 
 app.use(errorController)
-export default app
+export { app, server, socketManager }

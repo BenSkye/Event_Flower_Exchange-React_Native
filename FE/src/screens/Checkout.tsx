@@ -187,7 +187,7 @@ const Checkout = () => {
                                     <Image source={{ uri: flower.images[0] }} style={styles.image} />
                                     <View style={styles.productDetails}>
                                         <Text style={styles.textName}>{flower.name}</Text>
-                                        {flower?.saleType === 'fixed_price' && <Text style={styles.text}>{formatPrice(flower.fixedPrice)}</Text>}
+                                        {(flower?.saleType === 'fixed_price' || flower?.saleType === 'negotiation') && <Text style={styles.text}>{formatPrice(flower.fixedPrice)}</Text>}
                                         {flower?.saleType === 'auction' && auction && auction.isBuyNow && <Text style={styles.text}>{formatPrice(auction?.buyNowPrice)}</Text>}
                                         {flower?.saleType === 'auction' && auction && !auction.isBuyNow && <Text style={styles.text}>{formatPrice(auction?.currentPrice)}</Text>}
                                     </View>

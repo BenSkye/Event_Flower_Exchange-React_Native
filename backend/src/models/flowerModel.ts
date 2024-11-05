@@ -29,7 +29,7 @@ const flowerSchema = new Schema(
     ],
     saleType: {
       type: String,
-      enum: ['fixed_price', 'auction'],
+      enum: ['fixed_price', 'auction', 'negotiation'],
       required: true
     },
     status: {
@@ -42,7 +42,7 @@ const flowerSchema = new Schema(
       enum: ['fresh', 'slightly_wilted', 'wilted', 'expired'],
       default: 'fresh'
     },
-    fixedPrice: { type: Number },
+    fixedPrice: { type: Number, default: null },
     lastSoldPrice: { type: Number },
   },
   { timestamps: true, collection: COLLECTION_NAME }
