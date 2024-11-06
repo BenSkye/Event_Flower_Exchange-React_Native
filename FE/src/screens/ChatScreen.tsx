@@ -50,6 +50,11 @@ const ChatScreen = () => {
             setConversation(conversation);
         });
 
+        SocketService.onCancelOrder((conversation: any) => {
+            console.log('conversation51', conversation)
+            setConversation(conversation);
+        });
+
         SocketService.joinRoom(conversationId);
 
         // Listen for new messages

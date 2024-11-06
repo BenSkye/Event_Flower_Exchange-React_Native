@@ -109,6 +109,13 @@ class SocketService {
         }
     }
 
+    public onCancelOrder(callback: (order: any) => void) {
+        if (this.socket) {
+            this.socket.on('cancelOrder', callback);
+        }
+    }
+
+
 
 
     public joinRoom(conversationId: string) {
