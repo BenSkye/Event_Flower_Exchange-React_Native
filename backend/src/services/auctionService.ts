@@ -55,6 +55,13 @@ class AuctionService {
     const currentTime = new Date();
     console.log('currentTime', currentTime)
     auction.bids.push({ bidder: userId, amount, time: currentTime })
+    //nếu auction có buyNow và amount này là amount đầu tiên lớn hơn giá buyNow thì cập nhật thời gian endTime xuống còn 15 phút
+    if (auction.isBuyNow && auction.buyNowPrice && amount >= auction.buyNowPrice && (!auction.currentPrice || auction.currentPrice < auction.buyNowPrice)) {
+      const timeZone = 'Asia/Ho_Chi_Minh';
+      const currentTime = toZonedTime(new Date(), timeZone);
+      const fifteenMinutesLater = new Date(currentTime.getTime() + 15 * 60 * 1000);
+      auction.endTime = fifteenMinutesLater;
+    }
     auction.currentPrice = amount
     const updateAuction = await auctionRepository.updateAuction(auctionId, auction)
     const userRepositoryInstance = new userRepository();

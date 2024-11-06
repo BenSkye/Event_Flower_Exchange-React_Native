@@ -17,6 +17,8 @@ import SocketService from '../services/SocketService';
 import { useAuth } from '../context/AuthContext';
 import { getConversationById } from '../services/conversation';
 import { formatInputPrice, formatPrice, parseInputPrice } from '../utils';
+import { ORDER_STATUS_LABELS } from '../constant/indext';
+import { RootStackParamList } from '../navigation/RootNavigator';
 
 const ChatScreen = () => {
     const [messages, setMessages] = useState<any[]>([]);
@@ -25,7 +27,7 @@ const ChatScreen = () => {
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [orderPrice, setOrderPrice] = useState('');
     const [loading, setLoading] = useState(true);
-    const navigation = useNavigation();
+    const navigation = useNavigation<RootStackParamList>();
     const { user } = useAuth();
     const route = useRoute<any>();
     const flatListRef = useRef<FlatList>(null);
@@ -126,16 +128,69 @@ const ChatScreen = () => {
 
     const renderOrderInfo = () => {
         if (!conversation?.orderId) return null;
+        const isPending = conversation.orderId.status === 'pending';
+        const isSeller = user?._id === conversation?.sellerId?._id;
+
+        const handleOrderPress = () => {
+            if (isPending && !isSeller) {
+                navigation.navigate('Checkout', {
+                    flowerId: conversation.flowerId._id,
+                    orderId: conversation.orderId._id
+                });
+            } else {
+                navigation.navigate('OrderDetail', {
+                    orderId: conversation.orderId._id
+                });
+            }
+        };
+
+        const handleCancelOrder = () => {
+            if (isPending && isSeller) {
+                SocketService.cancelOrderInConversation(conversationId);
+            }
+        };
+
         return (
-            <View style={styles.orderInfo}>
-                <Text style={styles.orderTitle}>Đơn hàng #{conversation.orderId.orderCode}</Text>
-                <Text style={styles.orderPrice}>
-                    Giá: {formatPrice(conversation.orderId.price)}
-                </Text>
-                <Text style={styles.orderStatus}>
-                    Trạng thái: {conversation.orderId.status}
-                </Text>
-            </View>
+            <TouchableOpacity
+                style={styles.orderInfo}
+                onPress={handleOrderPress}
+            >
+                <View style={styles.orderHeader}>
+                    <Text style={styles.orderTitle}>#{conversation.orderId.orderCode}</Text>
+                    <View style={[
+                        styles.statusBadge,
+                        { backgroundColor: isPending ? '#FFC107' : '#4CAF50' }
+                    ]}>
+                        <Text style={styles.statusText}>
+                            {ORDER_STATUS_LABELS[conversation.orderId.status as keyof typeof ORDER_STATUS_LABELS]}
+                        </Text>
+                    </View>
+                </View>
+                <View style={styles.orderDetails}>
+                    <Text style={styles.orderPrice}>
+                        {formatPrice(conversation.orderId.price)}
+                    </Text>
+                    {isPending && (
+                        <View style={styles.orderActions}>
+                            {isSeller ? (
+                                <TouchableOpacity
+                                    style={styles.cancelButton}
+                                    onPress={handleCancelOrder}
+                                >
+                                    <Text style={styles.actionButtonText}>Hủy đơn</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity
+                                    style={styles.paymentButton}
+                                    onPress={handleOrderPress}
+                                >
+                                    <Text style={styles.actionButtonText}>Thanh toán</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    )}
+                </View>
+            </TouchableOpacity>
         );
     };
 
@@ -314,24 +369,60 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     orderInfo: {
-        backgroundColor: '#f8f9fa',
+        backgroundColor: '#fff',
         padding: 12,
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
+    },
+    orderHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
     },
     orderTitle: {
         fontSize: 16,
         fontWeight: 'bold',
     },
-    orderPrice: {
-        fontSize: 14,
-        color: '#2196F3',
-        marginTop: 4,
+    statusBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
     },
-    orderStatus: {
+    statusText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    orderDetails: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    orderPrice: {
+        fontSize: 16,
+        color: '#2196F3',
+        fontWeight: 'bold',
+    },
+    orderActions: {
+        flexDirection: 'row',
+    },
+    cancelButton: {
+        backgroundColor: '#F44336',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 16,
+    },
+    paymentButton: {
+        backgroundColor: '#4CAF50',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 16,
+    },
+    actionButtonText: {
+        color: '#fff',
         fontSize: 14,
-        color: '#666',
-        marginTop: 4,
+        fontWeight: '500',
     },
     modalContainer: {
         flex: 1,
@@ -365,9 +456,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 8,
         marginLeft: 10,
-    },
-    cancelButton: {
-        backgroundColor: '#666',
     },
     confirmButton: {
         backgroundColor: '#4CAF50',

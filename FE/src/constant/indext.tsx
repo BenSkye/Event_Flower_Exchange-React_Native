@@ -6,7 +6,7 @@ export const ORDER_STATUS_COLORS = {
 };
 
 export const ORDER_STATUS_LABELS = {
-    'pending': 'Chờ xác nhận',
+    'pending': 'Đang chờ',
     'completed': 'Xác nhận',
     'delivering': 'Đang giao',
     'delivered': 'Đã giao',
