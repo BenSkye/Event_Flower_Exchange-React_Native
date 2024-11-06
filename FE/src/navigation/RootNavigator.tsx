@@ -179,7 +179,6 @@ const TabNavigator = () => {
                         fontWeight: 'bold',
                     },
                 }} />
-            <Tab.Screen name="Profile" component={ProfileScreen} />
             <Tab.Screen name="Conversation" component={ConversationListScreen}
                 listeners={{
                     tabPress: (e) => {
@@ -190,6 +189,7 @@ const TabNavigator = () => {
                     },
                 }}
             />
+            <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
     );
 };
