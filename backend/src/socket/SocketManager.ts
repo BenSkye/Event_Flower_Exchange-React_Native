@@ -127,6 +127,20 @@ export class SocketManager {
         }
       });
 
+      socket.on('cancelOrderInConversation', async (conversationId: string) => {
+        try {
+          const conversation = await ConversationService.cancelOrderInConversation(
+            conversationId,
+            socket.data.user._id
+          );
+          console.log('conversation136', conversation)
+          // Emit to both users in the conversation
+          this.chatNamespace.to(conversationId).emit('cancelOrder', conversation);
+        } catch (error: any) {
+          socket.emit('error', { message: error.message });
+        }
+      });
+
       socket.on('typing', (conversationId: string) => {
         socket.broadcast.to(conversationId).emit('userTyping');
       });

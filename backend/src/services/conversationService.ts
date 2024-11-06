@@ -66,12 +66,12 @@ class ConversationService {
 
   static async cancelOrderInConversation(conversationId: string, userId: string) {
     const conversation = await conversationRepository.getConversationById(conversationId)
-    if (conversation?.sellerId.toString() !== userId) {
+    if (conversation?.sellerId.toString() !== userId.toString()) {
       throw new AppError('You are not allowed to cancel order in this conversation', 400)
     }
-    const updateOrder = orderRepository.updateOrder(conversation.orderId.toString(), { status: 'cancel' })
-    const updateFlower = flowerRepository.updateFlower(conversation.flowerId.toString(), { fixedPrice: null })
-    const updateConversation = conversationRepository.updateConversation(conversationId, { orderId: null })
+    const updateOrder = await orderRepository.updateOrder(conversation.orderId.toString(), { status: 'cancel' })
+    const updateFlower = await flowerRepository.updateFlower(conversation.flowerId.toString(), { fixedPrice: null })
+    const updateConversation = await conversationRepository.updateConversation(conversationId, { orderId: null })
     return updateConversation
   }
 
