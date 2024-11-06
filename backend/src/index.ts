@@ -1,4 +1,4 @@
-import app from './app'
+import { app, server } from './app'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 dotenv.config({ path: '.env' })
@@ -13,6 +13,6 @@ mongoose.connect(DB, {}).then(() => {
 const hostname = process.env.HOSTNAME || 'localhost'
 const port = process.env.PORT || 5050
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`)
 })

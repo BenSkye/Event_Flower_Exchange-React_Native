@@ -32,6 +32,7 @@ import {
     AUCTION_STATUS_LABELS,
     PRODUCT_STATUS_LABELS
 } from '../../constant/indext';
+import { createConversation } from '../../services/conversation';
 
 type ParamList = {
     Detail: {
@@ -120,6 +121,16 @@ const ProductDetail = () => {
             Alert.alert('Lỗi', 'Đặt giá thất bại. Vui lòng thử lại.');
         }
     };
+
+    const handleCreateConversation = async () => {
+        const result = await createConversation(product._id)
+        console.log('result', result)
+        if (result) {
+            navigation.navigate('Chat', { conversationId: result._id })
+        } else {
+            Alert.alert('Lỗi', 'Tạo cuộc trò chuyện thất bại. Vui lòng thử lại.');
+        }
+    }
 
     if (!product) {
         return (
@@ -291,6 +302,15 @@ const ProductDetail = () => {
                         </TouchableOpacity>
                     ) : (
                         <></>
+                    )}
+                    {user?._id !== product.sellerId._id && (
+                        <TouchableOpacity
+                            style={ProductDetailStyle.chatButton}
+                            onPress={handleCreateConversation}
+                        >
+                            <Ionicons name="chatbubble-outline" size={24} color="#fff" />
+                            <Text style={ProductDetailStyle.chatButtonText}>Chat với người bán</Text>
+                        </TouchableOpacity>
                     )}
 
                     <View style={ProductDetailStyle.descriptionCard}>

@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import apiClient from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deletePushToken, handleNotification } from '../utils/handleNotification';
+import SocketService from '../services/SocketService';
 
 interface AuthContextType {
     isLoggedIn: boolean;
@@ -36,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const response = await apiClient.get('/user/personal-information');
             console.log('response35', response.data)
             setUser(response.data.data.personal);
+            await SocketService.connect();
             setIsLoggedIn(true);
         }
     }
@@ -47,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(response.data.data.user)
         AsyncStorage.setItem('token', response.data.data.token)
         if (response.data.status === 'success') {
+            await SocketService.connect();
             setIsLoggedIn(true);
             return response.data
         } else {
@@ -70,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('response69', response)
         if (response.status === 'success') {
             setIsLoggedIn(false);
+            await SocketService.disconnect();
             AsyncStorage.removeItem('token');
             setUser(null);
         }
@@ -88,10 +92,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const changePassword = async (oldPassword: string, newPassword: string, confirmPassword: string) => {
-        const response = await apiClient.patch('/auth/change-password', { 
-            oldPassword, 
+        const response = await apiClient.patch('/auth/change-password', {
+            oldPassword,
             newPassword,
-            confirmPassword 
+            confirmPassword
         });
         console.log('Change password response:', response.data);
         return response.data;

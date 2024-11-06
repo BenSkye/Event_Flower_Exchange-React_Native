@@ -14,6 +14,7 @@ class OrderService {
     return newOrder;
   }
 
+
   static async changeOrderStatus(orderId: string, status: string) {
     const updateOrder = await orderRepository.updateOrder({ _id: orderId }, { status: status })
     return updateOrder

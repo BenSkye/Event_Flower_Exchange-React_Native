@@ -222,5 +222,20 @@ export default StyleSheet.create({
   auctionStatus: {
     fontSize: 16,
     fontWeight: '600',
-  }
+  },
+  chatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+
+  chatButtonText: {
+    color: '#fff',
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
