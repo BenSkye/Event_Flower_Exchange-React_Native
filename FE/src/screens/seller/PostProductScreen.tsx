@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import PostProductStyle from '../../styles/PostProductStyle';
 import { getCategory, createFlower } from '../../services/flower';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { formatInputPrice } from '../../utils';
 
 const PostProduct = () => {
   const navigation = useNavigation();
@@ -114,7 +115,7 @@ const PostProduct = () => {
         Alert.alert("Lỗi", "Vui lòng nhập giá cố định");
         return;
       }
-      if (parseFloat(price) < 10000) {
+      if (parseFloat(price.replace(/,/g, '')) < 10000) {
         Alert.alert("Lỗi", "Giá cố định phải lớn hơn hoặc bằng 10,000 VNĐ");
         return;
       }
@@ -123,14 +124,20 @@ const PostProduct = () => {
         Alert.alert("Lỗi", "Vui lòng nhập giá khởi điểm");
         return;
       }
-      if (parseFloat(startingPrice) < 10000) {
+      if (parseFloat(startingPrice.replace(/,/g, '')) < 10000) {
         Alert.alert("Lỗi", "Giá khởi điểm phải lớn hơn hoặc bằng 10,000 VNĐ");
         return;
       }
       
-      if (isBuyNow && (!buyNowPrice || parseFloat(buyNowPrice) < 10000)) {
-        Alert.alert("Lỗi", "Giá mua ngay phải lớn hơn hoặc bằng 10,000 VNĐ");
-        return;
+      if (isBuyNow) {
+        if (!buyNowPrice) {
+          Alert.alert("Lỗi", "Vui lòng nhập giá mua ngay");
+          return;
+        }
+        if (parseFloat(buyNowPrice.replace(/,/g, '')) < 10000) {
+          Alert.alert("Lỗi", "Giá mua ngay phải lớn hơn hoặc bằng 10,000 VNĐ");
+          return;
+        }
       }
     }
 
@@ -297,12 +304,9 @@ const PostProduct = () => {
             <Text style={PostProductStyle.label}>Giá cố định</Text>
             <TextInput
               style={PostProductStyle.input}
-              value={price}
-              onChangeText={(value) => {
-                setPrice(value);
-                if (value) validatePrice(value, "Giá cố định");
-              }}
-              placeholder="Nhập giá cố định (tối thiểu 10,000 VNĐ)"
+              value={formatInputPrice(price)}
+              onChangeText={setPrice}
+              placeholder="Nhập giá cố định"
               keyboardType="numeric"
             />
           </>
@@ -311,12 +315,9 @@ const PostProduct = () => {
             <Text style={PostProductStyle.label}>Giá khởi điểm</Text>
             <TextInput
               style={PostProductStyle.input}
-              value={startingPrice}
-              onChangeText={(value) => {
-                setStartingPrice(value);
-                if (value) validatePrice(value, "Giá khởi điểm");
-              }}
-              placeholder="Nhập giá khởi điểm (tối thiểu 10,000 VNĐ)"
+              value={formatInputPrice(startingPrice)}
+              onChangeText={setStartingPrice}
+              placeholder="Nhập giá khởi điểm"
               keyboardType="numeric"
             />
             <Text style={PostProductStyle.label}>Thời gian bắt đầu</Text>

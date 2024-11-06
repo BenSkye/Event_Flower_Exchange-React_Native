@@ -23,6 +23,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import EditProductScreen from '../screens/seller/EditProductScreen';
 import ChangePassword from '../screens/ChangePassword';
+import ManageOrder from '../screens/seller/ManageOrder';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,9 +66,9 @@ const PROTECTED_SCREENS = [
 
 // Material Design 3 color palette
 const colors = {
-    primary: '#5a61c9',
-    secondary: '#03DAC6',
-    background: '#F5F5F5',
+    primary: '#4CAF50',
+    secondary: '#4CAF50',
+    background: '#4CAF50',
     surface: '#FFFFFF',
     onPrimary: '#FFFFFF',
     onSecondary: '#000000',
@@ -126,6 +127,7 @@ const TabNavigator = () => {
                 tabBarActiveTintColor: colors.primary,
                 tabBarInactiveTintColor: 'gray',
                 tabBarStyle: styles.tabBar,
+                tabBarHideOnKeyboard: true,
                 headerShown: false,
             })}
         >
@@ -218,7 +220,7 @@ const RootNavigator = () => {
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name='SellProduct' component={PostProduct} />
             <Stack.Screen name='ManageProduct' component={ManageProduct} />
-
+            <Stack.Screen name='ManageOrder' component={ManageOrder} />
             <Stack.Screen
                 name="Checkout"
                 component={withProtectedScreen(Checkout, 'Checkout')}
@@ -307,11 +309,16 @@ const RootNavigator = () => {
 
 const styles = StyleSheet.create({
     tabBar: {
-        backgroundColor: colors.surface,
         height: 60,
+        backgroundColor: colors.surface,
         borderTopWidth: 1,
         borderTopColor: 'rgba(0, 0, 0, 0.1)',
         elevation: 8,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 999,
     }
 })
 

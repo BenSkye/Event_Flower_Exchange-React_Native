@@ -53,16 +53,16 @@ const Checkout = () => {
         try {
             if (flower?.saleType === 'fixed_price') {
                 const paymentLink = await checkoutFixedFlower(routeParams.flowerId.toString(), selectedAddress);
-                console.log('paymentLink', paymentLink)
+                // console.log('paymentLink', paymentLink)
                 if (paymentLink) {
                     setPaymentUrl(paymentLink.checkoutUrl);
                 } else {
                     alert('Có lỗi xảy ra khi tạo đơn hàng');
                 }
             } else if (flower?.saleType === 'auction' && auction && auction.isBuyNow) {
-                console.log('auction', auction)
+                // console.log('auction', auction)
                 const paymentLink = await checkoutBuyNowAuction(auction._id.toString(), selectedAddress);
-                console.log('paymentLink', paymentLink)
+                // console.log('paymentLink', paymentLink)
                 if (paymentLink) {
                     setPaymentUrl(paymentLink.checkoutUrl);
                 } else {
@@ -70,7 +70,7 @@ const Checkout = () => {
                 }
             } else if (flower?.saleType === 'auction' && auction && !auction.isBuyNow) {
                 const paymentLink = await checkoutWinAuction(auction.flowerId.toString(), selectedAddress);
-                console.log('paymentLink', paymentLink)
+                // console.log('paymentLink', paymentLink)
                 if (paymentLink) {
                     setPaymentUrl(paymentLink.checkoutUrl);
                 } else {
@@ -95,9 +95,9 @@ const Checkout = () => {
     };
 
     const handleSpecialUrls = (event: any) => {
-        console.log('event', event)
+        // console.log('event', event)
         const { url } = event;
-        console.log('url115', url)
+        // console.log('url115', url)
         const queryParams = Linking.parse(url).queryParams as Record<string, string>;
         if (url.startsWith('https://dl.vietqr.io/pay')) {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));
@@ -160,12 +160,16 @@ const Checkout = () => {
                         <TouchableOpacity onPress={() => { navigation.navigate('ChooseOrderAddress') }}>
                             <View style={styles.sectionAddress}>
                                 <AntDesign name="enviromento" size={24} color="#5a61c9" style={styles.sallerIcon} />
-                                <View>
+                                <View style={styles.addressContent}>
                                     <Text style={styles.sectionTitle}>Địa chỉ nhận hàng</Text>
                                     {selectedAddress ? (
                                         <>
-                                            <Text style={styles.text}>{selectedAddress.name} | {selectedAddress.phone}</Text>
-                                            <Text style={styles.text}>{selectedAddress.address}</Text>
+                                            <Text style={styles.text} numberOfLines={1}>
+                                                {selectedAddress.name} | {selectedAddress.phone}
+                                            </Text>
+                                            <Text style={styles.text} numberOfLines={2}>
+                                                {selectedAddress.address}
+                                            </Text>
                                         </>
                                     ) : (
                                         <Text style={styles.text}>Chưa có địa chỉ nhận hàng</Text>
@@ -216,23 +220,7 @@ const Checkout = () => {
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
-    },
-    container: {
-        padding: 16,
-        marginTop: 16,
-        backgroundColor: '#f5f5f5',
-        paddingBottom: 80, // To avoid overlap with the button
-    },
-    section: {
-        marginBottom: 24,
-        padding: 16,
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 2,
+        height: '100%',
     },
     sectionAddress: {
         marginBottom: 24,
@@ -244,8 +232,42 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 2,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignItems: 'flex-start', // Changed from center to flex-start
     },
+    container: {
+        padding: 16,
+        marginTop: 16,
+        backgroundColor: '#f5f5f5',
+        paddingBottom: 80, // To avoid overlap with the button
+        height: '100%',
+    },
+    section: {
+        marginBottom: 24,
+        padding: 16,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 2,
+    }, addressContent: {
+        flex: 1,
+        marginRight: 8, // Add margin to prevent text from touching the right arrow
+    },
+    // sectionAddress: {
+    //     marginBottom: 24,
+    //     padding: 16,
+    //     backgroundColor: '#fff',
+    //     borderRadius: 8,
+    //     shadowColor: '#000',
+    //     shadowOffset: { width: 0, height: 2 },
+    //     shadowOpacity: 0.1,
+    //     shadowRadius: 8,
+    //     elevation: 2,
+    //     flexDirection: 'row'
+    // },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -288,20 +310,21 @@ const styles = StyleSheet.create({
         borderTopColor: '#ddd',
     },
     checkoutButton: {
-        backgroundColor: '#5a61c9',
-        paddingVertical: 14,
-        borderRadius: 8,
+        backgroundColor: '#4CAF50',
+        borderRadius: 12,
+        padding: 16,
         alignItems: 'center',
     },
     checkoutText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 16,
+        fontWeight: '600',
     },
     rightIcon: {
         marginLeft: 'auto',
         justifyContent: 'center',
-    }, disabledButton: {
+    },
+    disabledButton: {
         backgroundColor: '#a0a0a0',
     },
 });

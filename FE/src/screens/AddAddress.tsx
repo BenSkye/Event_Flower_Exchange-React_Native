@@ -138,10 +138,10 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     completeButton: {
-        backgroundColor: '#ccc',
-        paddingVertical: 16,
+        backgroundColor: '#4CAF50',
+        borderRadius: 12,
+        padding: 16,
         alignItems: 'center',
-        borderRadius: 4,
     },
     completeButtonText: {
         fontSize: 16,

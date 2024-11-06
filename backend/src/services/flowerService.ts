@@ -58,7 +58,10 @@ class FlowerService {
     return newFlower
   }
   static async getListFlower(page: number, limit: number, name: any) {
-    const query = { name: { $regex: name, $options: 'i' } };
+    const query = {
+      name: { $regex: name, $options: 'i' },
+      status: { $nin: ['unavailable', 'sold'] }
+    };
     const flowers = await flowerRepository.getFlowers((page - 1) * limit, limit, query)
     console.log('flowers', flowers)
     return flowers

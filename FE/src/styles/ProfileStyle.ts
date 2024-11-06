@@ -4,10 +4,12 @@ const ProfileStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    marginBottom: 60,
+    marginTop: 20,
   },
   headerSection: {
     alignItems: "center",
-    backgroundColor: "#5a61c9",
+    backgroundColor: "#4CAF50",
     paddingVertical: 40,
     paddingHorizontal: 20,
   },
@@ -24,30 +26,55 @@ const ProfileStyle = StyleSheet.create({
     color: "#fff",
   },
   actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 16,
-    marginBottom: 8,
+    padding: 20,
+    gap: 12,
   },
   actionButton: {
-    backgroundColor: "#03DAC6",
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    elevation: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    elevation: 1, // Giảm độ đổ bóng
+  },
+  oginButton: {
+    backgroundColor: '#66BB6A', // Màu xanh nhạt hơn
+  },
+  registerButton: {
+    backgroundColor: '#fff',
+    borderWidth: 0.8, // Giảm độ dày viền
+    borderColor: '#66BB6A',
   },
   actionButtonText: {
-    color: "#000",
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 15, // Giảm kích thước chữ
+    fontWeight: '500', // Giảm độ đậm của chữ
+    marginLeft: 8,
+  },
+  loginButton: {
+    backgroundColor: '#66BB6A', // Màu xanh nhạt hơn
+  },
+  loginButtonText: {
+    color: '#fff',
+  },
+  registerButtonText: {
+    color: '#66BB6A',
+  },
+  buttonIcon: {
+    marginRight: 6,
   },
   section: {
     marginTop: 24,
     paddingHorizontal: 16,
+    // marginBottom: 40,
+  },
+  section2: {
+    marginTop: 24,
+    paddingHorizontal: 16,
+    marginBottom: 100,
   },
   sectionTitle: {
     fontSize: 16,
-    color: "#5a61c9",
+    color: "#4CAF50",
     marginBottom: 8,
     fontWeight: "600",
   },
@@ -56,6 +83,7 @@ const ProfileStyle = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     elevation: 1,
+    marginBottom: 12,
   },
   sectionItem: {
     flexDirection: "row",
@@ -78,6 +106,7 @@ const ProfileStyle = StyleSheet.create({
     borderRadius: 15,
     padding: 5,
   },
+
 });
 
 export default ProfileStyle;

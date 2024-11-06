@@ -1,36 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { TextInput, Button, Text, SegmentedButtons, Chip } from 'react-native-paper';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { View, ScrollView, StyleSheet, Alert, TouchableOpacity, Image, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput, Button, Text, SegmentedButtons } from 'react-native-paper';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from '../../utils/firebase/firebase';
 import { getFlowerById, updateFlowerById } from '../../services/flower';
 import PostProductStyle from '../../styles/PostProductStyle';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { formatInputPrice } from '../../utils';
 
-interface Product {
-    _id: string;
-    name: string;
-    description: string;
-    images: string[];
-    saleType: string;
-    price?: number;
-    startPrice?: number;
-    freshness: string;
+interface RouteParams {
+    productId: string;
 }
 
 const EditProductScreen = () => {
-    const route = useRoute();
     const navigation = useNavigation();
-    const { productId } = route.params as { productId: string };
+    const route = useRoute();
+    const { productId } = route.params as RouteParams;
 
-    const [product, setProduct] = useState<Product | null>(null);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [images, setImages] = useState<string[]>([]);
-    const [saleType, setSaleType] = useState('fixed_price');
     const [price, setPrice] = useState('');
-    const [startPrice, setStartPrice] = useState('');
-    const [freshness, setFreshness] = useState('new');
+    const [freshness, setFreshness] = useState('fresh');
+    const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -40,163 +34,247 @@ const EditProductScreen = () => {
     const fetchProductDetails = async () => {
         try {
             setIsLoading(true);
-            const response = await getFlowerById(productId);
-            setProduct(response);
-            setName(response.name);
-            setDescription(response.description);
-            setImages(response.images);
-            setSaleType(response.saleType);
-            setPrice(response.price?.toString() || '');
-            setStartPrice(response.startPrice?.toString() || '');
-            setFreshness(response.freshness);
+            const product = await getFlowerById(productId);
+            setName(product.name);
+            setDescription(product.description);
+            setImages(product.images);
+            setPrice(product.fixedPrice?.toString() || '');
+            setFreshness(product.freshness);
         } catch (error) {
             console.error('Error fetching product details:', error);
+            Alert.alert('Lỗi', 'Không thể tải thông tin sản phẩm');
         } finally {
             setIsLoading(false);
         }
     };
 
     const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsMultipleSelection: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setIsLoading(true);
+                const uploadedUrls = await uploadImages(result.assets.map(asset => asset.uri));
+                setImages([...images, ...uploadedUrls]);
+                setIsLoading(false);
+            }
+        } catch (error) {
+            console.error('Error picking image:', error);
+            Alert.alert('Lỗi', 'Không thể tải ảnh lên');
+            setIsLoading(false);
+        }
+    };
+
+    const uploadImages = async (uris: string[]) => {
+        const uploadPromises = uris.map(async (uri) => {
+            const response = await fetch(uri);
+            const blob = await response.blob();
+            const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+            const storageRef = ref(storage, `products/${filename}`);
+
+            return new Promise<string>((resolve, reject) => {
+                const uploadTask = uploadBytesResumable(storageRef, blob);
+
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload is ' + progress + '% done');
+                    },
+                    (error) => {
+                        console.error("Upload error:", error);
+                        reject(error);
+                    },
+                    async () => {
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            resolve(downloadURL);
+                        } catch (error) {
+                            console.error("Get download URL error:", error);
+                            reject(error);
+                        }
+                    }
+                );
+            });
         });
 
-        if (!result.canceled) {
-            setImages([...images, result.assets[0].uri]);
+        try {
+            return await Promise.all(uploadPromises);
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            throw error;
         }
     };
 
     const removeImage = (index: number) => {
-        setImages(images.filter((_, i) => i !== index));
+        const newImages = [...images];
+        newImages.splice(index, 1);
+        setImages(newImages);
+    };
+
+    const validateForm = () => {
+        if (!name.trim()) {
+            setErrorMessage('Vui lòng nhập tên sản phẩm');
+            return false;
+        }
+        if (!description.trim()) {
+            setErrorMessage('Vui lòng nhập mô tả sản phẩm');
+            return false;
+        }
+        if (images.length === 0) {
+            setErrorMessage('Vui lòng thêm ít nhất một ảnh');
+            return false;
+        }
+        if (!price || Number(price) <= 0) {
+            setErrorMessage('Vui lòng nhập giá hợp lệ');
+            return false;
+        }
+        return true;
     };
 
     const handleSubmit = async () => {
         try {
+            if (!validateForm()) {
+                return;
+            }
+
             setIsLoading(true);
             const updatedProduct = {
                 name,
                 description,
                 images,
-                saleType,
-                price: saleType === 'fixed_price' ? Number(price) : undefined,
-                startPrice: saleType === 'auction' ? Number(startPrice) : undefined,
+                fixedPrice: Number(price),
                 freshness,
             };
 
             await updateFlowerById(productId, updatedProduct);
-            navigation.goBack();
+            Alert.alert('Thành công', 'Cập nhật sản phẩm thành công', [
+                { text: 'OK', onPress: () => navigation.goBack() }
+            ]);
         } catch (error) {
             console.error('Error updating product:', error);
+            Alert.alert('Lỗi', 'Có lỗi xảy ra khi cập nhật sản phẩm');
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <ScrollView style={styles.container}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={PostProductStyle.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#5a61c9" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Chỉnh sửa bài đăng</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={PostProductStyle.backButton}>
+                        <Ionicons name="arrow-back" size={24} color="#5a61c9" />
+                    </TouchableOpacity>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Chỉnh sửa sản phẩm</Text>
+                </View>
             </View>
 
-            <View style={styles.form}>
-                <TextInput
-                    label="Tên sản phẩm"
-                    value={name}
-                    onChangeText={setName}
-                    mode="outlined"
-                    style={styles.input}
-                />
+            <ScrollView style={styles.container}>
+                {errorMessage ? (
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                ) : null}
 
-                <TextInput
-                    label="Mô tả"
-                    value={description}
-                    onChangeText={setDescription}
-                    mode="outlined"
-                    multiline
-                    numberOfLines={4}
-                    style={styles.input}
-                />
+                <View style={styles.form}>
+                    <TextInput
+                        label="Tên sản phẩm"
+                        value={name}
+                        onChangeText={(text) => {
+                            setName(text);
+                            setErrorMessage('');
+                        }}
+                        mode="outlined"
+                        style={styles.input}
+                    />
 
-                <Text style={styles.label}>Hình ảnh sản phẩm</Text>
-                <View style={styles.imageContainer}>
-                    {images.map((uri, index) => (
-                        <View key={index} style={styles.imageWrapper}>
-                            <Image source={{ uri }} style={styles.image} />
-                            <TouchableOpacity
-                                style={styles.removeButton}
-                                onPress={() => removeImage(index)}
-                            >
-                                <Ionicons name="close-circle" size={24} color="red" />
-                            </TouchableOpacity>
-                        </View>
-                    ))}
-                    {images.length < 5 && (
-                        <TouchableOpacity style={styles.addImageButton} onPress={pickImage}>
-                            <Ionicons name="add" size={40} color="#5a61c9" />
-                        </TouchableOpacity>
-                    )}
-                </View>
+                    <TextInput
+                        label="Mô tả"
+                        value={description}
+                        onChangeText={(text) => {
+                            setDescription(text);
+                            setErrorMessage('');
+                        }}
+                        mode="outlined"
+                        multiline
+                        numberOfLines={4}
+                        style={styles.input}
+                    />
 
-                <Text style={styles.label}>Hình thức bán</Text>
-                <SegmentedButtons
-                    value={saleType}
-                    onValueChange={setSaleType}
-                    buttons={[
-                        { value: 'fixed_price', label: 'Giá cố định' },
-                        { value: 'auction', label: 'Đấu giá' },
-                    ]}
-                    style={styles.segmentedButtons}
-                />
+                    <Text style={styles.label}>Hình ảnh sản phẩm</Text>
+                    <FlatList
+                        data={images}
+                        renderItem={({ item, index }) => (
+                            <View style={styles.imageWrapper}>
+                                <Image source={{ uri: item }} style={styles.image} />
+                                <TouchableOpacity
+                                    style={styles.removeButton}
+                                    onPress={() => removeImage(index)}
+                                >
+                                    <Ionicons name="close-circle" size={24} color="red" />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        ListFooterComponent={() => (
+                            images.length < 5 && (
+                                <TouchableOpacity
+                                    style={styles.addImageButton}
+                                    onPress={pickImage}
+                                    disabled={isLoading}
+                                >
+                                    <Ionicons name="add" size={40} color="#666" />
+                                </TouchableOpacity>
+                            )
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                        contentContainerStyle={styles.imageContainer}
+                    />
 
-                {saleType === 'fixed_price' ? (
                     <TextInput
                         label="Giá bán"
-                        value={price}
-                        onChangeText={setPrice}
+                        value={formatInputPrice(price)}
+                        onChangeText={(text) => {
+                            setPrice(text.replace(/[^0-9]/g, ''));
+                            setErrorMessage('');
+                        }}
                         mode="outlined"
                         keyboardType="numeric"
                         style={styles.input}
                     />
-                ) : (
-                    <TextInput
-                        label="Giá khởi điểm"
-                        value={startPrice}
-                        onChangeText={setStartPrice}
-                        mode="outlined"
-                        keyboardType="numeric"
-                        style={styles.input}
+
+                    <Text style={styles.label}>Độ tươi mới</Text>
+                    <SegmentedButtons
+                        value={freshness}
+                        onValueChange={setFreshness}
+                        buttons={[
+                            { value: 'fresh', label: 'Mới' },
+                            { value: 'slightly_wilted', label: 'Vừa' },
+                            { value: 'wilted', label: 'Cũ' },
+                            { value: 'expired', label: 'Hết hạn' },
+                        ]}
+                        style={styles.segmentedButtons}
                     />
-                )}
 
-                <Text style={styles.label}>Độ tươi mới</Text>
-                <SegmentedButtons
-                    value={freshness}
-                    onValueChange={setFreshness}
-                    buttons={[
-                        { value: 'new', label: 'Mới' },
-                        { value: 'medium', label: 'Trung bình' },
-                        { value: 'old', label: 'Cũ' },
-                    ]}
-                    style={styles.segmentedButtons}
-                />
-
-                <Button
-                    mode="contained"
-                    onPress={handleSubmit}
-                    style={styles.submitButton}
-                    loading={isLoading}
-                    disabled={isLoading}
-                >
-                    Cập nhật
-                </Button>
-            </View>
-        </ScrollView>
+                    <Button
+                        mode="contained"
+                        onPress={handleSubmit}
+                        style={styles.submitButton}
+                        loading={isLoading}
+                        disabled={isLoading}
+                    >
+                        Cập nhật
+                    </Button>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -206,16 +284,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center',
         padding: 16,
+        backgroundColor: 'white',
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginLeft: 16,
     },
     form: {
         padding: 16,
@@ -225,13 +297,12 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 16,
-        fontWeight: 'bold',
         marginBottom: 8,
+        color: '#666',
     },
     imageContainer: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginBottom: 16,
+        paddingVertical: 8,
     },
     imageWrapper: {
         position: 'relative',
@@ -244,21 +315,27 @@ const styles = StyleSheet.create({
     },
     removeButton: {
         position: 'absolute',
-        top: -10,
         right: -10,
+        top: -10,
         backgroundColor: 'white',
         borderRadius: 12,
+        padding: 2,
     },
     addImageButton: {
         width: 100,
         height: 100,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#5a61c9',
+        borderColor: '#ccc',
         borderStyle: 'dashed',
         justifyContent: 'center',
         alignItems: 'center',
         margin: 4,
+    },
+    errorText: {
+        color: 'red',
+        padding: 16,
+        textAlign: 'center',
     },
     segmentedButtons: {
         marginBottom: 16,

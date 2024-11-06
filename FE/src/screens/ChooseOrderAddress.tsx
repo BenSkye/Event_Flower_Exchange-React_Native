@@ -53,7 +53,7 @@ const ChooseOrderAddress = () => {
                 renderItem={renderItem}
                 keyExtractor={(item) => item._id}
                 ListFooterComponent={
-                    <Button title="Thêm địa chỉ mới" icon='pluscircleo' onPress={() => { navigate.navigate('AddAddress') }} />
+                    <Button style={styles.addAddressButton} title="Thêm địa chỉ mới" icon='pluscircleo' onPress={() => { navigate.navigate('AddAddress') }} />
                 }
             />
 
@@ -65,6 +65,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        height: '100%',
+        backgroundColor: '#fff',
     },
     addressItem: {
         flexDirection: 'row',
@@ -77,6 +79,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#909497',
         marginBottom: 4,
+    },
+    addAddressButton: {
+        backgroundColor: '#4CAF50',
+        borderRadius: 12,
+        padding: 16,
+        alignItems: 'center',
     },
 
 })
