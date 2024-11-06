@@ -82,17 +82,19 @@ const ConversationListScreen = () => {
                     style={styles.avatar}
                 />
                 <View style={styles.conversationInfo}>
-                    <Text style={styles.userName}>{otherUser.userName}</Text>
-                    <Text style={styles.flowerName}>{item.flowerId.name}</Text>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.userName}>{otherUser.userName}</Text>
+                        <Text style={styles.flowerName}>• {item.flowerId.name}</Text>
+                    </View>
                     {lastMessage && (
-                        <>
+                        <View style={styles.messageRow}>
                             <Text style={styles.lastMessage} numberOfLines={1}>
                                 {lastMessage.text}
                             </Text>
                             <Text style={styles.timestamp}>
                                 {formatDateTime.timeMessage(lastMessage.timestamp)}
                             </Text>
-                        </>
+                        </View>
                     )}
                 </View>
             </TouchableOpacity>
@@ -155,20 +157,30 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center'
     },
+    headerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 6
+    },
     userName: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 4
     },
     flowerName: {
         fontSize: 14,
         color: '#666',
-        marginBottom: 4
+        marginLeft: 8
+    },
+    messageRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     lastMessage: {
         fontSize: 14,
         color: '#666',
-        marginBottom: 4
+        flex: 1,
+        marginRight: 8
     },
     timestamp: {
         fontSize: 12,

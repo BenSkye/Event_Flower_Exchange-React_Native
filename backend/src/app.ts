@@ -21,6 +21,7 @@ import addressRoute from '~/routes/addressRoute'
 import checkoutRoute from '~/routes/checkoutRoute'
 import { SocketManager } from '~/socket/SocketManager'
 import conversationRoute from '~/routes/conversationRoute'
+import OrderService from '~/services/orderService'
 
 dotenv.config()
 
@@ -58,6 +59,7 @@ app.all('*', (req, res, next) => {
 cron.schedule('* * * * *', () => {
   console.log('Running endTimeAuction every minute');
   AuctionService.endTimeStartTimeAuction();
+  OrderService.endTimeOrder();
 });
 
 app.use(errorController)

@@ -64,7 +64,8 @@ const PROTECTED_SCREENS = [
     'ChooseOrderAddress',
     'AddAddress',
     'OrderDetail',
-    'Checkout'
+    'Checkout',
+    'Conversation'
 ];
 
 // Material Design 3 color palette
@@ -179,7 +180,16 @@ const TabNavigator = () => {
                     },
                 }} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
-            <Tab.Screen name="Conversation" component={ConversationListScreen} />
+            <Tab.Screen name="Conversation" component={ConversationListScreen}
+                listeners={{
+                    tabPress: (e) => {
+                        e.preventDefault(); // Ngăn chặn navigation mặc định
+                        if (handleProtectedNavigation('Conversation')) {
+                            navigation.navigate('Conversation');
+                        }
+                    },
+                }}
+            />
         </Tab.Navigator>
     );
 };

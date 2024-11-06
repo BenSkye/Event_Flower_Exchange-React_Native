@@ -103,6 +103,12 @@ class SocketService {
         }
     }
 
+    public cancelOrderInConversation(conversationId: string) {
+        if (this.socket) {
+            this.socket.emit('cancelOrderInConversation', conversationId);
+        }
+    }
+
 
 
     public joinRoom(conversationId: string) {

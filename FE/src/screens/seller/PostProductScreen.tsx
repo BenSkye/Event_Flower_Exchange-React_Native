@@ -266,7 +266,9 @@ const PostProduct = () => {
         >
           <Picker.Item label="Giá cố định" value="fixed_price" />
           <Picker.Item label="Đấu giá" value="auction" />
+          <Picker.Item label="Thương lượng" value="negotiation" />
         </Picker>
+
 
         {saleType === 'fixed_price' ? (
           <>
@@ -279,7 +281,7 @@ const PostProduct = () => {
               keyboardType="numeric"
             />
           </>
-        ) : (
+        ) : saleType === 'auction' ? (
           <>
             <Text style={PostProductStyle.label}>Giá khởi điểm</Text>
             <TextInput
@@ -376,6 +378,10 @@ const PostProduct = () => {
               </>
             )}
           </>
+        ) : (
+          <Text style={[PostProductStyle.noteText, { textAlign: 'center', marginTop: 10 }]}>
+            Giá sẽ được thỏa thuận với người mua trong chat
+          </Text>
         )}
 
         <Text style={PostProductStyle.label}>Độ tươi</Text>

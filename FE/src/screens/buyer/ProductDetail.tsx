@@ -103,12 +103,6 @@ const ProductDetail = () => {
             return;
         }
 
-        if (auctionInfo?.isBuyNow) {
-            if (amount >= auctionInfo.buyNowPrice) {
-                Alert.alert('Lỗi', 'Giá mua phải bé hơn giá mua ngay');
-                return;
-            }
-        }
 
         try {
             const result = await placeBid(auctionInfo._id, amount);
@@ -274,14 +268,14 @@ const ProductDetail = () => {
                                         {formatPrice(auctionInfo.startingPrice)}
                                     </Text>
                                 </View>
-                                {auctionInfo.isBuyNow && (
+                                {/* {auctionInfo.isBuyNow && (
                                     <View style={ProductDetailStyle.auctionRow}>
                                         <Text style={ProductDetailStyle.auctionLabel}>Giá mua ngay:</Text>
                                         <Text style={ProductDetailStyle.auctionValue}>
                                             {formatPrice(auctionInfo.buyNowPrice)}
                                         </Text>
                                     </View>
-                                )}
+                                )} */}
                                 {auctionInfo.currentPrice && (
                                     <View style={ProductDetailStyle.auctionRow}>
                                         <Text style={ProductDetailStyle.auctionLabel}>Giá hiện tại:</Text>
@@ -293,7 +287,7 @@ const ProductDetail = () => {
                             </View>
                         </View>
                     )}
-                    {product.saleType === 'auction' && auctionInfo?.isBuyNow && user?._id !== product.sellerId._id ? (
+                    {/* {product.saleType === 'auction' && auctionInfo?.isBuyNow && user?._id !== product.sellerId._id ? (
                         <TouchableOpacity
                             style={ProductDetailStyle.buyButton}
                             onPress={() => navigation.navigate('Checkout', { flowerId: product._id })}
@@ -302,8 +296,8 @@ const ProductDetail = () => {
                         </TouchableOpacity>
                     ) : (
                         <></>
-                    )}
-                    {user?._id !== product.sellerId._id && (
+                    )} */}
+                    {user && user?._id !== product.sellerId._id && (
                         <TouchableOpacity
                             style={ProductDetailStyle.chatButton}
                             onPress={handleCreateConversation}
